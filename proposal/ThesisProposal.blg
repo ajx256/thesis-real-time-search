@@ -1,0 +1,26 @@
+This is BibTeX, Version 0.99dThe top-level auxiliary file: ThesisProposal.aux
+The style file: plain.bst
+Database file #1: References.bib
+Repeated entry---line 146 of file References.bib
+ : @inproceedings{DBLP:conf/aips/CsernaRF17
+ :                                         ,
+I'm skipping whatever remains of this entry
+A bad cross reference---entry "DBLP:conf/aaai/Mutchler86"
+refers to entry "DBLP:conf/aaai/1986-1", which doesn't exist
+A bad cross reference---entry "DBLP:conf/ijcai/Pemberton95"
+refers to entry "DBLP:conf/ijcai/1995", which doesn't exist
+A bad cross reference---entry "DBLP:conf/socs/OCeallaighR15"
+refers to entry "DBLP:conf/socs/2015", which doesn't exist
+A bad cross reference---entry "DBLP:conf/aips/CsernaRF17"
+refers to entry "DBLP:conf/aips/2017", which doesn't exist
+A bad cross reference---entry "DBLP:conf/ijcai/TolpinBSFK13"
+refers to entry "DBLP:conf/ijcai/2013", which doesn't exist
+A bad cross reference---entry "DBLP:conf/socs/WiltTR10"
+refers to entry "DBLP:conf/socs/2010", which doesn't exist
+Warning--I didn't find a database entry for "DBLP:conf/aips/2017"
+Warning--I didn't find a database entry for "DBLP:conf/ijcai/1995"
+Warning--I didn't find a database entry for "DBLP:conf/ijcai/2013"
+Warning--I didn't find a database entry for "DBLP:conf/aaai/1986-1"
+Warning--I didn't find a database entry for "DBLP:conf/socs/2015"
+Warning--I didn't find a database entry for "DBLP:conf/socs/2010"
+(There were 7 error messages)

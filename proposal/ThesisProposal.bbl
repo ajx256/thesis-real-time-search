@@ -1,0 +1,70 @@
+\begin{thebibliography}{10}
+
+\bibitem{DBLP:conf/aips/CsernaRF17}
+Bence Cserna, Wheeler Ruml, and Jeremy Frank.
+\newblock {Planning Time to Think: Metareasoning for On-Line Planning with
+  Durative Actions}.
+\newblock In {\em Proceedings of the Twenty-Seventh International Conference on
+  Automated Planning and Scheduling, {ICAPS} 2017.}, pages 56--60, 2017.
+
+\bibitem{DBLP:journals/jacm/DechterP85}
+Rina Dechter and Judea Pearl.
+\newblock {Generalized Best-First Search Strategies and the Optimality of A*}.
+\newblock {\em J. {ACM}}, 32(3):505--536, 1985.
+
+\bibitem{DBLP:journals/tssc/HartNR68}
+Peter~E. Hart, Nils~J. Nilsson, and Bertram Raphael.
+\newblock {A Formal Basis for the Heuristic Determination of Minimum Cost
+  Paths}.
+\newblock {\em {IEEE} Trans. Systems Science and Cybernetics}, 4(2):100--107,
+  1968.
+
+\bibitem{DBLP:journals/jair/KieselBR15}
+Scott Kiesel, Ethan Burns, and Wheeler Ruml.
+\newblock {Achieving Goals Quickly Using Real-time Search: Experimental Results
+  in Video Games}.
+\newblock {\em J. Artif. Intell. Res.}, 54:123--158, 2015.
+
+\bibitem{DBLP:journals/aamas/KoenigS09}
+Sven Koenig and Xiaoxun Sun.
+\newblock {Comparing real-time and incremental heuristic search for real-time
+  situated agents}.
+\newblock {\em Autonomous Agents and Multi-Agent Systems}, 18(3):313--341,
+  2009.
+
+\bibitem{DBLP:conf/aaai/Mutchler86}
+David Mutchler.
+\newblock {Optimal Allocation of Very Limited Search Resources}.
+\newblock In {\em Proceedings of the 5th National Conference on Artificial
+  Intelligence. Volume 1: Science.}, pages 467--471, 1986.
+
+\bibitem{DBLP:conf/socs/OCeallaighR15}
+Dylan O'Ceallaigh and Wheeler Ruml.
+\newblock {Metareasoning in Real-Time Heuristic Search}.
+\newblock In {\em Proceedings of the Eighth Annual Symposium on Combinatorial
+  Search, {SOCS} 2015.}, pages 87--95, 2015.
+
+\bibitem{DBLP:conf/ijcai/Pemberton95}
+Joseph~C. Pemberton.
+\newblock {k-Best: {A} New Method for Real-Time Decision Making}.
+\newblock In {\em Proceedings of the Fourteenth International Joint Conference
+  on Artificial Intelligence, {IJCAI} 95}, pages 227--235, 1995.
+
+\bibitem{DBLP:books/daglib/0069195}
+Stuart~J. Russell and Eric Wefald.
+\newblock {\em {Do the right thing - studies in limited rationality}}.
+\newblock {MIT} Press, 1991.
+
+\bibitem{DBLP:conf/ijcai/TolpinBSFK13}
+David Tolpin, Tal Beja, Solomon~Eyal Shimony, Ariel Felner, and Erez Karpas.
+\newblock {Toward Rational Deployment of Multiple Heuristics in {A}}.
+\newblock In {\em {IJCAI} 2013, Proceedings of the 23rd International Joint
+  Conference on Artificial Intelligence}, pages 674--680, 2013.
+
+\bibitem{DBLP:conf/socs/WiltTR10}
+Christopher~Makoto Wilt, Jordan~Tyler Thayer, and Wheeler Ruml.
+\newblock {A Comparison of Greedy Search Algorithms}.
+\newblock In {\em Proceedings of the Third Annual Symposium on Combinatorial
+  Search, {SOCS} 2010}, 2010.
+
+\end{thebibliography}
