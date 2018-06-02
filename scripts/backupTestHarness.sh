@@ -2,17 +2,13 @@
 
 branchFactors="
 2"
-
+# Maybe 100, 300, 1000
 depths="
-10
-100
-1000"
-
+100"
+# LA 10, 20, 50
+# Or 1, 3, 10, 30, 100
 lookaheads="
-5
-10
-15
-20"
+10"
 
 numProcs=0
 
