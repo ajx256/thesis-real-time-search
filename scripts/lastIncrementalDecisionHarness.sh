@@ -18,7 +18,7 @@ do
 	instance=0
 	for file in ../worlds/treeWorld/b${b}d${d}-*
 	do
-	  if ((numProcs >= 7))
+	  if ((numProcs >= 12))
 	  then
 		wait
 		numProcs=0
