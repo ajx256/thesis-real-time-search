@@ -5,7 +5,7 @@ import seaborn as sns
 from os import listdir
 
 # Hard coded result directories
-resultDirs = {"b2d10", "b2d100", "b2d1000"}
+resultDirs = {"b2d100"}
 
 algorithms = {"Minimin", "Bellman", "Nancy", "Cserna"}
 
@@ -17,8 +17,8 @@ solutionCost = []
 print("reading in data...")
 
 for dir in resultDirs:
-    for file in listdir("../results/treeWorld/" + dir):
-        with open("../results/treeWorld/" + dir + "/" + file) as json_data:
+    for file in listdir("../results/backupTests/" + dir):
+        with open("../results/backupTests/" + dir + "/" + file) as json_data:
             resultData = json.load(json_data)
             for algo in algorithms:
                 instance.append(str(dir))
