@@ -7,7 +7,7 @@ from os import listdir
 # Hard coded result directories
 resultDirs = {"b2d100"}
 
-algorithms = {"Minimin", "Bellman", "Nancy", "Cserna"}
+algorithms = {"Minimin", "Bellman", "Nancy", "Cserna", "CsernaPembertonBelief"}
 
 instance = []
 lookAheadVals = []

@@ -7,9 +7,9 @@ import seaborn as sns
 
 sns.set(color_codes=True)
 
-node1 = pd.read_csv("../examples/PembertonNode1.csv")
-node2 = pd.read_csv("../examples/PembertonNode2.csv")
-cserna = pd.read_csv("../examples/PembertonCserna.csv")
+node1 = pd.read_csv("../examples/ConvUniformNode1.csv")
+node2 = pd.read_csv("../examples/ConvUniformNode2.csv")
+cserna = pd.read_csv("../examples/ConvUniformCserna.csv")
 
 plt.plot(cserna["Path Cost Cserna"], cserna["Probability Cserna"])
 plt.plot(node1["Path Cost Node 1"], node1["Probability Node 1"])

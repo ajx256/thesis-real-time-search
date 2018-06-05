@@ -246,6 +246,53 @@ public:
 		}
 	}
 
+	// Creates a discrete distribution based on Pemberton's belief distribution, a uniform between 0 and 1, offset by some g-value
+	DiscreteDistribution(int maxSamples, double g, int d, int bf)
+		: maxSamples(maxSamples)
+	{
+		vector<DiscreteDistribution> uniforms;
+
+		for (int i = 0; i < bf; i++)
+		{
+			DiscreteDistribution u(maxSamples);
+			uniforms.push_back(u);
+		}
+
+		// This is a goal node, belief is a spike at true value
+		if (d == 0)
+		{
+			distribution.insert(ProbabilityNode(g, 1.0));
+			return;
+		}
+
+		// Leaf nodes in this case are a convolution of bf uniform distributions between 0 and 1
+		double lower = 0.0;
+		double upper = 1.0;
+
+		double sampleStepSize = (upper - lower) / maxSamples;
+
+		double currentX = lower;
+
+		for (int i = 0; i < maxSamples; i++)
+		{
+			// Shift the uniform distros by the leaf's g-value
+			ProbabilityNode node(currentX + g, sampleStepSize);
+
+			for (DiscreteDistribution& uniform : uniforms)
+				uniform.distribution.insert(node);
+
+			currentX += sampleStepSize;
+		}
+
+		// Now convolute the uniform distributions
+		for (int i = 1; i < uniforms.size(); i++)
+		{
+			uniforms[0] = uniforms[0] * uniforms[i];
+		}
+
+		this->distribution = uniforms[0].distribution;
+	}
+
 	void createFromUniform(int maxSamples, double g, int d)
 	{
 		this->maxSamples = maxSamples;
@@ -376,7 +423,6 @@ public:
 			csernaDistro.distribution.insert(ProbabilityNode(it->first, it->second));
 		}
 		
-		/*
 		double cdf;
 		cout << "Path Cost Node 1,Probability Node 1,CDF Node 1" << endl;
 		cdf = 0.0;
@@ -403,7 +449,6 @@ public:
 		}
 		cout << endl << endl;
 		exit(1);
-		*/
 
 		return csernaDistro;
 	}
