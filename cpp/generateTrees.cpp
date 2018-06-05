@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-
+#include <climits>
 using namespace std;
 
 int main(int argc, char** argv)
@@ -16,6 +16,7 @@ int main(int argc, char** argv)
 	int b = stoi(argv[2]);
 	int n = stoi(argv[3]);
 	string dir = argv[4];
+	srand(time(NULL));
 
 	for (int i = 1; i <= n; i++)
 	{
@@ -23,7 +24,7 @@ int main(int argc, char** argv)
 		ofstream out(dir + "/" + fileName);
 		out << b << endl;
 		out << depth << endl;
-		out << rand() << endl;
+		out << rand() % ULONG_MAX << endl;
 		out.close();
 	}
 }
