@@ -206,7 +206,7 @@ public:
 	}
 
 	// Creates a discrete distribution based on Pemberton's belief distribution, a uniform between 0 and 1, offset by some g-value
-	DiscreteDistribution(int maxSamples, double g, int d)
+	DiscreteDistribution(int maxSamples, double g, double d)
 		: maxSamples(maxSamples)
 	{
 		// This is a goal node, belief is a spike at true value
@@ -247,7 +247,7 @@ public:
 	}
 
 	// Creates a discrete distribution based on Pemberton's belief distribution, a uniform between 0 and 1, offset by some g-value
-	DiscreteDistribution(int maxSamples, double g, int d, int bf)
+	DiscreteDistribution(int maxSamples, double g, double d, int bf)
 		: maxSamples(maxSamples)
 	{
 		vector<DiscreteDistribution> uniforms;
@@ -293,7 +293,7 @@ public:
 		this->distribution = uniforms[0].distribution;
 	}
 
-	void createFromUniform(int maxSamples, double g, int d)
+	void createFromUniform(int maxSamples, double g, double d)
 	{
 		this->maxSamples = maxSamples;
 		// Clear existing distro
@@ -327,7 +327,7 @@ public:
 		}
 	}
 
-	void createFromGaussian(double mean, int d, double stdDev)
+	void createFromGaussian(double mean, double d, double stdDev)
 	{
 		// Clear existing distro
 		distribution.clear();
