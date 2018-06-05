@@ -7,13 +7,13 @@ import seaborn as sns
 
 sns.set(color_codes=True)
 
-node1 = pd.read_csv("../examples/UniformNode1.csv")
-node2 = pd.read_csv("../examples/UniformNode2.csv")
-cserna = pd.read_csv("../examples/UniformCserna.csv")
+node1 = pd.read_csv("../examples/PembertonNode1.csv")
+node2 = pd.read_csv("../examples/PembertonNode2.csv")
+cserna = pd.read_csv("../examples/PembertonCserna.csv")
 
-plt.plot(cserna["Path Cost Cserna"], cserna["CDF Cserna"])
-plt.plot(node1["Path Cost Node 1"], node1["CDF Node 1"])
-plt.plot(node2["Path Cost Node 2"], node2["CDF Node 2"])
+plt.plot(cserna["Path Cost Cserna"], cserna["Probability Cserna"])
+plt.plot(node1["Path Cost Node 1"], node1["Probability Node 1"])
+plt.plot(node2["Path Cost Node 2"], node2["Probability Node 2"])
 plt.title("Probability that Complete Path Cost is Less Than Given X")
 plt.legend()
 plt.ylabel("Probability")
