@@ -162,7 +162,7 @@ public:
 
 	DiscreteDistribution() {}
 	DiscreteDistribution(int maxSamples) : maxSamples(maxSamples) {}
-	DiscreteDistribution(int maxSamples, double mean, double stdDev)
+	DiscreteDistribution(int maxSamples, double mean, double d, double stdDev)
 		: maxSamples(maxSamples)
 	{
 		// Create a Discrete Distribution from a gaussian
@@ -181,7 +181,7 @@ public:
 		for (int i = 0; i < maxSamples; i++)
 		{
 			// Get the probability for this x value
-			double prob = probabilityDensityFunction(currentX, mean, pow(stdDev, 2));
+			double prob = probabilityDensityFunction(currentX, mean, d * pow(stdDev, 2));
 
 			// So if this a goal node, we know the cost
 			if (std::isnan(prob) && stdDev == 0)
@@ -327,7 +327,7 @@ public:
 		}
 	}
 
-	void createFromGaussian(double mean, double stdDev)
+	void createFromGaussian(double mean, int d, double stdDev)
 	{
 		// Clear existing distro
 		distribution.clear();
@@ -348,7 +348,7 @@ public:
 		for (int i = 0; i < maxSamples; i++)
 		{
 			// Get the probability for this x value
-			double prob = probabilityDensityFunction(currentX, mean, pow(stdDev, 2));
+			double prob = probabilityDensityFunction(currentX, mean, d * pow(stdDev, 2));
 
 			// So if this a goal node, we know the cost
 			if (std::isnan(prob) && stdDev == 0)
@@ -422,7 +422,9 @@ public:
 		{
 			csernaDistro.distribution.insert(ProbabilityNode(it->first, it->second));
 		}
-		
+
+		/*
+		cout << csernaDistro.expectedCost() << endl;
 		double cdf;
 		cout << "Path Cost Node 1,Probability Node 1,CDF Node 1" << endl;
 		cdf = 0.0;
@@ -449,6 +451,7 @@ public:
 		}
 		cout << endl << endl;
 		exit(1);
+		*/
 
 		return csernaDistro;
 	}

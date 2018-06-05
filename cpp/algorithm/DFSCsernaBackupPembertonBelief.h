@@ -152,7 +152,7 @@ struct DFSCsernaBackupPembertonBelief
 			//tla.topLevelOpen.push(childNode);
 			tla.topLevelNode = childNode;
 			//open.push(childNode);
-			childNode->distribution = DiscreteDistribution(100, childNode->getGValue(), childNode->getD(), domain.getBranchingFactor());
+			childNode->distribution = DiscreteDistribution(100, childNode->getGValue(), (int)childNode->getD(), domain.getBranchingFactor());
 			// Push this node onto open
 			openUclosed[childNode->getState().hash()].push_back(childNode);
 			// Add this top level action to the list
@@ -232,7 +232,7 @@ struct DFSCsernaBackupPembertonBelief
 				tla.topLevelOpen.pop();
 
 				// Make this node's PDF a discrete distribution...
-				best->distribution = DiscreteDistribution(100, best->getGValue(), best->getD(), domain.getBranchingFactor());
+				best->distribution = DiscreteDistribution(100, best->getGValue(), (int)best->getD(), domain.getBranchingFactor());
 
 				tla.kBestNodes.push_back(best);
 				i++;
