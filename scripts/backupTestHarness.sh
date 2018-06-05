@@ -8,7 +8,7 @@ depths="
 # LA 10, 20, 50
 # Or 1, 3, 10, 30, 100
 lookaheads="
-10"
+7"
 
 numProcs=0
 

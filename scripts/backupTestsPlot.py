@@ -21,6 +21,8 @@ for dir in resultDirs:
         with open("../results/backupTests/" + dir + "/" + file) as json_data:
             resultData = json.load(json_data)
             for algo in algorithms:
+                if resultData["Lookahead"] == 7:
+                    continue
                 instance.append(str(dir))
                 lookAheadVals.append(resultData["Lookahead"])
                 algorithm.append(algo)
