@@ -165,6 +165,13 @@ public:
 	DiscreteDistribution(int maxSamples, double mean, double d, double stdDev)
 		: maxSamples(maxSamples)
 	{
+		// This is a goal node, belief is a spike at true value
+		if (d == 0)
+		{
+			distribution.insert(ProbabilityNode(mean, 1.0));
+			return;
+		}
+
 		// Create a Discrete Distribution from a gaussian
 		double lower = max(0.0, mean - 3 * stdDev);
 		double upper = mean + 3 * stdDev;
@@ -331,6 +338,13 @@ public:
 	{
 		// Clear existing distro
 		distribution.clear();
+
+		// This is a goal node, belief is a spike at true value
+		if (d == 0)
+		{
+			distribution.insert(ProbabilityNode(mean, 1.0));
+			return;
+		}
 
 		// Create a Discrete Distribution from a gaussian
 		double lower = max(0.0, mean - 3 * stdDev);
