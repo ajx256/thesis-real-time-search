@@ -39,8 +39,8 @@ for instance in resultDirs:
     instanceData = df.loc[df["instance"] == instance]
     sns.set_style("white")
     sns.set(rc={'figure.figsize': (11, 8)})
-    sns.violinplot(x="Depth Limit", y="Solution Cost", hue="Algorithm", data=instanceData, positions=0)
-    sns.pointplot(x="Depth Limit", y="Solution Cost", data=instanceData, join=False, ci=95.0, color=[0.3,0.3,0.3], markers=' ')
+    ax1 = sns.violinplot(x="Depth Limit", y="Solution Cost", hue="Algorithm", data=instanceData, positions=0, inner=None)
+    sns.pointplot(x="Depth Limit", y="Solution Cost", data=instanceData, join=False, ax=ax1, ci=95.0, color=[0.3,0.3,0.3], markers=' ')
     plt.title("Tree Instance: " + instance)
 
     plt.savefig("../plots/BackupStrategyComparison" + instance + ".png")
