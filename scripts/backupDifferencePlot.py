@@ -40,7 +40,7 @@ for instance in resultDirs:
     
     sns.set_style("white")
     sns.set(rc={'figure.figsize': (11, 8)})
-    sns.pointplot(x="Depth Limit", y="Algorithm Cost - Cserna Cost", hue="Algorithm", data=instanceData, ci=95, join=False, dodge=0.3)
+    sns.pointplot(x="Depth Limit", y="Algorithm Cost - Cserna Cost", hue="Algorithm", hue_order=algorithms, data=instanceData, ci=95, join=False, dodge=0.3)
     plt.title("Tree Instance: " + instance)
 
     plt.savefig("../plots/BackupStrategyDifference" + instance + ".png")

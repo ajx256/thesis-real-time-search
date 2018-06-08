@@ -41,12 +41,12 @@ for instance in resultDirs:
     sns.set_style("white")
     sns.set(rc={'figure.figsize': (11, 8)})
 
-    ax = sns.pointplot(x="Depth Limit", y="Solution Cost", hue="Algorithm", data=instanceData, join=False, dodge=0.639, palette=sns.color_palette(["red"]), markers="_", errwidth=3, ci=95)
+    ax = sns.pointplot(x="Depth Limit", y="Solution Cost", hue="Algorithm", hue_order=algorithms, data=instanceData, join=False, dodge=0.639, palette=sns.color_palette(["red"]), markers="_", errwidth=3, ci=95)
     plt.setp(ax.lines, zorder=100)
     plt.setp(ax.collections, zorder=100, label="")
     ax.legend_.remove()
     
-    sns.violinplot(x="Depth Limit", y="Solution Cost", hue="Algorithm", data=instanceData, palette="Set3")    
+    sns.violinplot(x="Depth Limit", y="Solution Cost", hue="Algorithm", hue_order=algorithms, data=instanceData, palette="Set3")    
 
     plt.title("Tree Instance: " + instance)
     plt.ylabel("Solution Cost")
