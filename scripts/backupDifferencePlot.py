@@ -7,7 +7,8 @@ from os import listdir
 # Hard coded result directories
 resultDirs = {"b2d100"}
 
-algorithms = {"Minimin", "Bellman", "Nancy", "CsernaPembertonBelief"}
+algorithms = ["Minimin", "Bellman", "Nancy", "CsernaPembertonBelief"]
+depths = [3, 7, 10]
 
 instance = []
 lookAheadVals = []
@@ -40,7 +41,7 @@ for instance in resultDirs:
     
     sns.set_style("white")
     sns.set(rc={'figure.figsize': (11, 8)})
-    sns.pointplot(x="Depth Limit", y="Algorithm Cost - Cserna Cost", hue="Algorithm", hue_order=algorithms, data=instanceData, ci=95, join=False, dodge=0.3)
+    sns.pointplot(x="Depth Limit", y="Algorithm Cost - Cserna Cost", hue="Algorithm", order=depths, hue_order=algorithms, data=instanceData, ci=95, join=False, dodge=0.3, palette="Set3")
     plt.title("Tree Instance: " + instance)
 
     plt.savefig("../plots/BackupStrategyDifference" + instance + ".png")
