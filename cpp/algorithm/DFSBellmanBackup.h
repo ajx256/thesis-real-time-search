@@ -30,6 +30,7 @@ struct DFSBellmanBackup
 		Node* parent;
 		State stateRep;
 		bool open;
+		State topLevelState;
 
 	public:
 		Cost getGValue() const { return g; }
@@ -44,9 +45,15 @@ struct DFSBellmanBackup
 		bool onOpen() { return open; }
 		void close() { open = false; }
 		void reopen() { open = true; }
+		void setTopLevelState(State tls) { topLevelState = tls; }
+		State getTopLevelState() { return topLevelState; }
 
 		Node(Cost g, Cost h, Cost derr, Cost eps, State treeNode, Node* parent)
-			: g(g), h(h), derr(derr), eps(eps), stateRep(treeNode), parent(parent) {}
+			: g(g), h(h), derr(derr), eps(eps), stateRep(treeNode), parent(parent) 
+		{
+			if (parent != NULL)
+				topLevelState = parent->getTopLevelState();
+		}
 	};
 
 	struct CompareNodes
@@ -72,29 +79,27 @@ struct DFSBellmanBackup
 		openUclosed.clear();
 	}
 
-	bool duplicateDetection(Node* node)
+	void generateTopLevelActions(Node* start, int lookahead, ResultContainer& res)
 	{
-		// Check if this node exists 
-		vector<Node*> potentialDups = openUclosed[node->getState().hash()];
-		for (Node* n : potentialDups)
-		{
-			if (n->getState() == node->getState())
-			{
-				// These two states are dups, so check if both are on open
-				if (n->onOpen())
-				{
-					// If on open, keep better of two
-					if (node->getGValue() < n->getGValue())
-					{
-						n->setGValue(node->getGValue());
-						n->setParent(node->getParent());
-					}
-				}
-				return true;
-			}
-		}
+		// The first node to be expanded in any problem is the start node
+		// Doing so yields the top level actions
+		start->close();
+		res.nodesExpanded++;
 
-		return false;
+		vector<State> children = domain.successors(start->getState());
+		res.nodesGenerated += children.size();
+		for (State child : children)
+		{
+			Node* childNode = new Node(start->getGValue() + domain.getEdgeCost(child.getSeedOffset()),
+				domain.heuristic(child), domain.distance(child), eps, child, start);
+			childNode->setTopLevelState(child);
+
+			// Only push top level actions onto open, so they may be selected later
+			openUclosed[childNode->getState().hash()].push_back(childNode);
+
+			// Explore under this TLA
+			explore(childNode, 2, lookahead, res);
+		}
 	}
 
 	void explore(Node* cur, int curDepth, int maxDepth, ResultContainer& res)
@@ -103,8 +108,13 @@ struct DFSBellmanBackup
 		// do not expand it.
 		if (curDepth > maxDepth || domain.isGoal(cur->getState()))
 		{
-			// Add this node to open and recurse back up
-			open.push(cur);
+			// If this node has the best f-cost, this will determine our minimin decision
+			if (best == NULL || best->getFHatValue() > cur->getFHatValue())
+			{
+				if (best != NULL && openUclosed[best->getState().hash()].end() == find(openUclosed[best->getState().hash()].begin(), openUclosed[best->getState().hash()].end(), best))
+					delete best;
+				best = cur;
+			}
 		}
 		else
 		{
@@ -115,13 +125,10 @@ struct DFSBellmanBackup
 			{
 				Node* childNode = new Node(cur->getGValue() + domain.getEdgeCost(child.getSeedOffset()),
 					domain.heuristic(child), domain.distance(child), eps, child, cur);
-				// Duplicate detection
-				if (!duplicateDetection(childNode))
-				{
-					openUclosed[child.hash()].push_back(childNode);
-					explore(childNode, curDepth + 1, maxDepth, res);
-				}
-				else
+
+				explore(childNode, curDepth + 1, maxDepth, res);
+
+				if (childNode != best && childNode != NULL)
 					delete childNode;
 			}
 		}
@@ -137,24 +144,10 @@ struct DFSBellmanBackup
 
 		// Get the start node
 		Node* start = new Node(0, 0, domain.distance(domain.getStartState()), eps, domain.getStartState(), NULL);
-		openUclosed[start->getState().hash()].push_back(start);
 
 		while (1)
 		{
-			if (domain.isGoal(start->getState()))
-			{
-				// TODO: Solution found, stop timer
-
-				// Calculate path cost and return solution
-				calculateCost(start, res);
-
-				return res;
-			}
-
-			// Empty OPEN and CLOSED
-			while (!open.empty())
-				open.pop();
-			closed.clear();
+			best = NULL;
 
 			// delete all of the nodes from the last expansion phase
 			for (typename unordered_map<unsigned long, vector<Node*> >::iterator it = openUclosed.begin(); it != openUclosed.end(); it++)
@@ -164,28 +157,37 @@ struct DFSBellmanBackup
 
 			openUclosed.clear();
 
-			// Push start onto open
-			openUclosed[start->getState().hash()].push_back(start);
-
-			// Expand some nodes until expnasion limit
-			explore(start, 1, lookahead, res);
-
-			if (open.empty())
+			if (domain.isGoal(start->getState()))
 			{
-				break;
+				// TODO: Solution found, stop timer
+
+				// Calculate path cost and return solution
+				calculateCost(start, res);
+
+				delete start;
+				openUclosed.clear();
+
+				return res;
 			}
 
-			// TODO: Learning?
+			// Expand some nodes until expnasion limit
+			generateTopLevelActions(start, lookahead, res);
+			
+			if (start != best && start != NULL)
+				delete start;
 
-			// Decisison strategy is minimin backup, so go toward the node with the lowest f-value
-			Node* goalPrime = open.top();
-			open.pop();
-
-			// Only move one step towards best on open
-			while (goalPrime->getParent() != start)
-				goalPrime = goalPrime->getParent();
-
-			start = goalPrime;
+			// Get the new start node
+			vector<Node*> potential = openUclosed[best->getTopLevelState().hash()];
+			for (Node* n : potential)
+			{
+				if (n->getState() == best->getTopLevelState())
+				{
+					if (openUclosed[best->getState().hash()].end() == find(openUclosed[best->getState().hash()].begin(), openUclosed[best->getState().hash()].end(), best))
+						delete best;		
+					start = n;
+					break;
+				}
+			}
 		}
 		return res;
 	}
@@ -195,6 +197,7 @@ private:
 	priority_queue<Node*, vector<Node*>, CompareNodes> open;
 	unordered_map<unsigned long, vector<Node*> > closed;
 	unordered_map<unsigned long, vector<Node*> > openUclosed;
+	Node* best;
 
 	void calculateCost(Node* solution, ResultContainer& res)
 	{

@@ -162,7 +162,7 @@ public:
 
 	DiscreteDistribution() {}
 	DiscreteDistribution(int maxSamples) : maxSamples(maxSamples) {}
-	DiscreteDistribution(int maxSamples, double mean, double d, double stdDev)
+	DiscreteDistribution(int maxSamples, double f, double mean, double d, double error)
 		: maxSamples(maxSamples)
 	{
 		// This is a goal node, belief is a spike at true value
@@ -172,8 +172,10 @@ public:
 			return;
 		}
 
+		double stdDev = (d * error) / 3.0;
+
 		// Create a Discrete Distribution from a gaussian
-		double lower = max(0.0, mean - 3 * stdDev);
+		double lower = f;
 		double upper = mean + 3 * stdDev;
 
 		double sampleStepSize = (upper - lower) / maxSamples;
@@ -188,7 +190,7 @@ public:
 		for (int i = 0; i < maxSamples; i++)
 		{
 			// Get the probability for this x value
-			double prob = probabilityDensityFunction(currentX, mean, d * pow(stdDev, 2));
+			double prob = probabilityDensityFunction(currentX, mean, pow(stdDev, 2));
 
 			// So if this a goal node, we know the cost
 			if (std::isnan(prob) && stdDev == 0)
@@ -334,7 +336,7 @@ public:
 		}
 	}
 
-	void createFromGaussian(double mean, double d, double stdDev)
+	void createFromGaussian(double f, double mean, double d, double error)
 	{
 		// Clear existing distro
 		distribution.clear();
@@ -346,8 +348,10 @@ public:
 			return;
 		}
 
+		double stdDev = (d * error) / 3.0;
+
 		// Create a Discrete Distribution from a gaussian
-		double lower = max(0.0, mean - 3 * stdDev);
+		double lower = f;
 		double upper = mean + 3 * stdDev;
 
 		double sampleStepSize = (upper - lower) / maxSamples;
@@ -362,7 +366,7 @@ public:
 		for (int i = 0; i < maxSamples; i++)
 		{
 			// Get the probability for this x value
-			double prob = probabilityDensityFunction(currentX, mean, d * pow(stdDev, 2));
+			double prob = probabilityDensityFunction(currentX, mean, pow(stdDev, 2));
 
 			// So if this a goal node, we know the cost
 			if (std::isnan(prob) && stdDev == 0)

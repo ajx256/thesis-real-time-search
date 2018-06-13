@@ -32,6 +32,7 @@ struct DFSCsernaBackupPembertonBelief
 		int owningTLA;
 		bool open;
 		DiscreteDistribution distribution;
+		State topLevelState;
 
 	public:
 		Cost getGValue() const { return g; }
@@ -49,10 +50,15 @@ struct DFSCsernaBackupPembertonBelief
 		bool onOpen() { return open; }
 		void close() { open = false; }
 		void reopen() { open = true; }
+		void setTopLevelState(State tls) { topLevelState = tls; }
+		State getTopLevelState() { return topLevelState; }
 
 		Node(Cost g, Cost h, Cost derr, Cost eps, State treeNode, Node* parent, int tla)
 			: g(g), h(h), derr(derr), eps(eps), stateRep(treeNode), parent(parent), owningTLA(tla)
-		{}
+		{
+			if (parent != NULL)
+				topLevelState = parent->getTopLevelState();
+		}
 	};
 
 	struct CompareNodes
@@ -145,6 +151,7 @@ struct DFSCsernaBackupPembertonBelief
 		{
 			Node* childNode = new Node(start->getGValue() + domain.getEdgeCost(child.getSeedOffset()),
 				domain.heuristic(child), domain.distance(child), eps, child, start, topLevelActions.size());
+			childNode->setTopLevelState(child);
 			// No top level action will ever be a duplicate, so no need to check.
 			// Make a new top level action and push this node onto its open
 			TopLevelAction tla;

@@ -7,7 +7,7 @@ from os import listdir
 # Hard coded result directories
 resultDirs = {"b2d100"}
 
-algorithms = ["Minimin", "Bellman", "Nancy", "CsernaPembertonBelief", "Cserna"]
+algorithms = ["Minimin", "Bellman", "Nancy", "K-Best 3", "K-Best 10", "K-Best 30", "Cserna Pemberton Belief", "Cserna"]
 depths= [3, 7, 10]
 
 instance = []

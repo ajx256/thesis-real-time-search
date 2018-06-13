@@ -32,6 +32,7 @@ struct DFSNancyBackup
 		int owningTLA;
 		bool open;
 		DiscreteDistribution distribution;
+		State topLevelState;
 
 	public:
 		Cost getGValue() const { return g; }
@@ -49,10 +50,15 @@ struct DFSNancyBackup
 		bool onOpen() { return open; }
 		void close() { open = false; }
 		void reopen() { open = true; }
+		void setTopLevelState(State tls) { topLevelState = tls; }
+		State getTopLevelState() { return topLevelState; }
 
 		Node(Cost g, Cost h, Cost derr, Cost eps, State treeNode, Node* parent, int tla)
 			: g(g), h(h), derr(derr), eps(eps), stateRep(treeNode), parent(parent), owningTLA(tla)
-		{}
+		{
+			if (parent != NULL)
+				topLevelState = parent->getTopLevelState();
+		}
 	};
 
 	struct CompareNodes
@@ -145,6 +151,7 @@ struct DFSNancyBackup
 		{
 			Node* childNode = new Node(start->getGValue() + domain.getEdgeCost(child.getSeedOffset()),
 				domain.heuristic(child), domain.distance(child), eps, child, start, topLevelActions.size());
+			childNode->setTopLevelState(child);
 			// No top level action will ever be a duplicate, so no need to check.
 			// Make a new top level action and push this node onto its open
 			TopLevelAction tla;
@@ -152,7 +159,7 @@ struct DFSNancyBackup
 			//tla.topLevelOpen.push(childNode);
 			tla.topLevelNode = childNode;
 			//open.push(childNode);
-			childNode->distribution = DiscreteDistribution(100, childNode->getFHatValue(), childNode->getD(), (double)(1.0 / (domain.getBranchingFactor() + 1)));
+			childNode->distribution = DiscreteDistribution(100, childNode->getFValue(), childNode->getFHatValue(), childNode->getD(), (double)(1.0 / (domain.getBranchingFactor() + 1)));
 			// Push this node onto open
 			openUclosed[childNode->getState().hash()].push_back(childNode);
 			// Add this top level action to the list
@@ -232,7 +239,7 @@ struct DFSNancyBackup
 				tla.topLevelOpen.pop();
 
 				// Make this node's PDF a discrete distribution...
-				best->distribution = DiscreteDistribution(100, best->getFHatValue(), best->getD(), (double)(1.0 / (domain.getBranchingFactor() + 1)));
+				best->distribution = DiscreteDistribution(100, best->getFValue(), best->getFHatValue(), best->getD(), (double)(1.0 / (domain.getBranchingFactor() + 1)));
 
 				tla.kBestNodes.push_back(best);
 				i++;
