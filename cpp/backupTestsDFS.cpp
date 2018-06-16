@@ -35,14 +35,14 @@ int main(int argc, char** argv)
 	DFSKBestCsernaBackup<TreeWorld> k10(world, 10);
 	DFSKBestCsernaBackup<TreeWorld> k30(world, 30);
 
+	ResultContainer k3Res = k3.search(lookaheadDepth);
+	ResultContainer k10Res = k10.search(lookaheadDepth);
+	ResultContainer k30Res = k30.search(lookaheadDepth);
 	ResultContainer miniminRes = minimin.search(lookaheadDepth);
 	ResultContainer bellmanRes = bellman.search(lookaheadDepth);
 	ResultContainer pembertonRes = pemberton.search(lookaheadDepth);
 	ResultContainer nancyRes = nancy.search(lookaheadDepth);
 	ResultContainer csernaRes = cserna.search(lookaheadDepth);
-	ResultContainer k3Res = k3.search(lookaheadDepth);
-	ResultContainer k10Res = k10.search(lookaheadDepth);
-	ResultContainer k30Res = k30.search(lookaheadDepth);
 
 
 	string result = "{ \"Minimin\": " + to_string(miniminRes.solutionCost) + ", \"Bellman\": " + 

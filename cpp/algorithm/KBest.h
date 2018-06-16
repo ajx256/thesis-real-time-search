@@ -152,7 +152,7 @@ struct KBest
 			tla.topLevelOpen.push(childNode);
 			tla.topLevelNode = childNode;
 			open.push(childNode);
-			childNode->distribution = DiscreteDistribution(100, childNode->getFValue(), childNode->getFHatValue(), childNode->getD(), (double)(1.0 / (domain.getBranchingFactor() + 1)));
+			childNode->distribution = DiscreteDistribution(1000, childNode->getFValue(), childNode->getFHatValue(), childNode->getD(), (double)(1.0 / (domain.getBranchingFactor() + 1)));
 			// Push this node onto open
 			openUclosed[childNode->getState().hash()].push_back(childNode);
 			// Add this top level action to the list
@@ -254,7 +254,7 @@ struct KBest
 				tla.topLevelOpen.pop();
 
 				// Make this node's PDF a discrete distribution...
-				best->distribution = DiscreteDistribution(100, best->getFValue(), best->getFHatValue(), best->getD(), (double)(1.0 / (domain.getBranchingFactor() + 1)));
+				best->distribution = DiscreteDistribution(1000, best->getFValue(), best->getFHatValue(), best->getD(), (double)(1.0 / (domain.getBranchingFactor() + 1)));
 
 				tla.kBestNodes.push_back(best);
 				i++;
@@ -396,7 +396,7 @@ struct KBest
 				tla.topLevelNode = childNode;
 				tla.topLevelOpen.push(childNode);
 				open.push(childNode);
-				childNode->distribution = DiscreteDistribution(100, childNode->getGValue(), childNode->getD());
+				childNode->distribution = DiscreteDistribution(1000, childNode->getGValue(), childNode->getD());
 				// Push this node onto open
 				openUclosed[childNode->getState().hash()].push_back(childNode);
 				// Add this top level action to the list
@@ -546,7 +546,7 @@ private:
 				tla.topLevelOpen.pop();
 
 				// Make this node's PDF a discrete distribution...
-				best->distribution = DiscreteDistribution(100, best->getGValue(), best->getD());
+				best->distribution = DiscreteDistribution(1000, best->getGValue(), best->getD());
 
 				tla.kBestNodes.push_back(best);
 				i++;
