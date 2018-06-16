@@ -32,6 +32,7 @@ struct DFSKBestCsernaBackup
 		int owningTLA;
 		bool open;
 		DiscreteDistribution distribution;
+		State topLevelState;
 
 	public:
 		Cost getGValue() const { return g; }
@@ -49,10 +50,14 @@ struct DFSKBestCsernaBackup
 		bool onOpen() { return open; }
 		void close() { open = false; }
 		void reopen() { open = true; }
+		void setTopLevelState(State tls) { topLevelState = tls; }
+		State getTopLevelState() { return topLevelState; }
 
 		Node(Cost g, Cost h, Cost derr, Cost eps, State treeNode, Node* parent, int tla)
 			: g(g), h(h), derr(derr), eps(eps), stateRep(treeNode), parent(parent), owningTLA(tla)
 		{
+			if (parent != NULL)
+				topLevelState = parent->getTopLevelState();
 		}
 	};
 
@@ -78,14 +83,6 @@ struct DFSKBestCsernaBackup
 		}
 	};
 
-	struct CompareNodesGreatestFHat
-	{
-		bool operator()(const Node* n1, const Node* n2) const
-		{
-			return n1->getFHatValue() < n2->getFHatValue();
-		}
-	};
-
 	struct CompareDistance
 	{
 		bool operator()(Node* n1, Node* n2)
@@ -96,7 +93,7 @@ struct DFSKBestCsernaBackup
 
 	struct TopLevelAction
 	{
-		priority_queue<Node*, vector<Node*>, CompareNodesGreatestFHat> topLevelOpen;
+		priority_queue<Node*, vector<Node*>, CompareNodesFHat> topLevelOpen;
 		Cost expectedMinimumPathCost;
 		Node* topLevelNode;
 		vector<Node*> kBestNodes;
@@ -114,11 +111,38 @@ struct DFSKBestCsernaBackup
 		openUclosed.clear();
 	}
 
+	bool duplicateDetection(Node* node)
+	{
+		// Check if this node exists 
+		vector<Node*> potentialDups = openUclosed[node->getState().hash()];
+		for (Node* n : potentialDups)
+		{
+			if (n->getState() == node->getState())
+			{
+				// These two states are dups, so check if both are on open
+				if (n->onOpen())
+				{
+					// If on open, keep better of two
+					if (node->getGValue() < n->getGValue())
+					{
+						n->setGValue(node->getGValue());
+						n->setParent(node->getParent());
+						// TODO: Add or remove from worse TLA?
+					}
+				}
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	void generateTopLevelActions(Node* start, int lookahead, ResultContainer& res)
 	{
 		// The first node to be expanded in any problem is the start node
 		// Doing so yields the top level actions
 		start->close();
+		closed[start->getState().hash()].push_back(start);
 		res.nodesExpanded++;
 
 		vector<State> children = domain.successors(start->getState());
@@ -127,15 +151,15 @@ struct DFSKBestCsernaBackup
 		{
 			Node* childNode = new Node(start->getGValue() + domain.getEdgeCost(child.getSeedOffset()),
 				domain.heuristic(child), domain.distance(child), eps, child, start, topLevelActions.size());
-
+			childNode->setTopLevelState(child);
 			// No top level action will ever be a duplicate, so no need to check.
 			// Make a new top level action and push this node onto its open
 			TopLevelAction tla;
-			tla.expectedMinimumPathCost = -1;
+			tla.expectedMinimumPathCost = childNode->getFHatValue();
 			//tla.topLevelOpen.push(childNode);
 			tla.topLevelNode = childNode;
 			//open.push(childNode);
-			childNode->distribution = DiscreteDistribution(1000, childNode->getFValue(), childNode->getFHatValue(), childNode->getD(), (double)(1.0 / (domain.getBranchingFactor() + 1)));
+			childNode->distribution = DiscreteDistribution(100, childNode->getFValue(), childNode->getFHatValue(), childNode->getD(), (double)(1.0 / (domain.getBranchingFactor() + 1)));
 			// Push this node onto open
 			openUclosed[childNode->getState().hash()].push_back(childNode);
 			// Add this top level action to the list
@@ -152,35 +176,9 @@ struct DFSKBestCsernaBackup
 		// do not expand it.
 		if (curDepth > maxDepth || domain.isGoal(cur->getState()))
 		{
-			if (topLevelActions[cur->getOwningTLA()].topLevelOpen.size() < k)
-			{
-				topLevelActions[cur->getOwningTLA()].topLevelOpen.push(cur);
-			}
-			else
-			{
-				if (topLevelActions[cur->getOwningTLA()].topLevelOpen.top()->getFHatValue() > cur->getFHatValue())
-				{
-					// Ensure that the node being replaced is not a top level node
-					Node* node = topLevelActions[cur->getOwningTLA()].topLevelOpen.top();
-					topLevelActions[cur->getOwningTLA()].topLevelOpen.pop();
-					bool found = false;
-					vector<Node*> potential = openUclosed[node->getState().hash()];
-					for (Node* n : potential)
-					{
-						if (n->getState() == node->getState())
-						{
-							found = true;
-							break;
-						}
-					}
-
-					// If it is not a top level node, it can be deleted...
-					if (!found)
-						delete node;
-
-					topLevelActions[cur->getOwningTLA()].topLevelOpen.push(cur);
-				}
-			}
+			// Add this node to open and recurse back up
+			open.push(cur);
+			topLevelActions[cur->getOwningTLA()].topLevelOpen.push(cur);
 		}
 		else
 		{
@@ -191,38 +189,14 @@ struct DFSKBestCsernaBackup
 			{
 				Node* childNode = new Node(cur->getGValue() + domain.getEdgeCost(child.getSeedOffset()),
 					domain.heuristic(child), domain.distance(child), eps, child, cur, cur->getOwningTLA());
-
-				childNode->distribution = DiscreteDistribution(1000, childNode->getFValue(), childNode->getFHatValue(), childNode->getD(), (double)(1.0 / (domain.getBranchingFactor() + 1)));
-
-				explore(childNode, curDepth + 1, maxDepth, res);
-
-				priority_queue<Node*, vector<Node*>, CompareNodesGreatestFHat> tmp;
-				bool found = false;
-				// Check if this child is on the list of the k-best nodes for its top level action
-				while (!topLevelActions[childNode->getOwningTLA()].topLevelOpen.empty())
+				// Duplicate detection
+				if (!duplicateDetection(childNode))
 				{
-					if (topLevelActions[childNode->getOwningTLA()].topLevelOpen.top() == childNode)
-					{
-						topLevelActions[childNode->getOwningTLA()].topLevelOpen.pop();
-						found = true;
-						break;
-					}
-
-					tmp.push(topLevelActions[childNode->getOwningTLA()].topLevelOpen.top());
-					topLevelActions[childNode->getOwningTLA()].topLevelOpen.pop();
+					openUclosed[child.hash()].push_back(childNode);
+					explore(childNode, curDepth + 1, maxDepth, res);
 				}
-				
-				while (!tmp.empty())
-				{
-					topLevelActions[childNode->getOwningTLA()].topLevelOpen.push(tmp.top());
-					tmp.pop();
-				}
-
-				// If the node was not on the k-best list, it can be deleted
-				if (!found)
-				{
+				else
 					delete childNode;
-				}
 			}
 		}
 	}
@@ -265,7 +239,7 @@ struct DFSKBestCsernaBackup
 				tla.topLevelOpen.pop();
 
 				// Make this node's PDF a discrete distribution...
-				best->distribution = DiscreteDistribution(1000, best->getFValue(), best->getFHatValue(), best->getD(), (double)(1.0 / (domain.getBranchingFactor() + 1)));
+				best->distribution = DiscreteDistribution(100, best->getFValue(), best->getFHatValue(), best->getD(), (double)(1.0 / (domain.getBranchingFactor() + 1)));
 
 				tla.kBestNodes.push_back(best);
 				i++;
@@ -286,31 +260,10 @@ struct DFSKBestCsernaBackup
 
 		// Get the start node
 		Node* start = new Node(0, 0, domain.distance(domain.getStartState()), eps, domain.getStartState(), NULL, -1);
+		openUclosed[start->getState().hash()].push_back(start);
 
 		while (1)
 		{
-			// delete all of the TLAs from the last expansion phase
-			for (typename unordered_map<unsigned long, vector<Node*> >::iterator it = openUclosed.begin(); it != openUclosed.end(); it++)
-				for (typename vector<Node*>::iterator it2 = it->second.begin(); it2 != it->second.end(); it2++)
-					if (*it2 != start)
-						delete *it2;
-
-			openUclosed.clear();
-
-			// clear the TLA list
-			for (TopLevelAction tla : topLevelActions)
-			{
-				while (!tla.topLevelOpen.empty())
-				{
-					Node* n = tla.topLevelOpen.top();
-					tla.topLevelOpen.pop();
-					if (n != start)
-						delete n;
-				}
-			}
-
-			topLevelActions.clear();
-
 			if (domain.isGoal(start->getState()))
 			{
 				// TODO: Solution found, stop timer
@@ -321,8 +274,30 @@ struct DFSKBestCsernaBackup
 				return res;
 			}
 
+			// clear the TLA list
+			topLevelActions.clear();
+
+			// Empty OPEN and CLOSED
+			while (!open.empty())
+				open.pop();
+			closed.clear();
+
+			// delete all of the nodes from the last expansion phase
+			for (typename unordered_map<unsigned long, vector<Node*> >::iterator it = openUclosed.begin(); it != openUclosed.end(); it++)
+				for (typename vector<Node*>::iterator it2 = it->second.begin(); it2 != it->second.end(); it2++)
+					if (*it2 != start)
+						delete *it2;
+
+			openUclosed.clear();
+			openUclosed[start->getState().hash()].push_back(start);
+
 			// First, generate the top-level actions
 			generateTopLevelActions(start, lookahead, res);
+
+			if (open.empty())
+			{
+				break;
+			}
 
 			// TODO: Learning?
 

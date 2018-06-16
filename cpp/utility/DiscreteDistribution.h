@@ -172,11 +172,11 @@ public:
 			return;
 		}
 
-		double stdDev = (d * error) / 2.0;
+		double stdDev = (d * error) / 3.0;
 
 		// Create a Discrete Distribution from a gaussian
 		double lower = f;
-		double upper = mean + 2 * stdDev;
+		double upper = mean + 3 * stdDev;
 
 		double sampleStepSize = (upper - lower) / maxSamples;
 
@@ -210,7 +210,6 @@ public:
 		{
 			if (probSum > 0.0 && n.probability != 1.0)
 				n.probability = n.probability / probSum;
-
 			distribution.insert(n);
 		}
 	}
@@ -353,7 +352,7 @@ public:
 
 		// Create a Discrete Distribution from a gaussian
 		double lower = f;
-		double upper = mean + 2 * stdDev;
+		double upper = mean + 3 * stdDev;
 
 		double sampleStepSize = (upper - lower) / maxSamples;
 
