@@ -172,7 +172,7 @@ public:
 			return;
 		}
 
-		double stdDev = (d * error) / 3.0;
+		double stdDev = (d * error) / 2.0;
 
 		// Create a Discrete Distribution from a gaussian
 		double lower = f;
@@ -348,7 +348,7 @@ public:
 			return;
 		}
 
-		double stdDev = (d * error) / 3.0;
+		double stdDev = (d * error) / 2.0;
 
 		// Create a Discrete Distribution from a gaussian
 		double lower = f;
