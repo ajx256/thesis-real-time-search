@@ -8,12 +8,18 @@ from os import listdir
 resultDirs = {"b2d100"}
 
 algorithms = ["Minimin", "Bellman", "Nancy", "K-Best 3", "K-Best 10", "K-Best 30", "Cserna Pemberton Belief", "Cserna"]
+algorithmsDiff = ["Minimin", "Bellman", "Nancy", "K-Best 3", "K-Best 10", "K-Best 30", "Cserna Pemberton Belief"]
+
 depthsDFS = [3, 7, 10]
 
 instanceDFS = []
 lookAheadValsDFS = []
 algorithmDFS = []
 solutionCostDFS = []
+
+instanceDFSDiff = []
+lookAheadValsDFSDiff = []
+algorithmDFSDiff = []
 differenceCostDFS = []
 
 depthsAS = [10, 100, 1000]
@@ -22,6 +28,10 @@ instanceAS = []
 lookAheadValsAS = []
 algorithmAS = []
 solutionCostAS = []
+
+instanceASDiff = []
+lookAheadValsASDiff = []
+algorithmASDiff = []
 differenceCostAS = []
 
 print("reading in data...")
@@ -35,7 +45,11 @@ for dir in resultDirs:
                 lookAheadValsDFS.append(resultData["Lookahead"])
                 algorithmDFS.append(algo)
                 solutionCostDFS.append(resultData[algo])
-                differenceCostDFS.append(resultData[algo] - resultData["Cserna"])
+                if algo != "Cserna":
+                    differenceCostDFS.append(resultData[algo] - resultData["Cserna"])
+                    instanceDFSDiff.append(str(dir))
+                    lookAheadValsDFSDiff.append(resultData["Lookahead"])
+                    algorithmDFSDiff.append(algo)
 
 dfDFS = pd.DataFrame({
     "instance":instanceDFS,
@@ -45,10 +59,10 @@ dfDFS = pd.DataFrame({
 })
 
 dfDiffDFS = pd.DataFrame({
-    "instance":instanceDFS,
-    "Depth Limit":lookAheadValsDFS,
+    "instance":instanceDFSDiff,
+    "Depth Limit":lookAheadValsDFSDiff,
     "Algorithm Cost - Cserna Cost":differenceCostDFS,
-    "Algorithm":algorithmDFS
+    "Algorithm":algorithmDFSDiff
 })
 
 for dir in resultDirs:
@@ -60,8 +74,11 @@ for dir in resultDirs:
                 lookAheadValsAS.append(resultData["Lookahead"])
                 algorithmAS.append(algo)
                 solutionCostAS.append(resultData[algo])
-                differenceCostAS.append(resultData[algo] - resultData["Cserna"])
-
+                if algo != "Cserna":
+                    differenceCostAS.append(resultData[algo] - resultData["Cserna"])
+                    instanceASDiff.append(str(dir))
+                    lookAheadValsASDiff.append(resultData["Lookahead"])
+                    algorithmASDiff.append(algo)
 dfAS = pd.DataFrame({
     "instance":instanceAS,
     "Node Expansion Limit":lookAheadValsAS,
@@ -70,10 +87,10 @@ dfAS = pd.DataFrame({
 })
 
 dfDiffAS = pd.DataFrame({
-    "instance":instanceAS,
-    "Node Expansion Limit":lookAheadValsAS,
+    "instance":instanceASDiff,
+    "Node Expansion Limit":lookAheadValsASDiff,
     "Algorithm Cost - Cserna Cost":differenceCostAS,
-    "Algorithm":algorithmAS
+    "Algorithm":algorithmASDiff
 })
 
 print("building plots...")
@@ -82,9 +99,9 @@ for instance in resultDirs:
     instanceDataDFS = dfDFS.loc[dfDFS["instance"] == instance]
     
     sns.set_style("white")
-    sns.set(rc={'figure.figsize': (11, 8)})
+    sns.set(rc={'figure.figsize': (22, 16)})
 
-    ax = sns.pointplot(x="Depth Limit", y="Solution Cost", hue="Algorithm", order=depthsDFS, hue_order=algorithms, data=instanceDataDFS, join=False, dodge=0.639, palette=sns.color_palette(["red"]), markers="_", errwidth=3, ci=95)
+    ax = sns.pointplot(x="Depth Limit", y="Solution Cost", hue="Algorithm", order=depthsDFS, hue_order=algorithms, data=instanceDataDFS, join=False, dodge=0.839, palette=sns.color_palette(["red"]), markers="_", errwidth=3, ci=95)
     plt.setp(ax.lines, zorder=100)
     plt.setp(ax.collections, zorder=100, label="")
     ax.legend_.remove()
@@ -102,8 +119,8 @@ for instance in resultDirs:
     instanceDataDiffDFS = dfDiffDFS.loc[dfDiffDFS["instance"] == instance]
 
     sns.set_style("white")
-    sns.set(rc={'figure.figsize': (11, 8)})
-    sns.pointplot(x="Depth Limit", y="Algorithm Cost - Cserna Cost", hue="Algorithm", order=depthsDFS, hue_order=algorithms, data=instanceDataDiffDFS, ci=95, join=False, dodge=0.3, palette="Set3")
+    sns.set(rc={'figure.figsize': (22, 16)})
+    sns.pointplot(x="Depth Limit", y="Algorithm Cost - Cserna Cost", hue="Algorithm", order=depthsDFS, hue_order=algorithmsDiff, data=instanceDataDiffDFS, ci=95, join=False, dodge=0.3, palette="Set3")
     plt.title("Tree Instance: " + instance)
 
     plt.savefig("../plots/BackupStrategyDifferenceDFS" + instance + ".png")
@@ -115,9 +132,9 @@ for instance in resultDirs:
     instanceDataAS = dfAS.loc[dfAS["instance"] == instance]
     
     sns.set_style("white")
-    sns.set(rc={'figure.figsize': (11, 8)})
+    sns.set(rc={'figure.figsize': (22, 16)})
 
-    ax = sns.pointplot(x="Node Expansion Limit", y="Solution Cost", hue="Algorithm", order=depthsAS, hue_order=algorithms, data=instanceDataAS, join=False, dodge=0.639, palette=sns.color_palette(["red"]), markers="_", errwidth=3, ci=95)
+    ax = sns.pointplot(x="Node Expansion Limit", y="Solution Cost", hue="Algorithm", order=depthsAS, hue_order=algorithms, data=instanceDataAS, join=False, dodge=0.839, palette=sns.color_palette(["red"]), markers="_", errwidth=3, ci=95)
     plt.setp(ax.lines, zorder=100)
     plt.setp(ax.collections, zorder=100, label="")
     ax.legend_.remove()
@@ -135,8 +152,8 @@ for instance in resultDirs:
     instanceDataDiffAS = dfDiffAS.loc[dfDiffAS["instance"] == instance]
 
     sns.set_style("white")
-    sns.set(rc={'figure.figsize': (11, 8)})
-    sns.pointplot(x="Node Expansion Limit", y="Algorithm Cost - Cserna Cost", hue="Algorithm", order=depthsAS, hue_order=algorithms, data=instanceDataDiffAS, ci=95, join=False, dodge=0.3, palette="Set3")
+    sns.set(rc={'figure.figsize': (22, 16)})
+    sns.pointplot(x="Node Expansion Limit", y="Algorithm Cost - Cserna Cost", hue="Algorithm", order=depthsAS, hue_order=algorithmsDiff, data=instanceDataDiffAS, ci=95, join=False, dodge=0.3, palette="Set3")
     plt.title("Tree Instance: " + instance)
 
     plt.savefig("../plots/BackupStrategyDifferenceAS" + instance + ".png")
