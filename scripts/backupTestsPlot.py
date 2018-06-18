@@ -84,12 +84,12 @@ for instance in resultDirs:
     sns.set_style("white")
     sns.set(rc={'figure.figsize': (11, 8)})
 
-    ax = sns.pointplot(x="Depth Limit", y="Solution Cost", hue="Algorithm", order=depths, hue_order=algorithms, data=instanceDataDFS, join=False, dodge=0.639, palette=sns.color_palette(["red"]), markers="_", errwidth=3, ci=95)
+    ax = sns.pointplot(x="Depth Limit", y="Solution Cost", hue="Algorithm", order=depthsDFS, hue_order=algorithms, data=instanceDataDFS, join=False, dodge=0.639, palette=sns.color_palette(["red"]), markers="_", errwidth=3, ci=95)
     plt.setp(ax.lines, zorder=100)
     plt.setp(ax.collections, zorder=100, label="")
     ax.legend_.remove()
     
-    sns.violinplot(x="Depth Limit", y="Solution Cost", hue="Algorithm", order=depths, hue_order=algorithms, data=instanceDataDFS, palette="Set3")    
+    sns.violinplot(x="Depth Limit", y="Solution Cost", hue="Algorithm", order=depthsDFS, hue_order=algorithms, data=instanceDataDFS, palette="Set3")    
 
     plt.title("Tree Instance: " + instance)
     plt.ylabel("Solution Cost")
@@ -103,7 +103,7 @@ for instance in resultDirs:
 
     sns.set_style("white")
     sns.set(rc={'figure.figsize': (11, 8)})
-    sns.pointplot(x="Depth Limit", y="Algorithm Cost - Cserna Cost", hue="Algorithm", order=depths, hue_order=algorithms, data=instanceDataDiffDFS, ci=95, join=False, dodge=0.3, palette="Set3")
+    sns.pointplot(x="Depth Limit", y="Algorithm Cost - Cserna Cost", hue="Algorithm", order=depthsDFS, hue_order=algorithms, data=instanceDataDiffDFS, ci=95, join=False, dodge=0.3, palette="Set3")
     plt.title("Tree Instance: " + instance)
 
     plt.savefig("../plots/BackupStrategyDifferenceDFS" + instance + ".png")
@@ -117,12 +117,12 @@ for instance in resultDirs:
     sns.set_style("white")
     sns.set(rc={'figure.figsize': (11, 8)})
 
-    ax = sns.pointplot(x="Node Expansion Limit", y="Solution Cost", hue="Algorithm", order=depths, hue_order=algorithms, data=instanceDataAS, join=False, dodge=0.639, palette=sns.color_palette(["red"]), markers="_", errwidth=3, ci=95)
+    ax = sns.pointplot(x="Node Expansion Limit", y="Solution Cost", hue="Algorithm", order=depthsAS, hue_order=algorithms, data=instanceDataAS, join=False, dodge=0.639, palette=sns.color_palette(["red"]), markers="_", errwidth=3, ci=95)
     plt.setp(ax.lines, zorder=100)
     plt.setp(ax.collections, zorder=100, label="")
     ax.legend_.remove()
     
-    sns.violinplot(x="Node Expansion Limit", y="Solution Cost", hue="Algorithm", order=depths, hue_order=algorithms, data=instanceDataAS, palette="Set3")    
+    sns.violinplot(x="Node Expansion Limit", y="Solution Cost", hue="Algorithm", order=depthsAS, hue_order=algorithms, data=instanceDataAS, palette="Set3")    
 
     plt.title("Tree Instance: " + instance)
     plt.ylabel("Solution Cost")
@@ -136,7 +136,7 @@ for instance in resultDirs:
 
     sns.set_style("white")
     sns.set(rc={'figure.figsize': (11, 8)})
-    sns.pointplot(x="Node Expansion Limit", y="Algorithm Cost - Cserna Cost", hue="Algorithm", order=depths, hue_order=algorithms, data=instanceDataDiffAS, ci=95, join=False, dodge=0.3, palette="Set3")
+    sns.pointplot(x="Node Expansion Limit", y="Algorithm Cost - Cserna Cost", hue="Algorithm", order=depthsAS, hue_order=algorithms, data=instanceDataDiffAS, ci=95, join=False, dodge=0.3, palette="Set3")
     plt.title("Tree Instance: " + instance)
 
     plt.savefig("../plots/BackupStrategyDifferenceAS" + instance + ".png")
