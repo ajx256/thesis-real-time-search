@@ -112,7 +112,7 @@ for instance in resultDirs:
     plt.clf()
     plt.cla()
 
-    instanceDataaS = dfAS.loc[dfAS["instance"] == instance]
+    instanceDataAS = dfAS.loc[dfAS["instance"] == instance]
     
     sns.set_style("white")
     sns.set(rc={'figure.figsize': (11, 8)})
