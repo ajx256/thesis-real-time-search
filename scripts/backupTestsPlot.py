@@ -47,7 +47,7 @@ dfDFS = pd.DataFrame({
 dfDiffDFS = pd.DataFrame({
     "instance":instanceDFS,
     "Depth Limit":lookAheadValsDFS,
-    "Solution Cost":differenceCostDFS,
+    "Algorithm Cost - Cserna Cost":differenceCostDFS,
     "Algorithm":algorithmDFS
 })
 
@@ -72,7 +72,7 @@ dfAS = pd.DataFrame({
 dfDiffAS = pd.DataFrame({
     "instance":instanceAS,
     "Node Expansion Limit":lookAheadValsAS,
-    "Solution Cost":differenceCostAS,
+    "Algorithm Cost - Cserna Cost":differenceCostAS,
     "Algorithm":algorithmAS
 })
 
