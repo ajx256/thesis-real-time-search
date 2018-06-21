@@ -44,7 +44,7 @@ int main(int argc, char** argv)
 	}
 	else
 	{
-		ofstream out(argv[1]);
+		ofstream out(argv[2]);
 
 		out << result;
 		out.close();
