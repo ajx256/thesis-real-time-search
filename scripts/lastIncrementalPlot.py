@@ -49,7 +49,7 @@ df = pd.DataFrame({
 dfDiff = pd.DataFrame({
     "instance":instanceDiff,
     "Depth Limit":lookAheadValsDiff,
-    "Algorithm Cost - Cserna Cost":differenceCost,
+    "Algorithm Cost - K=All Cost":differenceCost,
     "Algorithm":algorithmDiff
 })
 
