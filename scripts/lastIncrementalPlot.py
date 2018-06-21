@@ -7,9 +7,9 @@ from os import listdir
 # Hard coded result directories
 resultDirs = {"b2d10"}
 
-algorithms = ["K-Best 1", "K-Best 10", "K-Best 100", "K-Best 1000", "All Frontier Nodes"]
+algorithms = ["K 1", "K 10", "K 100", "K 1000", "All Frontier Nodes"]
 
-depthsDFS = [9]
+depths = [9]
 
 instance = []
 lookAheadVals = []
