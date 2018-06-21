@@ -25,7 +25,7 @@ do
 	  then 
 		let instance++
 	  else
-		./../cpp/lastIncremental.sh (d - 1) ../results/lastIncrementalDecision/b${b}d${d}/LID-b${b}d${d}-${instance}.json < $file &
+		./../lastIncremental.sh 9 ../results/lastIncrementalDecision/b${b}d${d}/LID-b${b}d${d}-${instance}.json < $file &
 		let instance++
 		let numProcs++
 	  fi
