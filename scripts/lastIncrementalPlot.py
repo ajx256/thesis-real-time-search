@@ -59,14 +59,14 @@ for instance in resultDirs:
     instanceData = df.loc[df["instance"] == instance]
     
     sns.set_style("white")
-    sns.set(rc={'figure.figsize': (22, 16)})
+    sns.set(rc={'figure.figsize': (11, 8)})
 
-    ax = sns.pointplot(x="Depth Limit", y="Solution Cost", hue="Algorithm", order=depths, hue_order=algorithms, data=instanceData, join=False, dodge=0.5, palette=sns.color_palette(["red"]), markers="_", errwidth=3, ci=95)
+    ax = sns.pointplot(x="Depth Limit", y="Solution Cost", hue="Algorithm", order=depths, hue_order=algorithms, data=instanceData, join=False, dodge=0.639, palette=sns.color_palette(["red"]), markers="_", errwidth=3, ci=95)
     plt.setp(ax.lines, zorder=100)
     plt.setp(ax.collections, zorder=100, label="")
     ax.legend_.remove()
     
-    sns.violinplot(x="Depth Limit", y="Solution Cost", hue="Algorithm", order=depths, hue_order=algorithms, data=instanceData, palette="Set3")    
+    sns.violinplot(x="Depth Limit", y="Solution Cost", hue="Algorithm", order=depths, hue_order=algorithms, data=instanceData, palette="Set2")    
 
     plt.title("Tree Instance: " + instance)
     plt.ylabel("Solution Cost")
@@ -79,8 +79,8 @@ for instance in resultDirs:
     instanceDataDiff = dfDiff.loc[dfDiff["instance"] == instance]
 
     sns.set_style("white")
-    sns.set(rc={'figure.figsize': (22, 16)})
-    sns.pointplot(x="Depth Limit", y="Algorithm Cost - K=All Cost", hue="Algorithm", order=depths, hue_order=algorithmsDiff, data=instanceDataDiff, ci=95, join=False, dodge=0.3, palette="Set3")
+    sns.set(rc={'figure.figsize': (11, 8)})
+    sns.pointplot(x="Depth Limit", y="Algorithm Cost - K=All Cost", hue="Algorithm", order=depths, hue_order=algorithmsDiff, data=instanceDataDiff, ci=95, join=False, dodge=0.3, palette="Set2")
     plt.title("Tree Instance: " + instance)
 
     plt.savefig("../plots/KBestCompareKPlotDifference" + instance + ".png")
