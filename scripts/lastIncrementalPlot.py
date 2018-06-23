@@ -7,8 +7,8 @@ from os import listdir
 # Hard coded result directories
 resultDirs = {"b2d10"}
 
-algorithms = ["K 1", "K 10", "K 100", "K 1000", "All Frontier Nodes"]
-algorithmsDiff = ["K 1", "K 10", "K 100", "K 1000"]
+algorithms = ["K 1", "K 3", "K 5", "K 7", "All Frontier Nodes"]
+algorithmsDiff = ["K 1", "K 3", "K 5", "K 7"]
 
 depths = [9]
 

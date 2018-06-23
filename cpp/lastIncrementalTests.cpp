@@ -22,20 +22,20 @@ int main(int argc, char** argv)
 	TreeWorld world = TreeWorld(cin);
 
 	DFSKBestCsernaBackupPembertonBelief<TreeWorld> k1(world, 1);
-	DFSKBestCsernaBackupPembertonBelief<TreeWorld> k10(world, 10);
-	DFSKBestCsernaBackupPembertonBelief<TreeWorld> k100(world, 100);
-	DFSKBestCsernaBackupPembertonBelief<TreeWorld> k1000(world, 1000);
+	DFSKBestCsernaBackupPembertonBelief<TreeWorld> k3(world, 3);
+	DFSKBestCsernaBackupPembertonBelief<TreeWorld> k5(world, 5);
+	DFSKBestCsernaBackupPembertonBelief<TreeWorld> k7(world, 7);
 	DFSCsernaBackupPembertonBelief<TreeWorld> pemberton(world);
 
 	ResultContainer pembertonRes = pemberton.searchLI(lookaheadDepth);
 	ResultContainer k1Res = k1.searchLI(lookaheadDepth);
-	ResultContainer k10Res = k10.searchLI(lookaheadDepth);
-	ResultContainer k100Res = k100.searchLI(lookaheadDepth);
-	ResultContainer k1000Res = k1000.searchLI(lookaheadDepth);
+	ResultContainer k3Res = k3.searchLI(lookaheadDepth);
+	ResultContainer k5Res = k5.searchLI(lookaheadDepth);
+	ResultContainer k7Res = k7.searchLI(lookaheadDepth);
 
-	string result = "{ \"K 1\": " + to_string(k1Res.solutionCost) + ", \"K 10\": " +
-		to_string(k10Res.solutionCost) + ", \"K 100\": " + to_string(k100Res.solutionCost) +
-		", \"K 1000\": " + to_string(k1000Res.solutionCost) + ", \"All Frontier Nodes\": " +
+	string result = "{ \"K 1\": " + to_string(k1Res.solutionCost) + ", \"K 3\": " +
+		to_string(k3Res.solutionCost) + ", \"K 5\": " + to_string(k5Res.solutionCost) +
+		", \"K 7\": " + to_string(k7Res.solutionCost) + ", \"All Frontier Nodes\": " +
 		to_string(pembertonRes.solutionCost) + ", \"Lookahead\": " + to_string(lookaheadDepth) + " }";
 
 	if (argc < 3)
