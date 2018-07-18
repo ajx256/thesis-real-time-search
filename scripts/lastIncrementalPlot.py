@@ -7,8 +7,12 @@ from os import listdir
 # Hard coded result directories
 resultDirs = {"b2d10"}
 
-algorithms = ["K 1", "K 3", "K 5", "K 7", "All Frontier Nodes"]
-algorithmsDiff = ["K 1", "K 3", "K 5", "K 7"]
+algorithms = ["Minimin", "Bellman", "Nancy", "K-Best 1 Pemberton Belief", "K-Best 3 Pemberton Belief", "K-Best 5 Pemberton Belief", 
+              "K-Best 7 Pemberton Belief", "Cserna Pemberton Belief", "K-Best 1", "K-Best 3", "K-Best 5", 
+              "K-Best 7", "Cserna",]
+algorithmsDiff = ["Minimin", "Bellman", "Nancy", "K-Best 1 Pemberton Belief", "K-Best 3 Pemberton Belief", "K-Best 5 Pemberton Belief", 
+              "K-Best 7 Pemberton Belief", "Cserna Pemberton Belief", "K-Best 1", "K-Best 3", "K-Best 5", 
+              "K-Best 7"]
 
 depths = [9]
 
@@ -33,8 +37,8 @@ for dir in resultDirs:
                 lookAheadVals.append(resultData["Lookahead"])
                 algorithm.append(algo)
                 solutionCost.append(resultData[algo])
-                if algo != "All Frontier Nodes":
-                    differenceCost.append(resultData[algo] - resultData["All Frontier Nodes"])
+                if algo != "Cserna":
+                    differenceCost.append(resultData[algo] - resultData["Cserna"])
                     instanceDiff.append(str(dir))
                     lookAheadValsDiff.append(resultData["Lookahead"])
                     algorithmDiff.append(algo)
@@ -49,7 +53,7 @@ df = pd.DataFrame({
 dfDiff = pd.DataFrame({
     "instance":instanceDiff,
     "Depth Limit":lookAheadValsDiff,
-    "Algorithm Cost - K=All Cost":differenceCost,
+    "Algorithm Cost - Cserna Cost":differenceCost,
     "Algorithm":algorithmDiff
 })
 
@@ -70,7 +74,7 @@ for instance in resultDirs:
 
     plt.title("Tree Instance: " + instance)
     plt.ylabel("Solution Cost")
-    plt.savefig("../plots/KBestCompareKPlot" + instance + ".png")
+    plt.savefig("../plots/LIDComparison" + instance + ".png")
     
     plt.close()
     plt.clf()
@@ -80,10 +84,10 @@ for instance in resultDirs:
 
     sns.set_style("white")
     sns.set(rc={'figure.figsize': (11, 8)})
-    sns.pointplot(x="Depth Limit", y="Algorithm Cost - K=All Cost", hue="Algorithm", order=depths, hue_order=algorithmsDiff, data=instanceDataDiff, ci=95, join=False, dodge=0.3, palette="Set2")
+    sns.pointplot(x="Depth Limit", y="Algorithm Cost - Cserna", hue="Algorithm", order=depths, hue_order=algorithmsDiff, data=instanceDataDiff, ci=95, join=False, dodge=0.3, palette="Set2")
     plt.title("Tree Instance: " + instance)
 
-    plt.savefig("../plots/KBestCompareKPlotDifference" + instance + ".png")
+    plt.savefig("../plots/LIDDifference" + instance + ".png")
     
     plt.close()
     plt.clf()

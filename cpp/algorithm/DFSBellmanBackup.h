@@ -79,6 +79,32 @@ struct DFSBellmanBackup
 		openUclosed.clear();
 	}
 
+	bool duplicateDetection(Node* node)
+	{
+		// Check if this node exists 
+		vector<Node*> potentialDups = openUclosed[node->getState().hash()];
+		for (Node* n : potentialDups)
+		{
+			if (n->getState() == node->getState())
+			{
+				// These two states are dups, so check if both are on open
+				if (n->onOpen())
+				{
+					// If on open, keep better of two
+					if (node->getGValue() < n->getGValue())
+					{
+						n->setGValue(node->getGValue());
+						n->setParent(node->getParent());
+						// TODO: Add or remove from worse TLA?
+					}
+				}
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	void generateTopLevelActions(Node* start, int lookahead, ResultContainer& res)
 	{
 		// The first node to be expanded in any problem is the start node
@@ -129,6 +155,95 @@ struct DFSBellmanBackup
 				explore(childNode, curDepth + 1, maxDepth, res);
 
 				if (childNode != best && childNode != NULL)
+					delete childNode;
+			}
+		}
+	}
+
+	ResultContainer searchLI(int lookahead)
+	{
+		ResultContainer res;
+		res.solutionCost = 0;
+		res.nodesExpanded = 0;
+		res.nodesGenerated = 0;
+		res.solutionFound = false;
+
+		// Get the start node
+		Node* start = new Node(0, 0, domain.distance(domain.getStartState()), eps, domain.getStartState(), NULL);
+		openUclosed[start->getState().hash()].push_back(start);
+
+		// Make the last incremental decision for the first action
+
+		// First, generate the top-level actions
+		generateTopLevelActions(start, lookahead, res);
+
+		Node* nextStart = open.top();
+
+		while (nextStart->getParent() != start)
+		{
+			nextStart = nextStart->getParent();
+		}
+
+		start = nextStart;
+		
+		// Empty OPEN and CLOSED
+		while (!open.empty())
+			open.pop();
+		closed.clear();
+
+		// delete all of the nodes from the last expansion phase
+		for (typename unordered_map<unsigned long, vector<Node*> >::iterator it = openUclosed.begin(); it != openUclosed.end(); it++)
+			for (typename vector<Node*>::iterator it2 = it->second.begin(); it2 != it->second.end(); it2++)
+				if (*it2 != start)
+					delete *it2;
+
+		openUclosed.clear();
+		openUclosed[start->getState().hash()].push_back(start);
+
+		// Solve optimally with DFS
+
+		exploreLI(start, res);
+
+		start = open.top();
+
+		if (domain.isGoal(start->getState()))
+		{
+			// TODO: Solution found, stop timer
+
+			// Calculate path cost and return solution
+			calculateCost(start, res);
+
+			return res;
+		}
+
+		return res;
+	}
+
+	void exploreLI(Node* cur, ResultContainer& res)
+	{
+		// If this node is a goal, do not expand it. If the current depth is equal to our lookahead depth,
+		// do not expand it.
+		if (domain.isGoal(cur->getState()))
+		{
+			// Add this node to open and recurse back up
+			open.push(cur);
+		}
+		else
+		{
+			// Expand this node and recurse down for each child
+			vector<State> children = domain.successors(cur->getState());
+			res.nodesGenerated += children.size();
+			for (State child : children)
+			{
+				Node* childNode = new Node(cur->getGValue() + domain.getEdgeCost(child.getSeedOffset()),
+					domain.heuristic(child), domain.distance(child), eps, child, cur);
+				// Duplicate detection
+				if (!duplicateDetection(childNode))
+				{
+					openUclosed[child.hash()].push_back(childNode);
+					exploreLI(childNode, res);
+				}
+				else
 					delete childNode;
 			}
 		}
