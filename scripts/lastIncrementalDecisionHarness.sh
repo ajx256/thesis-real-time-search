@@ -4,7 +4,8 @@ branchFactors="
 2"
 
 depths="
-10"
+10
+15"
 
 numProcs=0
 
@@ -25,7 +26,8 @@ do
 	  then 
 		let instance++
 	  else
-		./../lastIncremental.sh 9 ../results/lastIncrementalDecision/b${b}d${d}/LID-b${b}d${d}-${instance}.json < $file &
+	    depthLimit=(${d} - 1)
+		./../lastIncremental.sh ${depthLimit} ../results/lastIncrementalDecision/b${b}d${d}/LID-b${b}d${d}-${instance}.json < $file &
 		let instance++
 		let numProcs++
 	  fi
