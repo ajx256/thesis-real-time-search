@@ -5,16 +5,14 @@ import seaborn as sns
 from os import listdir
 
 # Hard coded result directories
-resultDirs = {"b2d10"}
+resultDirs = {"b2d10", "b2d15"}
 
 algorithms = ["Minimin", "Bellman", "Nancy", "K-Best 1 Pemberton Belief", "K-Best 3 Pemberton Belief", "K-Best 5 Pemberton Belief", 
               "K-Best 7 Pemberton Belief", "Cserna Pemberton Belief", "K-Best 1", "K-Best 3", "K-Best 5", 
               "K-Best 7", "Cserna",]
 algorithmsDiff = ["Minimin", "Bellman", "Nancy", "K-Best 1 Pemberton Belief", "K-Best 3 Pemberton Belief", "K-Best 5 Pemberton Belief", 
               "K-Best 7 Pemberton Belief", "Cserna Pemberton Belief", "K-Best 1", "K-Best 3", "K-Best 5", 
-              "K-Best 7"]
-
-depths = [9]
+              "K-Best 7", "Cserna"]
 
 instance = []
 lookAheadVals = []
@@ -37,11 +35,10 @@ for dir in resultDirs:
                 lookAheadVals.append(resultData["Lookahead"])
                 algorithm.append(algo)
                 solutionCost.append(resultData[algo])
-                if algo != "Cserna":
-                    differenceCost.append(resultData[algo] - resultData["Cserna"])
-                    instanceDiff.append(str(dir))
-                    lookAheadValsDiff.append(resultData["Lookahead"])
-                    algorithmDiff.append(algo)
+                differenceCost.append(resultData[algo] - resultData["Cserna"])
+                instanceDiff.append(str(dir))
+                lookAheadValsDiff.append(resultData["Lookahead"])
+                algorithmDiff.append(algo)
 
 df = pd.DataFrame({
     "instance":instance,
@@ -61,7 +58,14 @@ print("building plots...")
 
 for instance in resultDirs:
     instanceData = df.loc[df["instance"] == instance]
-    
+
+    depths = []
+
+    if instanceData["Depth Limit"].iloc[0] == 14:
+        depths.append(14)
+    elif instanceData["Depth Limit"].iloc[0] == 9:
+        depths.append(9)
+        
     sns.set_style("white")
     sns.set(rc={'figure.figsize': (11, 8)})
 
@@ -72,7 +76,7 @@ for instance in resultDirs:
     
     sns.violinplot(x="Depth Limit", y="Solution Cost", hue="Algorithm", order=depths, hue_order=algorithms, data=instanceData, palette="Set2")    
 
-    plt.title("Tree Instance: " + instance)
+    plt.title("Last Incremental Decision with Tree Instance: " + instance)
     plt.ylabel("Solution Cost")
     plt.savefig("../plots/LIDComparison" + instance + ".png")
     
@@ -85,7 +89,7 @@ for instance in resultDirs:
     sns.set_style("white")
     sns.set(rc={'figure.figsize': (11, 8)})
     sns.pointplot(x="Depth Limit", y="Algorithm Cost - Cserna Cost", hue="Algorithm", order=depths, hue_order=algorithmsDiff, data=instanceDataDiff, ci=95, join=False, dodge=0.3, palette="Set2")
-    plt.title("Tree Instance: " + instance)
+    plt.title("Last Incremental Decision with Tree Instance: " + instance)
 
     plt.savefig("../plots/LIDDifference" + instance + ".png")
     

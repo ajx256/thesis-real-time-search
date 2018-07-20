@@ -7,8 +7,8 @@ from os import listdir
 # Hard coded result directories
 resultDirs = {"b2d100"}
 
-algorithms = ["Minimin", "Bellman", "Nancy", "K-Best 3", "K-Best 10", "K-Best 30", "Cserna Pemberton Belief", "Cserna"]
-algorithmsDiff = ["Minimin", "Bellman", "Nancy", "K-Best 3", "K-Best 10", "K-Best 30", "Cserna Pemberton Belief"]
+algorithms = ["Minimin", "Bellman", "Nancy", "K-Best 3", "K-Best 10", "K-Best 30", "Cserna", "Cserna Pemberton Belief"]
+algorithmsDiff = ["Minimin", "Bellman", "Nancy", "K-Best 3", "K-Best 10", "K-Best 30", "Cserna", "Cserna Pemberton Belief"]
 
 depthsDFS = [3, 7, 10]
 
@@ -45,11 +45,10 @@ for dir in resultDirs:
                 lookAheadValsDFS.append(resultData["Lookahead"])
                 algorithmDFS.append(algo)
                 solutionCostDFS.append(resultData[algo])
-                if algo != "Cserna":
-                    differenceCostDFS.append(resultData[algo] - resultData["Cserna"])
-                    instanceDFSDiff.append(str(dir))
-                    lookAheadValsDFSDiff.append(resultData["Lookahead"])
-                    algorithmDFSDiff.append(algo)
+                differenceCostDFS.append(resultData[algo] - resultData["Cserna"])
+                instanceDFSDiff.append(str(dir))
+                lookAheadValsDFSDiff.append(resultData["Lookahead"])
+                algorithmDFSDiff.append(algo)
 
 dfDFS = pd.DataFrame({
     "instance":instanceDFS,
@@ -74,11 +73,11 @@ for dir in resultDirs:
                 lookAheadValsAS.append(resultData["Lookahead"])
                 algorithmAS.append(algo)
                 solutionCostAS.append(resultData[algo])
-                if algo != "Cserna":
-                    differenceCostAS.append(resultData[algo] - resultData["Cserna"])
-                    instanceASDiff.append(str(dir))
-                    lookAheadValsASDiff.append(resultData["Lookahead"])
-                    algorithmASDiff.append(algo)
+                differenceCostAS.append(resultData[algo] - resultData["Cserna"])
+                instanceASDiff.append(str(dir))
+                lookAheadValsASDiff.append(resultData["Lookahead"])
+                algorithmASDiff.append(algo)
+
 dfAS = pd.DataFrame({
     "instance":instanceAS,
     "Node Expansion Limit":lookAheadValsAS,
@@ -108,7 +107,7 @@ for instance in resultDirs:
     
     sns.violinplot(x="Depth Limit", y="Solution Cost", hue="Algorithm", order=depthsDFS, hue_order=algorithms, data=instanceDataDFS, palette="Set3")    
 
-    plt.title("Tree Instance: " + instance)
+    plt.title("Depth First Lookahead with Tree Instance: " + instance)
     plt.ylabel("Solution Cost")
     plt.savefig("../plots/BackupStrategyComparisonDFS" + instance + ".png")
     
@@ -121,7 +120,7 @@ for instance in resultDirs:
     sns.set_style("white")
     sns.set(rc={'figure.figsize': (22, 16)})
     sns.pointplot(x="Depth Limit", y="Algorithm Cost - Cserna Cost", hue="Algorithm", order=depthsDFS, hue_order=algorithmsDiff, data=instanceDataDiffDFS, ci=95, join=False, dodge=0.3, palette="Set3")
-    plt.title("Tree Instance: " + instance)
+    plt.title("Depth First Lookahead with Tree Instance: " + instance)
 
     plt.savefig("../plots/BackupStrategyDifferenceDFS" + instance + ".png")
     
@@ -141,7 +140,7 @@ for instance in resultDirs:
     
     sns.violinplot(x="Node Expansion Limit", y="Solution Cost", hue="Algorithm", order=depthsAS, hue_order=algorithms, data=instanceDataAS, palette="Set3")    
 
-    plt.title("Tree Instance: " + instance)
+    plt.title("A* Lookahead with Tree Instance: " + instance)
     plt.ylabel("Solution Cost")
     plt.savefig("../plots/BackupStrategyComparisonAS" + instance + ".png")
     
@@ -154,7 +153,7 @@ for instance in resultDirs:
     sns.set_style("white")
     sns.set(rc={'figure.figsize': (22, 16)})
     sns.pointplot(x="Node Expansion Limit", y="Algorithm Cost - Cserna Cost", hue="Algorithm", order=depthsAS, hue_order=algorithmsDiff, data=instanceDataDiffAS, ci=95, join=False, dodge=0.3, palette="Set3")
-    plt.title("Tree Instance: " + instance)
+    plt.title("A* Lookahead with Tree Instance: " + instance)
 
     plt.savefig("../plots/BackupStrategyDifferenceAS" + instance + ".png")
     

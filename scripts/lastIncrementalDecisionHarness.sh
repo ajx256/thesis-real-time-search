@@ -26,8 +26,7 @@ do
 	  then 
 		let instance++
 	  else
-	    depthLimit=(${d} - 1)
-		./../lastIncremental.sh ${depthLimit} ../results/lastIncrementalDecision/b${b}d${d}/LID-b${b}d${d}-${instance}.json < $file &
+		./../lastIncremental.sh "$((d - 1))" ../results/lastIncrementalDecision/b${b}d${d}/LID-b${b}d${d}-${instance}.json < $file &
 		let instance++
 		let numProcs++
 	  fi
