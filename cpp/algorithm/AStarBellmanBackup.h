@@ -143,7 +143,7 @@ struct AStarBellmanBackup
 			res.nodesGenerated += children.size();
 			for (State child : children)
 			{
-				Node* childNode = new Node(node->getGValue() + domain.getEdgeCost(child.getSeedOffset()),
+				Node* childNode = new Node(node->getGValue() + domain.getEdgeCost(child),
 					domain.heuristic(child), domain.distance(child), eps, child, node);
 				// Duplicate detection
 				if (!duplicateDetection(childNode))

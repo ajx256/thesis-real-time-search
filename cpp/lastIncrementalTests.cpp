@@ -8,7 +8,7 @@
 #include "algorithm/DFSKBestCsernaBackup.h"
 #include "algorithm/DFSMiniminBackup.h"
 #include "algorithm/DFSNancyBackup.h"
-#include "domain/treeWorld.h"
+#include "domain/TreeWorld.h"
 
 using namespace std;
 

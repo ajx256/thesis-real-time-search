@@ -130,7 +130,7 @@ struct BeamSearch
 			for (State child : children)
 			{
 				// Push this child onto open
-				Node* childNode = new Node(node->getGValue() + domain.getEdgeCost(child.getSeedOffset()), child, node);
+				Node* childNode = new Node(node->getGValue() + domain.getEdgeCost(child), child, node);
 				// Duplicate detection
 				if (!duplicateDetection(childNode))
 				{

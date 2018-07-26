@@ -8,7 +8,7 @@
 #include "algorithm/Nancy.h"
 #include "algorithm/KBest.h"
 //#include "algorithm/FHat.h"
-#include "domain/treeWorld.h"
+#include "domain/TreeWorld.h"
 
 using namespace std;
 

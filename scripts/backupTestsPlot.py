@@ -98,7 +98,7 @@ for instance in resultDirs:
     instanceDataDFS = dfDFS.loc[dfDFS["instance"] == instance]
     
     sns.set_style("white")
-    sns.set(rc={'figure.figsize': (22, 16)})
+    sns.set(rc={'figure.figsize': (11, 8)})
 
     ax = sns.pointplot(x="Depth Limit", y="Solution Cost", hue="Algorithm", order=depthsDFS, hue_order=algorithms, data=instanceDataDFS, join=False, dodge=0.7, palette=sns.color_palette(["red"]), markers="_", errwidth=3, ci=95)
     plt.setp(ax.lines, zorder=100)
@@ -118,8 +118,8 @@ for instance in resultDirs:
     instanceDataDiffDFS = dfDiffDFS.loc[dfDiffDFS["instance"] == instance]
 
     sns.set_style("white")
-    sns.set(rc={'figure.figsize': (22, 16)})
-    sns.pointplot(x="Depth Limit", y="Algorithm Cost - Cserna Cost", hue="Algorithm", order=depthsDFS, hue_order=algorithmsDiff, data=instanceDataDiffDFS, ci=95, join=False, dodge=0.3, palette="Set3")
+    sns.set(rc={'figure.figsize': (11, 8)})
+    sns.pointplot(x="Depth Limit", y="Algorithm Cost - Cserna Cost", hue="Algorithm", order=depthsDFS, hue_order=algorithmsDiff, data=instanceDataDiffDFS, ci=95, join=False, dodge=0.35, palette="Set3")
     plt.title("Depth First Lookahead with Tree Instance: " + instance)
 
     plt.savefig("../plots/BackupStrategyDifferenceDFS" + instance + ".png")
@@ -131,7 +131,7 @@ for instance in resultDirs:
     instanceDataAS = dfAS.loc[dfAS["instance"] == instance]
     
     sns.set_style("white")
-    sns.set(rc={'figure.figsize': (22, 16)})
+    sns.set(rc={'figure.figsize': (11, 8)})
 
     ax = sns.pointplot(x="Node Expansion Limit", y="Solution Cost", hue="Algorithm", order=depthsAS, hue_order=algorithms, data=instanceDataAS, join=False, dodge=0.7, palette=sns.color_palette(["red"]), markers="_", errwidth=3, ci=95)
     plt.setp(ax.lines, zorder=100)
@@ -151,8 +151,8 @@ for instance in resultDirs:
     instanceDataDiffAS = dfDiffAS.loc[dfDiffAS["instance"] == instance]
 
     sns.set_style("white")
-    sns.set(rc={'figure.figsize': (22, 16)})
-    sns.pointplot(x="Node Expansion Limit", y="Algorithm Cost - Cserna Cost", hue="Algorithm", order=depthsAS, hue_order=algorithmsDiff, data=instanceDataDiffAS, ci=95, join=False, dodge=0.3, palette="Set3")
+    sns.set(rc={'figure.figsize': (11, 8)})
+    sns.pointplot(x="Node Expansion Limit", y="Algorithm Cost - Cserna Cost", hue="Algorithm", order=depthsAS, hue_order=algorithmsDiff, data=instanceDataDiffAS, ci=95, join=False, dodge=0.35, palette="Set3")
     plt.title("A* Lookahead with Tree Instance: " + instance)
 
     plt.savefig("../plots/BackupStrategyDifferenceAS" + instance + ".png")

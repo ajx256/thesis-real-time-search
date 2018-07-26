@@ -149,7 +149,7 @@ struct DFSKBestCsernaBackupPembertonBelief
 		res.nodesGenerated += children.size();
 		for (State child : children)
 		{
-			Node* childNode = new Node(start->getGValue() + domain.getEdgeCost(child.getSeedOffset()),
+			Node* childNode = new Node(start->getGValue() + domain.getEdgeCost(child),
 				domain.heuristic(child), domain.distance(child), eps, child, start, topLevelActions.size());
 			childNode->setTopLevelState(child);
 			// No top level action will ever be a duplicate, so no need to check.
@@ -182,12 +182,13 @@ struct DFSKBestCsernaBackupPembertonBelief
 		}
 		else
 		{
+			cur->close();
 			// Expand this node and recurse down for each child
 			vector<State> children = domain.successors(cur->getState());
 			res.nodesGenerated += children.size();
 			for (State child : children)
 			{
-				Node* childNode = new Node(cur->getGValue() + domain.getEdgeCost(child.getSeedOffset()),
+				Node* childNode = new Node(cur->getGValue() + domain.getEdgeCost(child),
 					domain.heuristic(child), domain.distance(child), eps, child, cur, cur->getOwningTLA());
 				// Duplicate detection
 				if (!duplicateDetection(childNode))
@@ -396,12 +397,13 @@ struct DFSKBestCsernaBackupPembertonBelief
 		}
 		else
 		{
+			cur->close();
 			// Expand this node and recurse down for each child
 			vector<State> children = domain.successors(cur->getState());
 			res.nodesGenerated += children.size();
 			for (State child : children)
 			{
-				Node* childNode = new Node(cur->getGValue() + domain.getEdgeCost(child.getSeedOffset()),
+				Node* childNode = new Node(cur->getGValue() + domain.getEdgeCost(child),
 					domain.heuristic(child), domain.distance(child), eps, child, cur, cur->getOwningTLA());
 				// Duplicate detection
 				if (!duplicateDetection(childNode))

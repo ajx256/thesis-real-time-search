@@ -126,7 +126,7 @@ struct Nancy
 		res.nodesGenerated += children.size();
 		for (State child : children)
 		{
-			Node* childNode = new Node(start->getGValue() + domain.getEdgeCost(child.getSeedOffset()),
+			Node* childNode = new Node(start->getGValue() + domain.getEdgeCost(child),
 				domain.heuristic(child), domain.distance(child), eps, child, start);
 			// No top level action will ever be a duplicate, so no need to check.
 			// Make a new top level action and push this node onto its open
@@ -324,7 +324,7 @@ struct Nancy
 
 				for (State child : children)
 				{
-					Node* childNode = new Node(node->getGValue() + domain.getEdgeCost(child.getSeedOffset()),
+					Node* childNode = new Node(node->getGValue() + domain.getEdgeCost(child),
 						domain.heuristic(child), domain.distance(child), eps, child, node);
 					// Duplicate detection
 					if (!duplicateDetection(childNode))
@@ -390,7 +390,7 @@ struct Nancy
 
 				for (State child : children)
 				{
-					Node* childNode = new Node(node->getGValue() + domain.getEdgeCost(child.getSeedOffset()),
+					Node* childNode = new Node(node->getGValue() + domain.getEdgeCost(child),
 						domain.heuristic(child), domain.distance(child), eps, child, node);
 					// Duplicate detection
 					if (!duplicateDetection(childNode))
