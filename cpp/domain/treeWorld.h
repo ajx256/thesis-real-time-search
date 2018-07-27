@@ -1,3 +1,4 @@
+#pragma once
 #include <limits>
 #include <ostream>
 #include <sstream>
@@ -5,6 +6,7 @@
 #include <vector>
 #include <unordered_map>
 #include "../utility/Random.h"
+#include "../utility/SlidingWindow.h"
 
 class TreeWorld {
 public:
@@ -130,6 +132,28 @@ public:
 		return info;
 	}
 
+	void pushDelayWindow(int val)
+	{
+		expansionDelayWindow.push(val);
+	}
+
+	double averageDelayWindow()
+	{
+		if (expansionDelayWindow.size() == 0)
+			return 1;
+
+		double avg = 0;
+
+		for (auto i : expansionDelayWindow)
+		{
+			avg += i;
+		}
+
+		avg /= expansionDelayWindow.size();
+
+		return avg;
+	}
+
 	State startState;
 	int maxDepth;
 	static int branchingFactor;
@@ -137,6 +161,7 @@ public:
 	RandomGenerator generator;
 	unordered_map<int, Cost> costMap;
 	int maxEdgeCosts;
+	SlidingWindow<int> expansionDelayWindow;
 };
 
 int TreeWorld::branchingFactor = 2;

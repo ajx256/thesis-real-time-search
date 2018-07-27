@@ -1,3 +1,4 @@
+#pragma once
 #include <vector>
 #include <limits>
 #include <algorithm>
@@ -77,6 +78,19 @@ template <class T, class Compare = less<T> >
 		{
 			pop_heap(c.begin(), c.end(), comp);
 			c.pop_back();
+		}
+
+		void remove(T item)
+		{
+			for (int i = 0; i < c.size(); i++)
+			{
+				if (c[i] == item)
+				{
+					c.erase(c.begin() + i);
+					make_heap(c.begin(), c.end(), comp);
+					break;
+				}
+			}
 		}
 
 		void clear()

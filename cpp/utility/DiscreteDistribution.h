@@ -64,6 +64,7 @@ class DiscreteDistribution
 
 	set<ProbabilityNode> distribution;
 	int maxSamples;
+	double var;
 
 	double probabilityDensityFunction(double x, double mu, double var)
 	{
@@ -173,6 +174,7 @@ public:
 		}
 
 		double stdDev = (d * error) / 2.0;
+		var = pow(stdDev, 2);
 
 		// Create a Discrete Distribution from a gaussian
 		double lower = f;
@@ -190,7 +192,7 @@ public:
 		for (int i = 0; i < maxSamples; i++)
 		{
 			// Get the probability for this x value
-			double prob = probabilityDensityFunction(currentX, mean, pow(stdDev, 2));
+			double prob = probabilityDensityFunction(currentX, mean, var);
 
 			// So if this a goal node, we know the cost
 			if (std::isnan(prob) && stdDev == 0)
@@ -349,6 +351,7 @@ public:
 		}
 
 		double stdDev = (d * error) / 2.0;
+		var = pow(stdDev, 2);
 
 		// Create a Discrete Distribution from a gaussian
 		double lower = f;
@@ -366,7 +369,7 @@ public:
 		for (int i = 0; i < maxSamples; i++)
 		{
 			// Get the probability for this x value
-			double prob = probabilityDensityFunction(currentX, mean, pow(stdDev, 2));
+			double prob = probabilityDensityFunction(currentX, mean, var);
 
 			// So if this a goal node, we know the cost
 			if (std::isnan(prob) && stdDev == 0)
@@ -472,5 +475,41 @@ public:
 		*/
 
 		return csernaDistro;
+	}
+
+	DiscreteDistribution& squish(double factor)
+	{
+		set<ProbabilityNode> newDistribution;
+		double mean = expectedCost();
+
+		for (ProbabilityNode n : distribution)
+		{
+			double distanceToMean = abs(n.cost - mean);
+			double distanceToShift = distanceToMean * factor;
+
+			double shiftedCost = n.cost;
+
+			if (shiftedCost > mean)
+				shiftedCost -= distanceToShift;
+			else if (shiftedCost < mean)
+				shiftedCost += distanceToShift;
+
+			newDistribution.insert(ProbabilityNode(shiftedCost, n.probability));
+		}
+
+		distribution.clear();
+		distribution = newDistribution;
+
+		return *this;
+	}
+
+	set<ProbabilityNode>::iterator begin()
+	{
+		return distribution.begin();
+	}
+
+	set<ProbabilityNode>::iterator end()
+	{
+		return distribution.end();
 	}
 };

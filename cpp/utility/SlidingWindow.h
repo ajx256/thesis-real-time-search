@@ -1,3 +1,4 @@
+#pragma once
 #include <vector>
 
 using namespace std;
@@ -5,7 +6,7 @@ using namespace std;
 template <typename T>
 class SlidingWindow {
 public:
-	SlidingWindow(unsigned int capacity)
+	SlidingWindow(unsigned int capacity = 100)
 		: capacity(capacity) {}
 
 	void push(T item) {
@@ -23,6 +24,11 @@ public:
 	{
 		while (!window.empty())
 			window.pop_back();
+	}
+
+	int size()
+	{
+		return window.size();
 	}
 
 	typename vector<T>::iterator begin()

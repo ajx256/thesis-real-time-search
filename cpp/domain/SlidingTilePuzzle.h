@@ -1,9 +1,11 @@
+#pragma once
 #include <limits>
 #include <ostream>
 #include <sstream>
 #include <string>
 #include <vector>
 #include <algorithm>
+#include "../utility/SlidingWindow.h"
 
 using namespace std;
 
@@ -329,8 +331,31 @@ public:
 		return info;
 	}
 
+	void pushDelayWindow(int val)
+	{
+		expansionDelayWindow.push(val);
+	}
+
+	double averageDelayWindow()
+	{
+		if (expansionDelayWindow.size() == 0)
+			return 1;
+
+		double avg = 0;
+
+		for (auto i : expansionDelayWindow)
+		{
+			avg += i;
+		}
+
+		avg /= expansionDelayWindow.size();
+
+		return avg;
+	}
+
 	std::vector<std::vector<int> > startBoard;
 	std::vector<std::vector<int> > endBoard;
 	int size;
 	State startState;
+	SlidingWindow<int> expansionDelayWindow;
 };
