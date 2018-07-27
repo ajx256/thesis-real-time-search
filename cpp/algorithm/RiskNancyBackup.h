@@ -335,7 +335,7 @@ struct RiskNancyBackup
 			// Belief of TLA is squished as a result of search. Mean stays the same, but variance is decreased by a factor based on expansion delay.
 			double ds = expansionsPerIteration / domain.averageDelayWindow();
 			double dy = topLevelActions[i].topLevelOpen.top()->getD();
-			double squishFactor = (1 - min(1.0, (ds / dy)));
+			double squishFactor = min(1.0, (ds / dy));
 
 			// Now squish the simulated belief by factor
 			DiscreteDistribution simulatedBelief = topLevelActions[i].belief;

@@ -27,8 +27,8 @@ differenceCost = []
 print("reading in data...")
 
 for dir in resultDirs:
-    for file in listdir("../results/lastIncrementalDecision/" + dir):
-        with open("../results/lastIncrementalDecision/" + dir + "/" + file) as json_data:
+    for file in listdir("../results/TreeWorld/lastIncrementalDecision/" + dir):
+        with open("../results/TreeWorld/lastIncrementalDecision/" + dir + "/" + file) as json_data:
             resultData = json.load(json_data)
             for algo in algorithms:
                 instance.append(str(dir))

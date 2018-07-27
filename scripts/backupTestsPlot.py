@@ -37,8 +37,8 @@ differenceCostAS = []
 print("reading in data...")
 
 for dir in resultDirs:
-    for file in listdir("../results/backupTests/DFS/" + dir):
-        with open("../results/backupTests/DFS/" + dir + "/" + file) as json_data:
+    for file in listdir("../results/TreeWorld/backupTests/DFS/" + dir):
+        with open("../results/TreeWorld/backupTests/DFS/" + dir + "/" + file) as json_data:
             resultData = json.load(json_data)
             for algo in algorithms:
                 instanceDFS.append(str(dir))
@@ -65,8 +65,8 @@ dfDiffDFS = pd.DataFrame({
 })
 
 for dir in resultDirs:
-    for file in listdir("../results/backupTests/AS/" + dir):
-        with open("../results/backupTests/AS/" + dir + "/" + file) as json_data:
+    for file in listdir("../results/TreeWorld/backupTests/AS/" + dir):
+        with open("../results/TreeWorld/backupTests/AS/" + dir + "/" + file) as json_data:
             resultData = json.load(json_data)
             for algo in algorithms:
                 instanceAS.append(str(dir))
