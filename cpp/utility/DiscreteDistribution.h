@@ -482,6 +482,25 @@ public:
 		set<ProbabilityNode> newDistribution;
 		double mean = expectedCost();
 
+		// If the squish factor is 1, all values in distribution will be moved to the mean.
+		if (factor == 1)
+		{
+			newDistribution.insert(ProbabilityNode(mean, 1.0));
+			distribution.clear();
+			distribution = newDistribution;
+
+			return *this;
+		}
+
+		/*
+		cout << "Before Squish Cost,Before Squish Probability" << endl;
+		for (ProbabilityNode n : distribution)
+		{
+			cout << n.cost << "," << n.probability << endl;
+		}
+		cout << endl;
+		*/
+
 		for (ProbabilityNode n : distribution)
 		{
 			double distanceToMean = abs(n.cost - mean);
@@ -499,6 +518,15 @@ public:
 
 		distribution.clear();
 		distribution = newDistribution;
+
+		/*
+		cout << "Squish Cost,Squish Probability" << endl;
+		for (ProbabilityNode n : distribution)
+		{
+			cout << n.cost << "," << n.probability << endl;
+		}
+		cout << endl;
+		*/
 
 		return *this;
 	}

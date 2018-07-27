@@ -7,13 +7,13 @@ import seaborn as sns
 
 sns.set(color_codes=True)
 
-node1 = pd.read_csv("../examples/ConvUniformNode1.csv")
-node2 = pd.read_csv("../examples/ConvUniformNode2.csv")
-cserna = pd.read_csv("../examples/ConvUniformCserna.csv")
+node1 = pd.read_csv("../examples/PreSquish.csv")
+node2 = pd.read_csv("../examples/PostSquish.csv")
+#cserna = pd.read_csv("../examples/ConvUniformCserna.csv")
 
-plt.plot(cserna["Path Cost Cserna"], cserna["CDF Cserna"])
-plt.plot(node1["Path Cost Node 1"], node1["CDF Node 1"])
-plt.plot(node2["Path Cost Node 2"], node2["CDF Node 2"])
+#plt.plot(cserna["Path Cost Cserna"], cserna["CDF Cserna"])
+plt.plot(node1["Before Squish Cost"], node1["Before Squish Probability"])
+plt.plot(node2["Squish Cost"], node2["Squish Probability"])
 plt.title("Probability that Complete Path Cost is Less Than Given X")
 plt.legend()
 plt.ylabel("Probability")
