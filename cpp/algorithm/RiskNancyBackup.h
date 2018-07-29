@@ -328,6 +328,18 @@ struct RiskNancyBackup
 		int minimalRiskTLA = 0;
 		double minimalRisk = 0;
 
+		// Start by identifying alpha: the TLA with lowest expected cost
+		int alphaTLA = 0;
+		double alphaExpectedCost = topLevelActions[0].belief.expectedCost();
+		for (int i = 1; i < topLevelActions.size(); i++)
+		{
+			if (topLevelActions[i].belief.expectedCost() < alphaExpectedCost)
+			{
+				alphaExpectedCost = topLevelActions[i].belief.expectedCost();
+				alphaTLA = i;
+			}
+		}
+
 		// Iterate over the top level actions
 		for (int i = 0; i < topLevelActions.size(); i++)
 		{
@@ -338,11 +350,11 @@ struct RiskNancyBackup
 			double squishFactor = min(1.0, (ds / dy));
 
 			// Now squish the simulated belief by factor
-			DiscreteDistribution simulatedBelief = topLevelActions[i].belief;
-			simulatedBelief.squish(squishFactor);
+			vector<TopLevelAction> squishedTopLevelActions = topLevelActions;
+			squishedTopLevelActions[i].belief.squish(squishFactor);
 
 			// Calculate the risk associated with expanding that node (by using the simulated belief as alpha in risk analysis)
-			double riskCalculation = riskAnalysis(i, simulatedBelief);
+			double riskCalculation = riskAnalysis(alphaTLA, squishedTopLevelActions);
 			
 			// If this is the first TLA risk has been calculated for, it by default minimizes risk...
 			if (i == 0)
@@ -358,21 +370,21 @@ struct RiskNancyBackup
 		return minimalRiskTLA;
 	}
 
-	double riskAnalysis(int alphaIndex, DiscreteDistribution alphaBelief)
+	double riskAnalysis(int alphaIndex, vector<TopLevelAction>& squishedTopLevelActions)
 	{
 		double risk = 0;
 
 		// Perform numerical integration to calculate risk associated with taking alpha as the expansion
-		for (auto alpha : alphaBelief)
+		for (auto alpha : squishedTopLevelActions[alphaIndex].belief)
 		{
-			for (int tla = 0; tla < topLevelActions.size(); tla++)
+			for (int tla = 0; tla < squishedTopLevelActions.size(); tla++)
 			{
 				// Don't integrate over alpha as a beta action
 				if (tla == alphaIndex)
 					continue;
 
 				// Integrate over values in beta belief
-				for (auto beta : topLevelActions[tla].belief)
+				for (auto beta : squishedTopLevelActions[tla].belief)
 				{
 					// Only use beta costs less than alpha cost in risk analysis
 					if (beta.cost < alpha.cost)
