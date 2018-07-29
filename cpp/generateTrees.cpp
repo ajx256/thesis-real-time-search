@@ -21,6 +21,16 @@ int main(int argc, char** argv)
 	for (int i = 1; i <= n; i++)
 	{
 		string fileName = "b" + to_string(b) + "d" + to_string(depth) + "-" + to_string(i) + ".tw";
+
+		// If this instance was already created, skip it
+		ifstream in(dir + "/" + fileName);
+		if (in.good())
+		{
+			in.close();
+			continue;
+		}
+		in.close();
+
 		ofstream out(dir + "/" + fileName);
 		out << b << endl;
 		out << depth << endl;
