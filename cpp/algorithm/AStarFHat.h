@@ -53,7 +53,32 @@ struct AStarFHat
 		}
 	};
 
-	AStarFHat(D& domain) : domain(domain) {}
+	AStarFHat(D& domain, int lookahead) : domain(domain), lookahead(lookahead)
+	{
+		switch (lookahead)
+		{
+		case 3:
+			eps = 0.295;
+			break;
+		case 6:
+			eps = 0.27;
+			break;
+		case 10:
+			eps = 0.26;
+			break;
+		case 30:
+			eps = 0.23;
+			break;
+		case 100:
+			eps = 0.225;
+			break;
+		case 1000:
+			eps = 0.223;
+			break;
+		default:
+			break;
+		}
+	}
 
 	~AStarFHat()
 	{
@@ -90,7 +115,7 @@ struct AStarFHat
 		return false;
 	}
 
-	Node* aStar(Node* start, int lookahead, ResultContainer& res)
+	Node* aStar(Node* start, ResultContainer& res)
 	{
 		int expansions = 0;
 
@@ -147,7 +172,7 @@ struct AStarFHat
 		return NULL;
 	}
 
-	ResultContainer search(int lookahead)
+	ResultContainer search()
 	{
 		ResultContainer res;
 		res.solutionCost = 0;
@@ -171,7 +196,7 @@ struct AStarFHat
 				return res;
 			}
 
-			Node* goalPrime = aStar(start, lookahead, res);
+			Node* goalPrime = aStar(start, res);
 
 			if (open.empty() && goalPrime == NULL)
 			{
@@ -198,6 +223,7 @@ private:
 	priority_queue<Node*, vector<Node*>, CompareNodes> open;
 	unordered_map<unsigned long, vector<Node*> > closed;
 	unordered_map<unsigned long, vector<Node*> > openUclosed;
+	int lookahead;
 
 	void calculateCost(Node* solution, ResultContainer& res)
 	{

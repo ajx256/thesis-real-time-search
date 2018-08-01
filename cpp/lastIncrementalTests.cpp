@@ -26,33 +26,33 @@ int main(int argc, char** argv)
 	// Make a tree world
 	TreeWorld world = TreeWorld(cin);
 
-	DFSKBestCsernaBackupPembertonBelief<TreeWorld> k1P(world, 1);
-	DFSKBestCsernaBackupPembertonBelief<TreeWorld> k3P(world, 3);
-	DFSKBestCsernaBackupPembertonBelief<TreeWorld> k5P(world, 5);
-	DFSKBestCsernaBackupPembertonBelief<TreeWorld> k7P(world, 7);
-	DFSCsernaBackupPembertonBelief<TreeWorld> pemberton(world);
-	DFSCsernaBackup<TreeWorld> cserna(world);
-	DFSKBestCsernaBackup<TreeWorld> k1(world, 1);
-	DFSKBestCsernaBackup<TreeWorld> k3(world, 3);
-	DFSKBestCsernaBackup<TreeWorld> k5(world, 5);
-	DFSKBestCsernaBackup<TreeWorld> k7(world, 7);
-	DFSBellmanBackup<TreeWorld> bellman(world);
-	DFSMiniminBackup<TreeWorld> minimin(world);
-	DFSNancyBackup<TreeWorld> nancy(world);
+	DFSKBestCsernaBackupPembertonBelief<TreeWorld> k1P(world, lookaheadDepth, 1);
+	DFSKBestCsernaBackupPembertonBelief<TreeWorld> k3P(world, lookaheadDepth, 3);
+	DFSKBestCsernaBackupPembertonBelief<TreeWorld> k5P(world, lookaheadDepth, 5);
+	DFSKBestCsernaBackupPembertonBelief<TreeWorld> k7P(world, lookaheadDepth, 7);
+	DFSCsernaBackupPembertonBelief<TreeWorld> pemberton(world, lookaheadDepth);
+	DFSCsernaBackup<TreeWorld> cserna(world, lookaheadDepth);
+	DFSKBestCsernaBackup<TreeWorld> k1(world, lookaheadDepth, 1);
+	DFSKBestCsernaBackup<TreeWorld> k3(world, lookaheadDepth, 3);
+	DFSKBestCsernaBackup<TreeWorld> k5(world, lookaheadDepth, 5);
+	DFSKBestCsernaBackup<TreeWorld> k7(world, lookaheadDepth, 7);
+	DFSBellmanBackup<TreeWorld> bellman(world, lookaheadDepth);
+	DFSMiniminBackup<TreeWorld> minimin(world, lookaheadDepth);
+	DFSNancyBackup<TreeWorld> nancy(world, lookaheadDepth);
 
-	ResultContainer pembertonRes = pemberton.searchLI(lookaheadDepth);
-	ResultContainer k1PRes = k1P.searchLI(lookaheadDepth);
-	ResultContainer k3PRes = k3P.searchLI(lookaheadDepth);
-	ResultContainer k5PRes = k5P.searchLI(lookaheadDepth);
-	ResultContainer k7PRes = k7P.searchLI(lookaheadDepth);
-	ResultContainer csernaRes = cserna.searchLI(lookaheadDepth);
-	ResultContainer k1Res = k1.searchLI(lookaheadDepth);
-	ResultContainer k3Res = k3.searchLI(lookaheadDepth);
-	ResultContainer k5Res = k5.searchLI(lookaheadDepth);
-	ResultContainer k7Res = k7.searchLI(lookaheadDepth);
-	ResultContainer bellmanRes = bellman.searchLI(lookaheadDepth);
-	ResultContainer miniminRes = minimin.searchLI(lookaheadDepth);
-	ResultContainer nancyRes = nancy.searchLI(lookaheadDepth);
+	ResultContainer pembertonRes = pemberton.searchLI();
+	ResultContainer k1PRes = k1P.searchLI();
+	ResultContainer k3PRes = k3P.searchLI();
+	ResultContainer k5PRes = k5P.searchLI();
+	ResultContainer k7PRes = k7P.searchLI();
+	ResultContainer csernaRes = cserna.searchLI();
+	ResultContainer k1Res = k1.searchLI();
+	ResultContainer k3Res = k3.searchLI();
+	ResultContainer k5Res = k5.searchLI();
+	ResultContainer k7Res = k7.searchLI();
+	ResultContainer bellmanRes = bellman.searchLI();
+	ResultContainer miniminRes = minimin.searchLI();
+	ResultContainer nancyRes = nancy.searchLI();
 
 	string result = "{ \"K-Best 1 Pemberton Belief\": " + to_string(k1PRes.solutionCost) + 
 		", \"K-Best 3 Pemberton Belief\": " + to_string(k3PRes.solutionCost) + 

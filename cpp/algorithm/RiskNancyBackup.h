@@ -99,7 +99,32 @@ struct RiskNancyBackup
 		DiscreteDistribution belief;
 	};
 
-	RiskNancyBackup(D& domain, int expansionAllocation) : domain(domain), expansionsPerIteration(expansionAllocation) {}
+	RiskNancyBackup(D& domain, int lookahead, int expansionAllocation) : domain(domain), lookahead(lookahead), expansionsPerIteration(expansionAllocation) 
+	{
+		switch (lookahead)
+		{
+			case 3:
+				eps = 0.295;
+				break;
+			case 6:
+				eps = 0.27;
+				break;
+			case 10:
+				eps = 0.26;
+				break;
+			case 30:
+				eps = 0.23;
+				break;
+			case 100:
+				eps = 0.225;
+				break;
+			case 1000:
+				eps = 0.223;
+				break;
+			default:
+				break;
+		}
+	}
 
 	~RiskNancyBackup()
 	{
@@ -137,7 +162,7 @@ struct RiskNancyBackup
 		return false;
 	}
 
-	ResultContainer search(int lookahead)
+	ResultContainer search()
 	{
 		ResultContainer res;
 		res.solutionCost = 0;
@@ -181,7 +206,7 @@ struct RiskNancyBackup
 			generateTopLevelActions(start, res);
 
 			// Expand some nodes until expnasion limit
-			explore(lookahead, res);
+			explore(res);
 
 			if (open.empty())
 			{
@@ -232,7 +257,7 @@ struct RiskNancyBackup
 			tla.topLevelNode = childNode;
 
 			// Initialize the belief distribution at this top level node and assign that as the expected path cost through this TLA
-			childNode->distribution = DiscreteDistribution(100, childNode->getFValue(), childNode->getFHatValue(), childNode->getD(), (double)(1.0 / (domain.getBranchingFactor() + 1)));
+			childNode->distribution = DiscreteDistribution(100, childNode->getFValue(), childNode->getFHatValue(), childNode->getD(), eps);
 			tla.expectedMinimumPathCost = childNode->distribution.expectedCost();
 
 			// Push this node onto open
@@ -244,7 +269,7 @@ struct RiskNancyBackup
 		}
 	}
 
-	void explore(int lookahead, ResultContainer& res)
+	void explore(ResultContainer& res)
 	{
 		// This starts at 1, because we had to expand start to get the top level actions
 		int expansions = 1;
@@ -446,7 +471,7 @@ struct RiskNancyBackup
 				tla.topLevelOpen.pop();
 
 				// Make this node's PDF a discrete distribution...
-				best->distribution = DiscreteDistribution(100, best->getFValue(), best->getFHatValue(), best->getD(), (double)(1.0 / (domain.getBranchingFactor() + 1)));
+				best->distribution = DiscreteDistribution(100, best->getFValue(), best->getFHatValue(), best->getD(), eps);
 
 				tla.kBestNodes.push_back(best);
 				i++;
@@ -471,6 +496,7 @@ private:
 	unordered_map<unsigned long, vector<Node*> > openUclosed;
 	int k = 1;
 	double expansionsPerIteration;
+	int lookahead;
 
 	void calculateCost(Node* solution, ResultContainer& res)
 	{

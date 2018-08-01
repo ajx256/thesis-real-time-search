@@ -69,7 +69,32 @@ struct LSSLRTAStar
 		double newBound;
 	};
 
-	LSSLRTAStar(D& domain) : domain(domain) {}
+	LSSLRTAStar(D& domain, int lookahead) : domain(domain), lookahead(lookahead)
+	{
+		switch (lookahead)
+		{
+		case 3:
+			eps = 0.295;
+			break;
+		case 6:
+			eps = 0.27;
+			break;
+		case 10:
+			eps = 0.26;
+			break;
+		case 30:
+			eps = 0.23;
+			break;
+		case 100:
+			eps = 0.225;
+			break;
+		case 1000:
+			eps = 0.223;
+			break;
+		default:
+			break;
+		}
+	}
 
 	~LSSLRTAStar()
 	{
@@ -108,7 +133,7 @@ struct LSSLRTAStar
 		}
 	}
 
-	resultContainer aStar(Node* start, int lookahead)
+	resultContainer aStar(Node* start)
 	{
 		resultContainer res;
 		res.solution = NULL;
@@ -159,7 +184,7 @@ struct LSSLRTAStar
 		return res;
 	}
 
-	resultContainer search(Node* start, int lookahead)
+	resultContainer search(Node* start)
 	{
 		resultContainer finalRes;
 		finalRes.solution = NULL;
@@ -173,7 +198,7 @@ struct LSSLRTAStar
 
 		while (1)
 		{
-			tmpRes = aStar(start, lookahead);
+			tmpRes = aStar(start);
 			finalRes.solution = tmpRes.solution;
 			finalRes.nodesExpand += tmpRes.nodesExpand;
 			finalRes.nodesGen += tmpRes.nodesGen;
@@ -202,4 +227,5 @@ struct LSSLRTAStar
 		unordered_map<unsigned long, Node*> closed;
 		unordered_map<unsigned long, Node*> tree;
 		D& domain;
+		int lookahead;
 };

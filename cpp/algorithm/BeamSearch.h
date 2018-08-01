@@ -50,7 +50,32 @@ struct BeamSearch
 		}
 	};
 
-	BeamSearch(D& domain, int beam) : domain(domain), beam(beam) {}
+	BeamSearch(D& domain, int lookahead, int beam) : domain(domain), lookahead(lookahead), beam(beam)
+	{
+		switch (lookahead)
+		{
+		case 3:
+			eps = 0.295;
+			break;
+		case 6:
+			eps = 0.27;
+			break;
+		case 10:
+			eps = 0.26;
+			break;
+		case 30:
+			eps = 0.23;
+			break;
+		case 100:
+			eps = 0.225;
+			break;
+		case 1000:
+			eps = 0.223;
+			break;
+		default:
+			break;
+		}
+	}
 
 	~BeamSearch()
 	{
@@ -100,7 +125,7 @@ struct BeamSearch
 		return false;
 	}
 
-	Node* breadthFirstSearch(priority_queue<Node*, vector<Node*>, CompareNodes> layer, int lookahead, int expansions, ResultContainer& res)
+	Node* breadthFirstSearch(priority_queue<Node*, vector<Node*>, CompareNodes> layer, int expansions, ResultContainer& res)
 	{
 		// keep track of the best node at the current layer
 		Node* bestAtLayer = layer.top();
@@ -165,7 +190,7 @@ struct BeamSearch
 		// If this layer is complete and still haven't hit expansion limit, go to next layer
 		if (layer.empty() && expansions < lookahead && !nextLayerMin.empty())
 		{
-			bestDeeper = breadthFirstSearch(nextLayerMin, lookahead, expansions, res);
+			bestDeeper = breadthFirstSearch(nextLayerMin, expansions, res);
 		}
 
 		// If a result came up from the next layer, use that
@@ -182,7 +207,7 @@ struct BeamSearch
 		}
 	}
 
-	ResultContainer search(int lookahead)
+	ResultContainer search()
 	{
 		ResultContainer res;
 		res.solutionCost = 0;
@@ -220,7 +245,7 @@ struct BeamSearch
 				return res;
 			}
 
-			Node* goalPrime = breadthFirstSearch(firstLayer, lookahead, 0, res);
+			Node* goalPrime = breadthFirstSearch(firstLayer, 0, res);
 
 			if (goalPrime == NULL || goalPrime == start)
 			{
@@ -245,6 +270,7 @@ private:
 	int beam;
 	unordered_map<unsigned long, vector<Node*> > closed;
 	unordered_map<unsigned long, vector<Node*> > openUclosed;
+	int lookahead;
 
 	void calculateCost(Node* solution, ResultContainer& res)
 	{

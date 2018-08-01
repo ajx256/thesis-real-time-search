@@ -35,30 +35,30 @@ int main(int argc, char** argv)
 		// Make a tree world
 		TreeWorld world = TreeWorld(cin);
 
-		BFSNancyBackup<TreeWorld> bfs(world);
-		AStarNancyBackup<TreeWorld> astar(world);
-		FHatNancyBackup<TreeWorld> fhat(world);
-		RiskNancyBackup<TreeWorld> risk(world, 1);
+		BFSNancyBackup<TreeWorld> bfs(world, lookaheadDepth);
+		AStarNancyBackup<TreeWorld> astar(world, lookaheadDepth);
+		FHatNancyBackup<TreeWorld> fhat(world, lookaheadDepth);
+		RiskNancyBackup<TreeWorld> risk(world, lookaheadDepth, 1);
 
-		bfsRes = bfs.search(lookaheadDepth);
-		astarRes = astar.search(lookaheadDepth);
-		fhatRes = fhat.search(lookaheadDepth);
-		riskRes = risk.search(lookaheadDepth);
+		bfsRes = bfs.search();
+		astarRes = astar.search();
+		fhatRes = fhat.search();
+		riskRes = risk.search();
 	}
 	else if (domain == "SlidingPuzzle")
 	{
 		// Make a tile puzzle
 		SlidingTilePuzzle world = SlidingTilePuzzle(cin);
 
-		BFSNancyBackup<SlidingTilePuzzle> bfs(world);
-		AStarNancyBackup<SlidingTilePuzzle> astar(world);
-		FHatNancyBackup<SlidingTilePuzzle> fhat(world);
-		RiskNancyBackup<SlidingTilePuzzle> risk(world, 1);
+		BFSNancyBackup<SlidingTilePuzzle> bfs(world, lookaheadDepth);
+		AStarNancyBackup<SlidingTilePuzzle> astar(world, lookaheadDepth);
+		FHatNancyBackup<SlidingTilePuzzle> fhat(world, lookaheadDepth);
+		RiskNancyBackup<SlidingTilePuzzle> risk(world, lookaheadDepth, 1);
 
-		bfsRes = bfs.search(lookaheadDepth);
-		astarRes = astar.search(lookaheadDepth);
-		fhatRes = fhat.search(lookaheadDepth);
-		riskRes = risk.search(lookaheadDepth);
+		bfsRes = bfs.search();
+		astarRes = astar.search();
+		fhatRes = fhat.search();
+		riskRes = risk.search();
 	}
 	else
 	{

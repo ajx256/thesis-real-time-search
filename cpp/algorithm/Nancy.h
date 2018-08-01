@@ -76,7 +76,32 @@ struct Nancy
 		Node* topLevelNode;
 	};
 
-	Nancy(D& domain) : domain(domain) {}
+	Nancy(D& domain, int lookahead) : domain(domain), lookahead(lookahead)
+	{
+		switch (lookahead)
+		{
+		case 3:
+			eps = 0.295;
+			break;
+		case 6:
+			eps = 0.27;
+			break;
+		case 10:
+			eps = 0.26;
+			break;
+		case 30:
+			eps = 0.23;
+			break;
+		case 100:
+			eps = 0.225;
+			break;
+		case 1000:
+			eps = 0.223;
+			break;
+		default:
+			break;
+		}
+	}
 
 	~Nancy()
 	{	
@@ -185,7 +210,7 @@ struct Nancy
 			for(Node* node : tla.topLevelOpen)
 			{
 				// Make this node's PDF a discrete distribution...
-				node->distribution = DiscreteDistribution(100, node->getFHatValue(), node->getD() / (domain.getBranchingFactor() + 1));
+				node->distribution = DiscreteDistribution(100, node->getFHatValue(), node->getD() * eps);
 			}
 
 			// Perform Cserna backup
@@ -193,7 +218,7 @@ struct Nancy
 		}
 	}
 
-	void explore(int lookahead, ResultContainer& res)
+	void explore(ResultContainer& res)
 	{
 		// This starts at 1, because we had to expand start to get the top level actions
 		int expansions = 1;
@@ -425,7 +450,7 @@ struct Nancy
 		}
 	}
 
-	ResultContainer search(int lookahead)
+	ResultContainer search()
 	{
 		ResultContainer res;
 		res.solutionCost = 0;
@@ -470,7 +495,7 @@ struct Nancy
 			generateTopLevelActions(start, res);
 
 			// Expand some nodes until expnasion limit
-			explore(lookahead, res);
+			explore(res);
 
 			if (open.empty())
 			{
@@ -517,6 +542,7 @@ private:
 	priority_queue<Node*, vector<Node*>, CompareNodes> open;
 	unordered_map<unsigned long, vector<Node*> > closed;
 	unordered_map<unsigned long, vector<Node*> > openUclosed;
+	int lookahead;
 
 	void calculateCost(Node* solution, ResultContainer& res)
 	{

@@ -42,23 +42,23 @@ int main(int argc, char** argv)
 		TreeWorld world = TreeWorld(cin);
 
 		// Run DFS with differing backup methods for decision making
-		AStarMiniminBackup<TreeWorld> minimin(world);
-		AStarBellmanBackup<TreeWorld> bellman(world);
-		AStarNancyBackup<TreeWorld> nancy(world);
-		AStarCsernaBackup<TreeWorld> cserna(world);
-		AStarCsernaBackupPembertonBelief<TreeWorld> pemberton(world);
-		AStarKBestCsernaBackup<TreeWorld> k3(world, 3);
-		AStarKBestCsernaBackup<TreeWorld> k10(world, 10);
-		AStarKBestCsernaBackup<TreeWorld> k30(world, 30);
+		AStarMiniminBackup<TreeWorld> minimin(world, lookaheadDepth);
+		AStarBellmanBackup<TreeWorld> bellman(world, lookaheadDepth);
+		AStarNancyBackup<TreeWorld> nancy(world, lookaheadDepth);
+		AStarCsernaBackup<TreeWorld> cserna(world, lookaheadDepth);
+		AStarCsernaBackupPembertonBelief<TreeWorld> pemberton(world, lookaheadDepth);
+		AStarKBestCsernaBackup<TreeWorld> k3(world, lookaheadDepth, 3);
+		AStarKBestCsernaBackup<TreeWorld> k10(world, lookaheadDepth, 10);
+		AStarKBestCsernaBackup<TreeWorld> k30(world, lookaheadDepth, 30);
 
-		miniminRes = minimin.search(lookaheadDepth);
-		bellmanRes = bellman.search(lookaheadDepth);
-		pembertonRes = pemberton.search(lookaheadDepth);
-		nancyRes = nancy.search(lookaheadDepth);
-		csernaRes = cserna.search(lookaheadDepth);
-		k3Res = k3.search(lookaheadDepth);
-		k10Res = k10.search(lookaheadDepth);
-		k30Res = k30.search(lookaheadDepth);
+		miniminRes = minimin.search();
+		bellmanRes = bellman.search();
+		pembertonRes = pemberton.search();
+		nancyRes = nancy.search();
+		csernaRes = cserna.search();
+		k3Res = k3.search();
+		k10Res = k10.search();
+		k30Res = k30.search();
 	}
 	else if (domain == "SlidingPuzzle")
 	{
@@ -66,31 +66,23 @@ int main(int argc, char** argv)
 		SlidingTilePuzzle world = SlidingTilePuzzle(cin);
 
 		// Run DFS with differing backup methods for decision making
-		AStarMiniminBackup<SlidingTilePuzzle> minimin(world);
-		AStarBellmanBackup<SlidingTilePuzzle> bellman(world);
-		AStarNancyBackup<SlidingTilePuzzle> nancy(world);
-		AStarCsernaBackup<SlidingTilePuzzle> cserna(world);
-		AStarCsernaBackupPembertonBelief<SlidingTilePuzzle> pemberton(world);
-		AStarKBestCsernaBackup<SlidingTilePuzzle> k3(world, 3);
-		AStarKBestCsernaBackup<SlidingTilePuzzle> k10(world, 10);
-		AStarKBestCsernaBackup<SlidingTilePuzzle> k30(world, 30);
+		AStarMiniminBackup<SlidingTilePuzzle> minimin(world, lookaheadDepth);
+		AStarBellmanBackup<SlidingTilePuzzle> bellman(world, lookaheadDepth);
+		AStarNancyBackup<SlidingTilePuzzle> nancy(world, lookaheadDepth);
+		AStarCsernaBackup<SlidingTilePuzzle> cserna(world, lookaheadDepth);
+		AStarCsernaBackupPembertonBelief<SlidingTilePuzzle> pemberton(world, lookaheadDepth);
+		AStarKBestCsernaBackup<SlidingTilePuzzle> k3(world, lookaheadDepth, 3);
+		AStarKBestCsernaBackup<SlidingTilePuzzle> k10(world, lookaheadDepth, 10);
+		AStarKBestCsernaBackup<SlidingTilePuzzle> k30(world, lookaheadDepth, 30);
 
-		miniminRes = minimin.search(lookaheadDepth);
-		cout << "done minimin" << endl;
-		bellmanRes = bellman.search(lookaheadDepth);
-		cout << "done bellman" << endl;
-		pembertonRes = pemberton.search(lookaheadDepth);
-		cout << "done pemberton" << endl;
-		nancyRes = nancy.search(lookaheadDepth);
-		cout << "done nancy" << endl;
-		csernaRes = cserna.search(lookaheadDepth);
-		cout << "done cserna" << endl;
-		k3Res = k3.search(lookaheadDepth);
-		cout << "done k3" << endl;
-		k10Res = k10.search(lookaheadDepth);
-		cout << "done k10" << endl;
-		k30Res = k30.search(lookaheadDepth);
-		cout << "done k30" << endl;
+		miniminRes = minimin.search();
+		bellmanRes = bellman.search();
+		pembertonRes = pemberton.search();
+		nancyRes = nancy.search();
+		csernaRes = cserna.search();
+		k3Res = k3.search();
+		k10Res = k10.search();
+		k30Res = k30.search();
 	}
 	else
 	{

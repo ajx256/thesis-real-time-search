@@ -42,23 +42,23 @@ int main(int argc, char** argv)
 		TreeWorld world = TreeWorld(cin);
 
 		// Run DFS with differing backup methods for decision making
-		DFSMiniminBackup<TreeWorld> minimin(world);
-		DFSBellmanBackup<TreeWorld> bellman(world);
-		DFSNancyBackup<TreeWorld> nancy(world);
-		DFSCsernaBackup<TreeWorld> cserna(world);
-		DFSCsernaBackupPembertonBelief<TreeWorld> pemberton(world);
-		DFSKBestCsernaBackup<TreeWorld> k3(world, 3);
-		DFSKBestCsernaBackup<TreeWorld> k10(world, 10);
-		DFSKBestCsernaBackup<TreeWorld> k30(world, 30);
+		DFSMiniminBackup<TreeWorld> minimin(world, lookaheadDepth);
+		DFSBellmanBackup<TreeWorld> bellman(world, lookaheadDepth);
+		DFSNancyBackup<TreeWorld> nancy(world, lookaheadDepth);
+		DFSCsernaBackup<TreeWorld> cserna(world, lookaheadDepth);
+		DFSCsernaBackupPembertonBelief<TreeWorld> pemberton(world, lookaheadDepth);
+		DFSKBestCsernaBackup<TreeWorld> k3(world, lookaheadDepth, 3);
+		DFSKBestCsernaBackup<TreeWorld> k10(world, lookaheadDepth, 10);
+		DFSKBestCsernaBackup<TreeWorld> k30(world, lookaheadDepth, 30);
 
-		miniminRes = minimin.search(lookaheadDepth);
-		bellmanRes = bellman.search(lookaheadDepth);
-		pembertonRes = pemberton.search(lookaheadDepth);
-		nancyRes = nancy.search(lookaheadDepth);
-		csernaRes = cserna.search(lookaheadDepth);
-		k3Res = k3.search(lookaheadDepth);
-		k10Res = k10.search(lookaheadDepth);
-		k30Res = k30.search(lookaheadDepth);
+		miniminRes = minimin.search();
+		bellmanRes = bellman.search();
+		pembertonRes = pemberton.search();
+		nancyRes = nancy.search();
+		csernaRes = cserna.search();
+		k3Res = k3.search();
+		k10Res = k10.search();
+		k30Res = k30.search();
 	}
 	else if (domain == "SlidingPuzzle")
 	{
@@ -66,23 +66,23 @@ int main(int argc, char** argv)
 		SlidingTilePuzzle world = SlidingTilePuzzle(cin);
 
 		// Run DFS with differing backup methods for decision making
-		DFSMiniminBackup<SlidingTilePuzzle> minimin(world);
-		DFSBellmanBackup<SlidingTilePuzzle> bellman(world);
-		DFSNancyBackup<SlidingTilePuzzle> nancy(world);
-		DFSCsernaBackup<SlidingTilePuzzle> cserna(world);
-		DFSCsernaBackupPembertonBelief<SlidingTilePuzzle> pemberton(world);
-		DFSKBestCsernaBackup<SlidingTilePuzzle> k3(world, 3);
-		DFSKBestCsernaBackup<SlidingTilePuzzle> k10(world, 10);
-		DFSKBestCsernaBackup<SlidingTilePuzzle> k30(world, 30);
+		DFSMiniminBackup<SlidingTilePuzzle> minimin(world, lookaheadDepth);
+		DFSBellmanBackup<SlidingTilePuzzle> bellman(world, lookaheadDepth);
+		DFSNancyBackup<SlidingTilePuzzle> nancy(world, lookaheadDepth);
+		DFSCsernaBackup<SlidingTilePuzzle> cserna(world, lookaheadDepth);
+		DFSCsernaBackupPembertonBelief<SlidingTilePuzzle> pemberton(world, lookaheadDepth);
+		DFSKBestCsernaBackup<SlidingTilePuzzle> k3(world, lookaheadDepth, 3);
+		DFSKBestCsernaBackup<SlidingTilePuzzle> k10(world, lookaheadDepth, 10);
+		DFSKBestCsernaBackup<SlidingTilePuzzle> k30(world, lookaheadDepth, 30);
 
-		miniminRes = minimin.search(lookaheadDepth);
-		bellmanRes = bellman.search(lookaheadDepth);
-		pembertonRes = pemberton.search(lookaheadDepth);
-		nancyRes = nancy.search(lookaheadDepth);
-		csernaRes = cserna.search(lookaheadDepth);
-		k3Res = k3.search(lookaheadDepth);
-		k10Res = k10.search(lookaheadDepth);
-		k30Res = k30.search(lookaheadDepth);
+		miniminRes = minimin.search();
+		bellmanRes = bellman.search();
+		pembertonRes = pemberton.search();
+		nancyRes = nancy.search();
+		csernaRes = cserna.search();
+		k3Res = k3.search();
+		k10Res = k10.search();
+		k30Res = k30.search();
 	}
 	else
 	{

@@ -1,5 +1,15 @@
 #!/bin/bash
 
+if (($# < 1))
+then
+  echo "./lastIncrementalDecisionHarness.sh <# of instances to test>"
+
+  exit 1
+fi
+
+# The maximum number of instances to test on
+maxInstances=$1
+
 branchFactors="
 2"
 
@@ -15,8 +25,13 @@ do
   do
 	mkdir ../results/TreeWorld/lastIncrementalDecision/b${b}d${d}
 	instance=0
+	testInstancesRun=0
 	for file in ../worlds/treeWorld/b${b}d${d}-*
 	do
+	  if ((testInstancesRun >= maxInstances))
+	  then
+	    break
+	  fi
 	  if ((numProcs >= 12))
 	  then
 		wait
@@ -30,6 +45,7 @@ do
 		let instance++
 		let numProcs++
 	  fi
+	  let testInstancesRun++
 	done
   done
 done

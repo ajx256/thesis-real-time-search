@@ -99,7 +99,29 @@ struct DFSCsernaBackup
 		vector<Node*> kBestNodes;
 	};
 
-	DFSCsernaBackup(D& domain) : domain(domain) {}
+	DFSCsernaBackup(D& domain, int lookahead) : domain(domain), lookahead(lookahead)
+	{
+		switch (lookahead)
+		{
+		case 3:
+			eps = 0.27;
+			break;
+		case 7:
+			eps = 0.24;
+			break;
+		case 9:
+			eps = 0.23;
+			break;
+		case 10:
+			eps = 0.225;
+			break;
+		case 14:
+			eps = 0.22;
+			break;
+		default:
+			break;
+		}
+	}
 
 	~DFSCsernaBackup()
 	{
@@ -137,7 +159,7 @@ struct DFSCsernaBackup
 		return false;
 	}
 
-	void generateTopLevelActions(Node* start, int lookahead, ResultContainer& res)
+	void generateTopLevelActions(Node* start, ResultContainer& res)
 	{
 		// The first node to be expanded in any problem is the start node
 		// Doing so yields the top level actions
@@ -159,22 +181,22 @@ struct DFSCsernaBackup
 			//tla.topLevelOpen.push(childNode);
 			tla.topLevelNode = childNode;
 			//open.push(childNode);
-			childNode->distribution = DiscreteDistribution(100, childNode->getFValue(), childNode->getFHatValue(), childNode->getD(), (double)(1.0 / (domain.getBranchingFactor() + 1)));
+			childNode->distribution = DiscreteDistribution(100, childNode->getFValue(), childNode->getFHatValue(), childNode->getD(), eps);
 			// Push this node onto open
 			openUclosed[childNode->getState().hash()].push_back(childNode);
 			// Add this top level action to the list
 			topLevelActions.push_back(tla);
 
 			// Explore under this TLA
-			explore(childNode, 2, lookahead, res);
+			explore(childNode, 2, res);
 		}
 	}
 
-	void explore(Node* cur, int curDepth, int maxDepth, ResultContainer& res)
+	void explore(Node* cur, int curDepth, ResultContainer& res)
 	{
 		// If this node is a goal, do not expand it. If the current depth is equal to our lookahead depth,
 		// do not expand it.
-		if (curDepth > maxDepth || domain.isGoal(cur->getState()))
+		if (curDepth > lookahead || domain.isGoal(cur->getState()))
 		{
 			// Add this node to open and recurse back up
 			open.push(cur);
@@ -194,7 +216,7 @@ struct DFSCsernaBackup
 				if (!duplicateDetection(childNode))
 				{
 					openUclosed[child.hash()].push_back(childNode);
-					explore(childNode, curDepth + 1, maxDepth, res);
+					explore(childNode, curDepth + 1, res);
 				}
 				else
 					delete childNode;
@@ -240,7 +262,7 @@ struct DFSCsernaBackup
 				tla.topLevelOpen.pop();
 
 				// Make this node's PDF a discrete distribution...
-				best->distribution = DiscreteDistribution(100, best->getFValue(), best->getFHatValue(), best->getD(), (double)(1.0 / (domain.getBranchingFactor() + 1)));
+				best->distribution = DiscreteDistribution(100, best->getFValue(), best->getFHatValue(), best->getD(), eps);
 
 				tla.kBestNodes.push_back(best);
 				i++;
@@ -251,7 +273,7 @@ struct DFSCsernaBackup
 		}
 	}
 
-	ResultContainer searchLI(int lookahead)
+	ResultContainer searchLI()
 	{
 		ResultContainer res;
 		res.solutionCost = 0;
@@ -266,7 +288,7 @@ struct DFSCsernaBackup
 		// Make the last incremental decision for the first action
 
 		// First, generate the top-level actions
-		generateTopLevelActions(start, lookahead, res);
+		generateTopLevelActions(start, res);
 
 		// Decisison strategy is to go to the top-level action with the minimum expected path cost,
 		// based on the distribution of path costs through its k-best children...
@@ -349,7 +371,7 @@ struct DFSCsernaBackup
 		}
 	}
 
-	ResultContainer search(int lookahead)
+	ResultContainer search()
 	{
 		ResultContainer res;
 		res.solutionCost = 0;
@@ -391,7 +413,7 @@ struct DFSCsernaBackup
 			openUclosed[start->getState().hash()].push_back(start);
 
 			// First, generate the top-level actions
-			generateTopLevelActions(start, lookahead, res);
+			generateTopLevelActions(start, res);
 
 			if (open.empty())
 			{
@@ -424,6 +446,7 @@ private:
 	unordered_map<unsigned long, vector<Node*> > closed;
 	unordered_map<unsigned long, vector<Node*> > openUclosed;
 	int k = numeric_limits<int>::max();
+	int lookahead;
 
 	void calculateCost(Node* solution, ResultContainer& res)
 	{

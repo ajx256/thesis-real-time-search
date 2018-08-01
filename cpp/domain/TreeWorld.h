@@ -17,8 +17,8 @@ public:
 	public:
 		State() : depth(0), seedOffset(0) {}
 
-		State(int depth, uint64_t seedOffset)
-			: depth(depth), seedOffset(seedOffset) {}
+		State(int depth, uint64_t seedOffset, int l)
+			: depth(depth), seedOffset(seedOffset), label(l) {}
 
 		friend std::ostream& operator<<(std::ostream& stream, const TreeWorld::State& state) {
 			stream << state.toString();
@@ -55,6 +55,7 @@ public:
 	private:
 		int depth;
 		uint64_t seedOffset;
+		int label;
 	};
 
 	TreeWorld(std::istream& input) {
@@ -77,7 +78,7 @@ public:
 		}
 
 		// Make the initial state
-		startState = State(0, 0);
+		startState = State(0, 0, 's');
 	}
 
 	bool isGoal(const State& location) const {
@@ -105,7 +106,7 @@ public:
 
 		for (int i = 1; i <= branchingFactor; i++)
 		{
-			State succ(state.getDepth() + 1, (state.getSeedOffset() * TreeWorld::branchingFactor) + i);
+			State succ(state.getDepth() + 1, (state.getSeedOffset() * TreeWorld::branchingFactor) + i, i);
 			successors.push_back(succ);
 		}
 

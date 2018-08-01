@@ -65,9 +65,9 @@ int main(int argc, char** argv)
 	{
 		ResultContainer solution;
 
-		RealTimeAStar<TreeWorld> aStarAlgo(world);
+		RealTimeAStar<TreeWorld> aStarAlgo(world, lookahead);
 
-		solution = aStarAlgo.search(lookahead);
+		solution = aStarAlgo.search();
 
 		if (argc < 4)
 		{
@@ -96,9 +96,9 @@ int main(int argc, char** argv)
 	{
 		ResultContainer solution;
 
-		AStarFHat<TreeWorld> aStarAlgo(world);
+		AStarFHat<TreeWorld> aStarAlgo(world, lookahead);
 
-		solution = aStarAlgo.search(lookahead);
+		solution = aStarAlgo.search();
 
 		if (argc < 4)
 		{
@@ -136,9 +136,9 @@ int main(int argc, char** argv)
 
 		ResultContainer solution;
 
-		BeamSearch<TreeWorld> beamAlgo(world, beamWidth);
+		BeamSearch<TreeWorld> beamAlgo(world, lookahead, beamWidth);
 
-		solution = beamAlgo.search(lookahead);
+		solution = beamAlgo.search();
 
 		if (argc < 5)
 		{
@@ -176,9 +176,9 @@ int main(int argc, char** argv)
 
 		ResultContainer solution;
 
-		KBest<TreeWorld> kBestAlgo(world, k);
+		KBest<TreeWorld> kBestAlgo(world, lookahead, k);
 
-		solution = kBestAlgo.search(lookahead);
+		solution = kBestAlgo.search();
 
 		if (argc < 5)
 		{
@@ -207,9 +207,9 @@ int main(int argc, char** argv)
 	{
 		ResultContainer solution;
 
-		Nancy<TreeWorld> nancyAlgo(world);
+		Nancy<TreeWorld> nancyAlgo(world, lookahead);
 
-		solution = nancyAlgo.search(lookahead);
+		solution = nancyAlgo.search();
 
 		if (argc < 4)
 		{

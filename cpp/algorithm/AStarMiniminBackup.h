@@ -48,7 +48,8 @@ struct AStarMiniminBackup
 		}
 	};
 
-	AStarMiniminBackup(D& domain) : domain(domain) {}
+	AStarMiniminBackup(D& domain, int lookahead) : domain(domain), lookahead(lookahead)
+	{}
 
 	~AStarMiniminBackup()
 	{
@@ -85,7 +86,7 @@ struct AStarMiniminBackup
 		return false;
 	}
 
-	Node* aStar(Node* start, int lookahead, ResultContainer& res)
+	Node* aStar(Node* start, ResultContainer& res)
 	{
 		int expansions = 0;
 
@@ -142,7 +143,7 @@ struct AStarMiniminBackup
 		return NULL;
 	}
 
-	ResultContainer search(int lookahead)
+	ResultContainer search()
 	{
 		ResultContainer res;
 		res.solutionCost = 0;
@@ -166,7 +167,7 @@ struct AStarMiniminBackup
 				return res;
 			}
 
-			Node* goalPrime = aStar(start, lookahead, res);
+			Node* goalPrime = aStar(start, res);
 
 			if (open.empty() && goalPrime == NULL)
 			{
@@ -193,6 +194,7 @@ private:
 	priority_queue<Node*, vector<Node*>, CompareNodes> open;
 	unordered_map<unsigned long, vector<Node*> > closed;
 	unordered_map<unsigned long, vector<Node*> > openUclosed;
+	int lookahead;
 
 	void calculateCost(Node* solution, ResultContainer& res)
 	{

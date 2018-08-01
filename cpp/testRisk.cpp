@@ -30,9 +30,9 @@ int main(int argc, char** argv)
 		TreeWorld world = TreeWorld(cin);
 
 		// Run DFS with differing backup methods for decision making
-		RiskNancyBackup<TreeWorld> risk(world, 1);
+		RiskNancyBackup<TreeWorld> risk(world, lookaheadDepth, 1);
 
-		riskRes = risk.search(lookaheadDepth);
+		riskRes = risk.search();
 	}
 	else if (domain == "SlidingPuzzle")
 	{
@@ -40,9 +40,9 @@ int main(int argc, char** argv)
 		SlidingTilePuzzle world = SlidingTilePuzzle(cin);
 
 		// Run DFS with differing backup methods for decision making
-		RiskNancyBackup<SlidingTilePuzzle> risk(world, 1);
+		RiskNancyBackup<SlidingTilePuzzle> risk(world, lookaheadDepth, 1);
 
-		riskRes = risk.search(lookaheadDepth);
+		riskRes = risk.search();
 	}
 	else
 	{

@@ -93,7 +93,32 @@ struct AStarCsernaBackupPembertonBelief
 		vector<Node*> kBestNodes;
 	};
 
-	AStarCsernaBackupPembertonBelief(D& domain) : domain(domain) {}
+	AStarCsernaBackupPembertonBelief(D& domain, int lookahead) : domain(domain), lookahead(lookahead)
+	{
+		switch (lookahead)
+		{
+		case 3:
+			eps = 0.295;
+			break;
+		case 6:
+			eps = 0.27;
+			break;
+		case 10:
+			eps = 0.26;
+			break;
+		case 30:
+			eps = 0.23;
+			break;
+		case 100:
+			eps = 0.225;
+			break;
+		case 1000:
+			eps = 0.223;
+			break;
+		default:
+			break;
+		}
+	}
 
 	~AStarCsernaBackupPembertonBelief()
 	{
@@ -160,7 +185,7 @@ struct AStarCsernaBackupPembertonBelief
 		}
 	}
 
-	void explore(int lookahead, ResultContainer& res)
+	void explore(ResultContainer& res)
 	{
 		// This starts at 1, because we had to expand start to get the top level actions
 		int expansions = 1;
@@ -265,7 +290,7 @@ struct AStarCsernaBackupPembertonBelief
 		}
 	}
 
-	ResultContainer search(int lookahead)
+	ResultContainer search()
 	{
 		ResultContainer res;
 		res.solutionCost = 0;
@@ -310,7 +335,7 @@ struct AStarCsernaBackupPembertonBelief
 			generateTopLevelActions(start, res);
 
 			// Expand some nodes until expnasion limit
-			explore(lookahead, res);
+			explore(res);
 
 			if (open.empty())
 			{
@@ -343,6 +368,7 @@ private:
 	unordered_map<unsigned long, vector<Node*> > closed;
 	unordered_map<unsigned long, vector<Node*> > openUclosed;
 	int k = numeric_limits<int>::infinity();
+	int lookahead;
 
 	void calculateCost(Node* solution, ResultContainer& res)
 	{

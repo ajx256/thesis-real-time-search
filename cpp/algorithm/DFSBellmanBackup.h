@@ -60,7 +60,29 @@ struct DFSBellmanBackup
 		}
 	};
 
-	DFSBellmanBackup(D& domain) : domain(domain) {}
+	DFSBellmanBackup(D& domain, int lookahead) : domain(domain), lookahead(lookahead)
+	{
+		switch (lookahead)
+		{
+		case 3:
+			eps = 0.27;
+			break;
+		case 7:
+			eps = 0.24;
+			break;
+		case 9:
+			eps = 0.23;
+			break;
+		case 10:
+			eps = 0.225;
+			break;
+		case 14:
+			eps = 0.22;
+			break;
+		default:
+			break;
+		}
+	}
 
 	~DFSBellmanBackup()
 	{
@@ -97,11 +119,11 @@ struct DFSBellmanBackup
 		return false;
 	}
 
-	void explore(Node* cur, int curDepth, int maxDepth, ResultContainer& res)
+	void explore(Node* cur, int curDepth, ResultContainer& res)
 	{
 		// If this node is a goal, do not expand it. If the current depth is equal to our lookahead depth,
 		// do not expand it.
-		if (curDepth > maxDepth || domain.isGoal(cur->getState()))
+		if (curDepth > lookahead || domain.isGoal(cur->getState()))
 		{
 			// Add this node to open and recurse back up
 			open.push(cur);
@@ -120,7 +142,7 @@ struct DFSBellmanBackup
 				if (!duplicateDetection(childNode))
 				{
 					openUclosed[child.hash()].push_back(childNode);
-					explore(childNode, curDepth + 1, maxDepth, res);
+					explore(childNode, curDepth + 1, res);
 				}
 				else
 					delete childNode;
@@ -128,7 +150,7 @@ struct DFSBellmanBackup
 		}
 	}
 
-	ResultContainer search(int lookahead)
+	ResultContainer search()
 	{
 		ResultContainer res;
 		res.solutionCost = 0;
@@ -169,7 +191,7 @@ struct DFSBellmanBackup
 			openUclosed[start->getState().hash()].push_back(start);
 
 			// Expand some nodes until expnasion limit
-			explore(start, 1, lookahead, res);
+			explore(start, 1, res);
 
 			if (open.empty())
 			{
@@ -191,7 +213,7 @@ struct DFSBellmanBackup
 		return res;
 	}
 
-	ResultContainer searchLI(int lookahead)
+	ResultContainer searchLI()
 	{
 		ResultContainer res;
 		res.solutionCost = 0;
@@ -206,7 +228,7 @@ struct DFSBellmanBackup
 		// Make the last incremental decision for the first action
 
 		// Expand some nodes until expnasion limit
-		explore(start, 1, lookahead, res);
+		explore(start, 1, res);
 
 		// TODO: Learning?
 
@@ -289,6 +311,7 @@ private:
 	priority_queue<Node*, vector<Node*>, CompareNodes> open;
 	unordered_map<unsigned long, vector<Node*> > closed;
 	unordered_map<unsigned long, vector<Node*> > openUclosed;
+	int lookahead;
 
 	void calculateCost(Node* solution, ResultContainer& res)
 	{

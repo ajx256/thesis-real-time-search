@@ -5,8 +5,8 @@ import seaborn as sns
 from os import listdir
 
 # Hard coded result directories
-resultDirs = {"b2d100"}
-limits = [10, 100, 1000]
+resultDirs = {"b2d100", "b2d10"}
+limits = [3, 6, 10, 30, 100, 1000]
 
 algorithmsExpA = ["A*", "F-Hat"]
 algorithmsDiffExpA = ["A*", "F-Hat"]
@@ -39,14 +39,14 @@ for dir in resultDirs:
 
 dfExpA = pd.DataFrame({
     "instance":instanceExpA,
-    "Expansion Limit":lookAheadValsExpA,
+    "Node Expansion Limit":lookAheadValsExpA,
     "Solution Cost":solutionCostExpA,
     "Algorithm":algorithmExpA
 })
 
 dfDiffExpA = pd.DataFrame({
     "instance":instanceDiffExpA,
-    "Expansion Limit":lookAheadValsDiffExpA,
+    "Node Expansion Limit":lookAheadValsDiffExpA,
     "Algorithm Cost - A* Cost":differenceCostExpA,
     "Algorithm":algorithmDiffExpA
 })
@@ -82,14 +82,14 @@ for dir in resultDirs:
 
 dfExpB = pd.DataFrame({
     "instance":instanceExpB,
-    "Expansion Limit":lookAheadValsExpB,
+    "Node Expansion Limit":lookAheadValsExpB,
     "Solution Cost":solutionCostExpB,
     "Algorithm":algorithmExpB
 })
 
 dfDiffExpB = pd.DataFrame({
     "instance":instanceDiffExpB,
-    "Expansion Limit":lookAheadValsDiffExpB,
+    "Node Expansion Limit":lookAheadValsDiffExpB,
     "Algorithm Cost - A* Cost":differenceCostExpB,
     "Algorithm":algorithmDiffExpB
 })
@@ -125,14 +125,14 @@ for dir in resultDirs:
 
 dfExpC = pd.DataFrame({
     "instance":instanceExpC,
-    "Expansion Limit":lookAheadValsExpC,
+    "Node Expansion Limit":lookAheadValsExpC,
     "Solution Cost":solutionCostExpC,
     "Algorithm":algorithmExpC
 })
 
 dfDiffExpC = pd.DataFrame({
     "instance":instanceDiffExpC,
-    "Expansion Limit":lookAheadValsDiffExpC,
+    "Node Expansion Limit":lookAheadValsDiffExpC,
     "Algorithm Cost - A* Cost":differenceCostExpC,
     "Algorithm":algorithmDiffExpC
 })
@@ -145,12 +145,12 @@ for instance in resultDirs:
     sns.set_style("white")
     sns.set(rc={'figure.figsize': (11, 8)})
 
-    ax = sns.pointplot(x="Expansion Limit", y="Solution Cost", hue="Algorithm", order=limits, hue_order=algorithmsExpA, data=instanceDataExpA, join=False, dodge=0.7, palette=sns.color_palette(["red"]), markers="_", errwidth=3, ci=95)
+    ax = sns.pointplot(x="Node Expansion Limit", y="Solution Cost", hue="Algorithm", order=limits, hue_order=algorithmsExpA, data=instanceDataExpA, join=False, dodge=0.7, palette=sns.color_palette(["red"]), markers="_", errwidth=3, ci=95)
     plt.setp(ax.lines, zorder=100)
     plt.setp(ax.collections, zorder=100, label="")
     ax.legend_.remove()
     
-    sns.violinplot(x="Expansion Limit", y="Solution Cost", hue="Algorithm", order=limits, hue_order=algorithmsExpA, data=instanceDataExpA, palette="Set3")    
+    sns.violinplot(x="Node Expansion Limit", y="Solution Cost", hue="Algorithm", order=limits, hue_order=algorithmsExpA, data=instanceDataExpA, palette="Set3")    
 
     plt.title("Aligning Expansion Strategy with Decision Strategy with Tree Instance: " + instance)
     plt.ylabel("Solution Cost")
@@ -164,7 +164,7 @@ for instance in resultDirs:
 
     sns.set_style("white")
     sns.set(rc={'figure.figsize': (11, 8)})
-    sns.pointplot(x="Expansion Limit", y="Algorithm Cost - A* Cost", hue="Algorithm", order=limits, hue_order=algorithmsDiffExpA, data=instanceDataDiffExpA, ci=95, join=False, dodge=0.35, palette="Set3")
+    sns.pointplot(x="Node Expansion Limit", y="Algorithm Cost - A* Cost", hue="Algorithm", order=limits, hue_order=algorithmsDiffExpA, data=instanceDataDiffExpA, ci=95, join=False, dodge=0.35, palette="Set3")
     plt.title("Aligning Expansion Strategy with Decision Strategy with Tree Instance: " + instance)
 
     plt.savefig("../plots/ExpansionDifferenceExpA" + instance + ".png")
@@ -178,12 +178,12 @@ for instance in resultDirs:
     sns.set_style("white")
     sns.set(rc={'figure.figsize': (11, 8)})
 
-    ax = sns.pointplot(x="Expansion Limit", y="Solution Cost", hue="Algorithm", order=limits, hue_order=algorithmsExpB, data=instanceDataExpB, join=False, dodge=0.7, palette=sns.color_palette(["red"]), markers="_", errwidth=3, ci=95)
+    ax = sns.pointplot(x="Node Expansion Limit", y="Solution Cost", hue="Algorithm", order=limits, hue_order=algorithmsExpB, data=instanceDataExpB, join=False, dodge=0.7, palette=sns.color_palette(["red"]), markers="_", errwidth=3, ci=95)
     plt.setp(ax.lines, zorder=100)
     plt.setp(ax.collections, zorder=100, label="")
     ax.legend_.remove()
     
-    sns.violinplot(x="Expansion Limit", y="Solution Cost", hue="Algorithm", order=limits, hue_order=algorithmsExpB, data=instanceDataExpB, palette="Set3")    
+    sns.violinplot(x="Node Expansion Limit", y="Solution Cost", hue="Algorithm", order=limits, hue_order=algorithmsExpB, data=instanceDataExpB, palette="Set3")    
 
     plt.title("Flexible vs Uniform Lookahead with Tree Instance: " + instance)
     plt.ylabel("Solution Cost")
@@ -197,7 +197,7 @@ for instance in resultDirs:
 
     sns.set_style("white")
     sns.set(rc={'figure.figsize': (11, 8)})
-    sns.pointplot(x="Expansion Limit", y="Algorithm Cost - A* Cost", hue="Algorithm", order=limits, hue_order=algorithmsDiffExpB, data=instanceDataDiffExpB, ci=95, join=False, dodge=0.35, palette="Set3")
+    sns.pointplot(x="Node Expansion Limit", y="Algorithm Cost - A* Cost", hue="Algorithm", order=limits, hue_order=algorithmsDiffExpB, data=instanceDataDiffExpB, ci=95, join=False, dodge=0.35, palette="Set3")
     plt.title("Flexible vs Uniform Lookahead with Tree Instance: " + instance)
 
     plt.savefig("../plots/ExpansionDifferenceExpB" + instance + ".png")
@@ -211,12 +211,12 @@ for instance in resultDirs:
     sns.set_style("white")
     sns.set(rc={'figure.figsize': (11, 8)})
 
-    ax = sns.pointplot(x="Expansion Limit", y="Solution Cost", hue="Algorithm", order=limits, hue_order=algorithmsExpC, data=instanceDataExpC, join=False, dodge=0.7, palette=sns.color_palette(["red"]), markers="_", errwidth=3, ci=95)
+    ax = sns.pointplot(x="Node Expansion Limit", y="Solution Cost", hue="Algorithm", order=limits, hue_order=algorithmsExpC, data=instanceDataExpC, join=False, dodge=0.7, palette=sns.color_palette(["red"]), markers="_", errwidth=3, ci=95)
     plt.setp(ax.lines, zorder=100)
     plt.setp(ax.collections, zorder=100, label="")
     ax.legend_.remove()
     
-    sns.violinplot(x="Expansion Limit", y="Solution Cost", hue="Algorithm", order=limits, hue_order=algorithmsExpC, data=instanceDataExpC, palette="Set3")    
+    sns.violinplot(x="Node Expansion Limit", y="Solution Cost", hue="Algorithm", order=limits, hue_order=algorithmsExpC, data=instanceDataExpC, palette="Set3")    
 
     plt.title("Risk vs F-Hat Lookahead with Tree Instance: " + instance)
     plt.ylabel("Solution Cost")
@@ -230,7 +230,7 @@ for instance in resultDirs:
 
     sns.set_style("white")
     sns.set(rc={'figure.figsize': (11, 8)})
-    sns.pointplot(x="Expansion Limit", y="Algorithm Cost - A* Cost", hue="Algorithm", order=limits, hue_order=algorithmsDiffExpC, data=instanceDataDiffExpC, ci=95, join=False, dodge=0.35, palette="Set3")
+    sns.pointplot(x="Node Expansion Limit", y="Algorithm Cost - A* Cost", hue="Algorithm", order=limits, hue_order=algorithmsDiffExpC, data=instanceDataDiffExpC, ci=95, join=False, dodge=0.35, palette="Set3")
     plt.title("Risk vs F-Hat Lookahead with Tree Instance: " + instance)
 
     plt.savefig("../plots/ExpansionDifferenceExpC" + instance + ".png")

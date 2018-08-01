@@ -80,7 +80,32 @@ struct FHat
 		double newBound;
 	};
 
-	FHat(D& domain) : domain(domain) {}
+	FHat(D& domain, int lookahead) : domain(domain), lookahead(lookahead)
+	{
+		switch (lookahead)
+		{
+		case 3:
+			eps = 0.295;
+			break;
+		case 6:
+			eps = 0.27;
+			break;
+		case 10:
+			eps = 0.26;
+			break;
+		case 30:
+			eps = 0.23;
+			break;
+		case 100:
+			eps = 0.225;
+			break;
+		case 1000:
+			eps = 0.223;
+			break;
+		default:
+			break;
+		}
+	}
 
 	~FHat()
 	{
@@ -121,7 +146,7 @@ struct FHat
 		}
 	}
 
-	resultContainer aStar(Node* start, int lookahead)
+	resultContainer aStar(Node* start)
 	{
 		resultContainer res;
 		res.solution = NULL;
@@ -172,7 +197,7 @@ struct FHat
 		return res;
 	}
 
-	resultContainer search(Node* start, int lookahead)
+	resultContainer search(Node* start)
 	{
 		resultContainer finalRes;
 		finalRes.solution = NULL;
@@ -186,7 +211,7 @@ struct FHat
 
 		while (1)
 		{
-			tmpRes = aStar(start, lookahead);
+			tmpRes = aStar(start);
 			finalRes.solution = tmpRes.solution;
 			finalRes.nodesExpand += tmpRes.nodesExpand;
 			finalRes.nodesGen += tmpRes.nodesGen;
@@ -216,4 +241,5 @@ struct FHat
 		priority_queue<Node*, vector<Node*>, CompareNodesFHat> open;
 		unordered_map<unsigned long, Node*> closed;
 		unordered_map<unsigned long, Node*> tree;
+		int lookahead;
 };
