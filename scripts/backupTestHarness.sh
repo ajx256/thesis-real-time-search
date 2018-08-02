@@ -35,7 +35,7 @@ then
       do
         for lookahead in "${@:7}"
         do
-          mkdir ../results/backupTests/AS/b${b}d${d}
+          mkdir ../results/TreeWorld/backupTests/AS/b${b}d${d}
           instance=0
 		  testInstancesRun=0
           for file in ../worlds/treeWorld/b${b}d${d}-*
@@ -49,11 +49,11 @@ then
               wait
               numProcs=0
             fi		  
-		    if [ -f ../results/backupTests/AS/b${b}d${d}/LA${lookahead}-${instance}.json ]
+		    if [ -f ../results/TreeWorld/backupTests/AS/b${b}d${d}/LA${lookahead}-${instance}.json ]
 		    then 
 		      let instance++
 		    else
-		      ./../backupTestsAS.sh ${domainType} ${lookahead} ../results/backupTests/AS/b${b}d${d}/LA${lookahead}-${instance}.json < ${file} &
+		      ./../backupTestsAS.sh ${domainType} ${lookahead} ../results/TreeWorld/backupTests/AS/b${b}d${d}/LA${lookahead}-${instance}.json < ${file} &
 		      let instance++
               let numProcs++
 		    fi
