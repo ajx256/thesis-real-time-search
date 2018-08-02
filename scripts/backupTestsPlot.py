@@ -100,16 +100,16 @@ for instance in resultDirs:
     sns.set_style("white")
     sns.set(rc={'figure.figsize': (11, 8)})
 
-    ax = sns.pointplot(x="Depth Limit", y="Solution Cost", hue="Algorithm", order=depthsDFS, hue_order=algorithms, data=instanceDataDFS, join=False, dodge=0.7, palette=sns.color_palette(["red"]), markers="_", errwidth=3, ci=95)
+    ax = sns.pointplot(x="Depth Limit", y="Solution Cost", hue="Algorithm", order=depthsDFS, hue_order=algorithms, data=instanceDataDFS, join=False, dodge=0.70, palette=sns.color_palette(["red"]), markers="_", errwidth=3, ci=95)
     plt.setp(ax.lines, zorder=100)
     plt.setp(ax.collections, zorder=100, label="")
     ax.legend_.remove()
     
-    sns.violinplot(x="Depth Limit", y="Solution Cost", hue="Algorithm", order=depthsDFS, hue_order=algorithms, data=instanceDataDFS, palette="Set3")    
+    sns.violinplot(x="Depth Limit", y="Solution Cost", hue="Algorithm", order=depthsDFS, hue_order=algorithms, data=instanceDataDFS, palette="Set2")    
 
     plt.title("Depth First Lookahead with Tree Instance: " + instance)
     plt.ylabel("Solution Cost")
-    plt.savefig("../plots/BackupStrategyComparisonDFS" + instance + ".png")
+    plt.savefig("../plots/BackupComparisonExpB" + instance + ".png")
     
     plt.close()
     plt.clf()
@@ -119,10 +119,10 @@ for instance in resultDirs:
 
     sns.set_style("white")
     sns.set(rc={'figure.figsize': (11, 8)})
-    sns.pointplot(x="Depth Limit", y="Algorithm Cost - Cserna Cost", hue="Algorithm", order=depthsDFS, hue_order=algorithmsDiff, data=instanceDataDiffDFS, ci=95, join=False, dodge=0.35, palette="Set3")
+    sns.pointplot(x="Depth Limit", y="Algorithm Cost - Cserna Cost", hue="Algorithm", order=depthsDFS, hue_order=algorithmsDiff, data=instanceDataDiffDFS, ci=95, join=False, dodge=0.35, palette="Set2")
     plt.title("Depth First Lookahead with Tree Instance: " + instance)
 
-    plt.savefig("../plots/BackupStrategyDifferenceDFS" + instance + ".png")
+    plt.savefig("../plots/BackupDifferenceExpB" + instance + ".png")
     
     plt.close()
     plt.clf()
@@ -138,11 +138,11 @@ for instance in resultDirs:
     plt.setp(ax.collections, zorder=100, label="")
     ax.legend_.remove()
     
-    sns.violinplot(x="Node Expansion Limit", y="Solution Cost", hue="Algorithm", order=depthsAS, hue_order=algorithms, data=instanceDataAS, palette="Set3")    
+    sns.violinplot(x="Node Expansion Limit", y="Solution Cost", hue="Algorithm", order=depthsAS, hue_order=algorithms, data=instanceDataAS, palette="Set2")    
 
     plt.title("A* Lookahead with Tree Instance: " + instance)
     plt.ylabel("Solution Cost")
-    plt.savefig("../plots/BackupStrategyComparisonAS" + instance + ".png")
+    plt.savefig("../plots/BackupComparisonExpC" + instance + ".png")
     
     plt.close()
     plt.clf()
@@ -152,10 +152,10 @@ for instance in resultDirs:
 
     sns.set_style("white")
     sns.set(rc={'figure.figsize': (11, 8)})
-    sns.pointplot(x="Node Expansion Limit", y="Algorithm Cost - Cserna Cost", hue="Algorithm", order=depthsAS, hue_order=algorithmsDiff, data=instanceDataDiffAS, ci=95, join=False, dodge=0.35, palette="Set3")
+    sns.pointplot(x="Node Expansion Limit", y="Algorithm Cost - Cserna Cost", hue="Algorithm", order=depthsAS, hue_order=algorithmsDiff, data=instanceDataDiffAS, ci=95, join=False, dodge=0.35, palette="Set2")
     plt.title("A* Lookahead with Tree Instance: " + instance)
 
-    plt.savefig("../plots/BackupStrategyDifferenceAS" + instance + ".png")
+    plt.savefig("../plots/BackupDifferenceExpC" + instance + ".png")
     
     plt.close()
     plt.clf()

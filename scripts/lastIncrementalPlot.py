@@ -7,6 +7,10 @@ from os import listdir
 # Hard coded result directories
 resultDirs = {"b2d10", "b2d15"}
 
+colors=["#e6194b", "#3cb44b", "#ffe119", "#0082c8", "#f58231", "#911eb4",
+        "#46f0f0", "#f032e6", "#808000", "#fabebe", "#008080", "#e6beff", 
+        "#aa6e28", "#800000"]
+
 algorithms = ["Minimin", "Bellman", "Nancy", "K-Best 1 Pemberton Belief", "K-Best 3 Pemberton Belief", "K-Best 5 Pemberton Belief", 
               "K-Best 7 Pemberton Belief", "Cserna Pemberton Belief", "K-Best 1", "K-Best 3", "K-Best 5", 
               "K-Best 7", "Cserna",]
@@ -69,16 +73,16 @@ for instance in resultDirs:
     sns.set_style("white")
     sns.set(rc={'figure.figsize': (11, 8)})
 
-    ax = sns.pointplot(x="Depth Limit", y="Solution Cost", hue="Algorithm", order=depths, hue_order=algorithms, data=instanceData, join=False, dodge=0.639, palette=sns.color_palette(["red"]), markers="_", errwidth=3, ci=95)
+    ax = sns.pointplot(x="Depth Limit", y="Solution Cost", hue="Algorithm", order=depths, hue_order=algorithms, data=instanceData, join=False, dodge=0.741, palette=sns.color_palette(["red"]), markers="_", errwidth=3, ci=95)
     plt.setp(ax.lines, zorder=100)
     plt.setp(ax.collections, zorder=100, label="")
     ax.legend_.remove()
     
-    sns.violinplot(x="Depth Limit", y="Solution Cost", hue="Algorithm", order=depths, hue_order=algorithms, data=instanceData, palette="Set2")    
+    sns.violinplot(x="Depth Limit", y="Solution Cost", hue="Algorithm", order=depths, hue_order=algorithms, data=instanceData, palette=sns.color_palette(colors))    
 
     plt.title("Last Incremental Decision with Tree Instance: " + instance)
     plt.ylabel("Solution Cost")
-    plt.savefig("../plots/LIDComparison" + instance + ".png")
+    plt.savefig("../plots/BackupComparisonExpA" + instance + ".png")
     
     plt.close()
     plt.clf()
@@ -88,10 +92,10 @@ for instance in resultDirs:
 
     sns.set_style("white")
     sns.set(rc={'figure.figsize': (11, 8)})
-    sns.pointplot(x="Depth Limit", y="Algorithm Cost - Cserna Cost", hue="Algorithm", order=depths, hue_order=algorithmsDiff, data=instanceDataDiff, ci=95, join=False, dodge=0.3, palette="Set2")
+    sns.pointplot(x="Depth Limit", y="Algorithm Cost - Cserna Cost", hue="Algorithm", order=depths, hue_order=algorithmsDiff, data=instanceDataDiff, ci=95, join=False, dodge=0.3, palette=sns.color_palette(colors))
     plt.title("Last Incremental Decision with Tree Instance: " + instance)
 
-    plt.savefig("../plots/LIDDifference" + instance + ".png")
+    plt.savefig("../plots/BackupDifferenceExpA" + instance + ".png")
     
     plt.close()
     plt.clf()
