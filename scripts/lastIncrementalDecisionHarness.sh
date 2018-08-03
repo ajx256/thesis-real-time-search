@@ -14,8 +14,7 @@ branchFactors="
 2"
 
 depths="
-10
-15"
+10"
 
 numProcs=0
 
