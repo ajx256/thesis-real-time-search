@@ -71,18 +71,19 @@ for instance in resultDirs:
         depths.append(9)
         
     sns.set_style("white")
-    sns.set(rc={'figure.figsize': (11, 8)})
+    sns.set(rc={'figure.figsize': (11, 8), 'font.size': 26, 'text.color': 'black'})
 
     ax = sns.pointplot(x="Depth Limit", y="Solution Cost", hue="Algorithm", order=depths, hue_order=algorithms, data=instanceData, join=False, dodge=0.741, palette=sns.color_palette(["red"]), markers="_", errwidth=3, ci=95)
+    ax.tick_params(colors='black', labelsize=12)
     plt.setp(ax.lines, zorder=100)
     plt.setp(ax.collections, zorder=100, label="")
     ax.legend_.remove()
     
     sns.violinplot(x="Depth Limit", y="Solution Cost", hue="Algorithm", order=depths, hue_order=algorithms, data=instanceData, palette=sns.color_palette(colors))    
 
-    plt.title("Last Incremental Decision with Tree Instance: " + instance)
-    plt.ylabel("Solution Cost")
-    plt.savefig("../plots/BackupComparisonExpA" + instance + ".png")
+    plt.ylabel("Solution Cost", color='black', fontsize=18)
+    plt.xlabel("Depth Limit", color='black', fontsize=18)
+    plt.savefig("../plots/BackupComparisonExpA" + instance + ".pdf")
     
     plt.close()
     plt.clf()
@@ -91,11 +92,12 @@ for instance in resultDirs:
     instanceDataDiff = dfDiff.loc[dfDiff["instance"] == instance]
 
     sns.set_style("white")
-    sns.set(rc={'figure.figsize': (11, 8)})
-    sns.pointplot(x="Depth Limit", y="Algorithm Cost - Cserna Cost", hue="Algorithm", order=depths, hue_order=algorithmsDiff, data=instanceDataDiff, ci=95, join=False, dodge=0.3, palette=sns.color_palette(colors))
-    plt.title("Last Incremental Decision with Tree Instance: " + instance)
-
-    plt.savefig("../plots/BackupDifferenceExpA" + instance + ".png")
+    sns.set(rc={'figure.figsize': (11, 8), 'font.size': 26, 'text.color': 'black'})
+    ax = sns.pointplot(x="Depth Limit", y="Algorithm Cost - Cserna Cost", hue="Algorithm", order=depths, hue_order=algorithmsDiff, data=instanceDataDiff, ci=95, join=False, dodge=0.3, palette=sns.color_palette(colors))
+    ax.tick_params(colors='black', labelsize=12)
+    plt.ylabel("Algorithm Cost - Cserna Cost", color='black', fontsize=18)
+    plt.xlabel("Depth Limit", color='black', fontsize=18)
+    plt.savefig("../plots/BackupDifferenceExpA" + instance + ".pdf")
     
     plt.close()
     plt.clf()

@@ -98,18 +98,19 @@ for instance in resultDirs:
     instanceDataDFS = dfDFS.loc[dfDFS["instance"] == instance]
     
     sns.set_style("white")
-    sns.set(rc={'figure.figsize': (11, 8)})
+    sns.set(rc={'figure.figsize': (11, 8), 'font.size': 26, 'text.color': 'black'})
 
     ax = sns.pointplot(x="Depth Limit", y="Solution Cost", hue="Algorithm", order=depthsDFS, hue_order=algorithms, data=instanceDataDFS, join=False, dodge=0.70, palette=sns.color_palette(["red"]), markers="_", errwidth=3, ci=95)
+    ax.tick_params(colors='black', labelsize=12)
     plt.setp(ax.lines, zorder=100)
     plt.setp(ax.collections, zorder=100, label="")
     ax.legend_.remove()
     
     sns.violinplot(x="Depth Limit", y="Solution Cost", hue="Algorithm", order=depthsDFS, hue_order=algorithms, data=instanceDataDFS, palette="Set2")    
 
-    plt.title("Depth First Lookahead with Tree Instance: " + instance)
-    plt.ylabel("Solution Cost")
-    plt.savefig("../plots/BackupComparisonExpB" + instance + ".png")
+    plt.ylabel("Solution Cost", color='black', fontsize=18)
+    plt.xlabel("Depth Limit", color='black', fontsize=18)
+    plt.savefig("../plots/BackupComparisonExpB" + instance + ".pdf")
     
     plt.close()
     plt.clf()
@@ -118,11 +119,12 @@ for instance in resultDirs:
     instanceDataDiffDFS = dfDiffDFS.loc[dfDiffDFS["instance"] == instance]
 
     sns.set_style("white")
-    sns.set(rc={'figure.figsize': (11, 8)})
-    sns.pointplot(x="Depth Limit", y="Algorithm Cost - Cserna Cost", hue="Algorithm", order=depthsDFS, hue_order=algorithmsDiff, data=instanceDataDiffDFS, ci=95, join=False, dodge=0.35, palette="Set2")
-    plt.title("Depth First Lookahead with Tree Instance: " + instance)
-
-    plt.savefig("../plots/BackupDifferenceExpB" + instance + ".png")
+    sns.set(rc={'figure.figsize': (11, 8), 'font.size': 26, 'text.color': 'black'})
+    ax = sns.pointplot(x="Depth Limit", y="Algorithm Cost - Cserna Cost", hue="Algorithm", order=depthsDFS, hue_order=algorithmsDiff, data=instanceDataDiffDFS, ci=95, join=False, dodge=0.35, palette="Set2")
+    ax.tick_params(colors='black', labelsize=12)
+    plt.ylabel("Algorithm Cost - Cserna Cost", color='black', fontsize=18)
+    plt.xlabel("Depth Limit", color='black', fontsize=18)
+    plt.savefig("../plots/BackupDifferenceExpB" + instance + ".pdf")
     
     plt.close()
     plt.clf()
@@ -131,18 +133,18 @@ for instance in resultDirs:
     instanceDataAS = dfAS.loc[dfAS["instance"] == instance]
     
     sns.set_style("white")
-    sns.set(rc={'figure.figsize': (11, 8)})
+    sns.set(rc={'figure.figsize': (11, 8), 'font.size': 26, 'text.color': 'black'})
 
     ax = sns.pointplot(x="Node Expansion Limit", y="Solution Cost", hue="Algorithm", order=depthsAS, hue_order=algorithms, data=instanceDataAS, join=False, dodge=0.7, palette=sns.color_palette(["red"]), markers="_", errwidth=3, ci=95)
+    ax.tick_params(colors='black', labelsize=12)
     plt.setp(ax.lines, zorder=100)
     plt.setp(ax.collections, zorder=100, label="")
     ax.legend_.remove()
     
     sns.violinplot(x="Node Expansion Limit", y="Solution Cost", hue="Algorithm", order=depthsAS, hue_order=algorithms, data=instanceDataAS, palette="Set2")    
-
-    plt.title("A* Lookahead with Tree Instance: " + instance)
-    plt.ylabel("Solution Cost")
-    plt.savefig("../plots/BackupComparisonExpC" + instance + ".png")
+    plt.ylabel("Solution Cost", color='black', fontsize=18)
+    plt.xlabel("Node Expansion Limit", color='black', fontsize=18)
+    plt.savefig("../plots/BackupComparisonExpC" + instance + ".pdf")
     
     plt.close()
     plt.clf()
@@ -151,11 +153,12 @@ for instance in resultDirs:
     instanceDataDiffAS = dfDiffAS.loc[dfDiffAS["instance"] == instance]
 
     sns.set_style("white")
-    sns.set(rc={'figure.figsize': (11, 8)})
-    sns.pointplot(x="Node Expansion Limit", y="Algorithm Cost - Cserna Cost", hue="Algorithm", order=depthsAS, hue_order=algorithmsDiff, data=instanceDataDiffAS, ci=95, join=False, dodge=0.35, palette="Set2")
-    plt.title("A* Lookahead with Tree Instance: " + instance)
-
-    plt.savefig("../plots/BackupDifferenceExpC" + instance + ".png")
+    sns.set(rc={'figure.figsize': (11, 8), 'font.size': 26, 'text.color': 'black'})
+    ax = sns.pointplot(x="Node Expansion Limit", y="Algorithm Cost - Cserna Cost", hue="Algorithm", order=depthsAS, hue_order=algorithmsDiff, data=instanceDataDiffAS, ci=95, join=False, dodge=0.35, palette="Set2")
+    ax.tick_params(colors='black', labelsize=12)
+    plt.ylabel("Algorithm Cost - Cserna Cost", color='black', fontsize=18)
+    plt.xlabel("Node Expansion Limit", color='black', fontsize=18)
+    plt.savefig("../plots/BackupDifferenceExpC" + instance + ".pdf")
     
     plt.close()
     plt.clf()

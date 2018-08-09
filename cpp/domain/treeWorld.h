@@ -8,11 +8,13 @@
 #include "../utility/Random.h"
 #include "../utility/SlidingWindow.h"
 
+using namespace std;
+
 class TreeWorld {
 public:
 	typedef double Cost;
 	static constexpr Cost COST_MAX = std::numeric_limits<Cost>::max();
-
+	
 	class State {
 	public:
 		State() : depth(0), seedOffset(0) {}
@@ -58,6 +60,14 @@ public:
 		int label;
 	};
 
+	struct HashState
+	{
+		std::size_t operator()(const State &s) const
+		{
+			return s.getSeedOffset();
+		}
+	};
+
 	TreeWorld(std::istream& input) {
 		// Read in the description of the tree
 		string line;
@@ -86,11 +96,31 @@ public:
 	}
 
 	Cost distance(const State& state) const {
+		// Check if the distance of this state has been updated
+		if (correctedD.find(state) != correctedD.end())
+		{
+			return correctedD[state];
+		}
+
 		return maxDepth - state.getDepth();
 	}
 
 	Cost heuristic(const State& state) const {
+		// Check if the heuristic of this state has been updated
+		if (correctedH.find(state) != correctedH.end())
+		{
+			return correctedH[state];
+		}
+
 		return 0;
+	}
+
+	void updateDistance(const State& state, Cost value) const {
+		correctedD[state] = value;
+	}
+
+	void updateHeuristic(const State& state, Cost value) const {
+		correctedH[state] = value;
 	}
 
 	int getBranchingFactor() const
@@ -111,6 +141,24 @@ public:
 		}
 
 		return successors;
+	}
+
+	std::vector<State> predecessors(const State& state) const {
+		std::vector<State> predecessors;
+
+		if (state.getDepth() == 0)
+			return predecessors;
+
+		double dblOffset = state.getSeedOffset() / (double)branchingFactor;
+		int offset = dblOffset;
+
+		if (offset == dblOffset)
+			offset = offset - 1;
+
+		State pred(state.getDepth() - 1, offset, 0);
+		predecessors.push_back(pred);
+
+		return predecessors;
 	}
 
 	bool safetyPredicate(const State& state) const { return true; }
@@ -161,6 +209,8 @@ public:
 	unsigned long long seed;
 	RandomGenerator generator;
 	unordered_map<int, Cost> costMap;
+	unordered_map<State, Cost, HashState> correctedH;
+	unordered_map<State, Cost, HashState> correctedD;
 	int maxEdgeCosts;
 	SlidingWindow<int> expansionDelayWindow;
 };

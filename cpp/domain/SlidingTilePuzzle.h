@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <unordered_map>
 #include "../utility/SlidingWindow.h"
 
 using namespace std;
@@ -74,6 +75,23 @@ public:
 	private:
 		std::vector<std::vector<int> > board;
 		char label;
+	};
+
+	struct HashState
+	{
+		std::size_t operator()(const State &s) const
+		{
+			unsigned long long val = 0;
+			for (int r = 0; r < board.size(); r++)
+			{
+				for (int c = 0; c < board[r].size(); c++)
+				{
+					unsigned long long index = (board.size() * r) + c;
+					val |= index << (board[r][c]);
+				}
+			}
+			return val;
+		}
 	};
 
 	SlidingTilePuzzle(std::istream& input) {
@@ -150,6 +168,34 @@ public:
 	}
 
 	Cost distance(const State& state) const {
+		// Check if the distance of this state has been updated
+		if (correctedD.find(state) != correctedD.end())
+		{
+			return correctedD[state];
+		}
+
+		return manhattanDistance(state);
+	}
+
+	Cost heuristic(const State& state) const {
+		// Check if the heuristic of this state has been updated
+		if (correctedH.find(state) != correctedH.end())
+		{
+			return correctedH[state];
+		}
+
+		return manhattanDistance(state);
+	}
+
+	void updateDistance(const State& state, Cost value) const {
+		correctedD[state] = value;
+	}
+
+	void updateHeuristic(const State& state, Cost value) const {
+		correctedH[state] = value;
+	}
+
+	Cost manhattanDistance(const State& state) const {
 		int manhattanSum = 0;
 
 		for (int r = 0; r < size; r++) {
@@ -164,10 +210,6 @@ public:
 		}
 
 		return manhattanSum;
-	}
-
-	Cost heuristic(const State& state) const {
-		return distance(state);
 	}
 
 	int getBranchingFactor() const
@@ -314,6 +356,10 @@ public:
 		return successors;
 	}
 
+	std::vector<State> predecessors(const State& state) const {
+		return successors(state);
+	}
+
 	bool safetyPredicate(const State& state) const { return true; }
 
 	const State getStartState() const {
@@ -358,4 +404,6 @@ public:
 	int size;
 	State startState;
 	SlidingWindow<int> expansionDelayWindow;
+	unordered_map<State, Cost, HashState> correctedH;
+	unordered_map<State, Cost, HashState> correctedD;
 };
