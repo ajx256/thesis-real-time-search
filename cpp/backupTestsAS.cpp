@@ -1,12 +1,12 @@
 #include <iostream>
 #include <string>
 #include <fstream>
-#include "algorithm/AStarMiniminBackup.h"
-#include "algorithm/AStarBellmanBackup.h"
-#include "algorithm/AStarNancyBackup.h"
-#include "algorithm/AStarCsernaBackup.h"
-#include "algorithm/AStarCsernaBackupPembertonBelief.h"
-#include "algorithm/AStarKBestCsernaBackup.h"
+#include "RealTimeSearch.h"
+#include "decisionAlgorithms/ScalarBackup.h"
+#include "decisionAlgorithms/KBestBackup.h"
+#include "expansionAlgorithms/AStar.h"
+#include "learningAlgorithms/Ignorance.h"
+#include "learningAlgorithms/Dijkstra.h"
 #include "domain/TreeWorld.h"
 #include "domain/SlidingTilePuzzle.h"
 
@@ -42,14 +42,14 @@ int main(int argc, char** argv)
 		TreeWorld world = TreeWorld(cin);
 
 		// Run DFS with differing backup methods for decision making
-		AStarMiniminBackup<TreeWorld> minimin(world, lookaheadDepth);
-		AStarBellmanBackup<TreeWorld> bellman(world, lookaheadDepth);
-		AStarNancyBackup<TreeWorld> nancy(world, lookaheadDepth);
-		AStarCsernaBackup<TreeWorld> cserna(world, lookaheadDepth);
-		AStarCsernaBackupPembertonBelief<TreeWorld> pemberton(world, lookaheadDepth);
-		AStarKBestCsernaBackup<TreeWorld> k3(world, lookaheadDepth, 3);
-		AStarKBestCsernaBackup<TreeWorld> k10(world, lookaheadDepth, 10);
-		AStarKBestCsernaBackup<TreeWorld> k30(world, lookaheadDepth, 30);
+		RealTimeSearch<TreeWorld> bellman(world, "a-star", "none", "bellman", lookaheadDepth);
+		RealTimeSearch<TreeWorld> minimin(world, "a-star", "none", "minimin", lookaheadDepth);
+		RealTimeSearch<TreeWorld> nancy(world, "a-star", "none", "k-best", lookaheadDepth, 1, "normal");
+		RealTimeSearch<TreeWorld> cserna(world, "a-star", "none", "k-best", lookaheadDepth, numeric_limits<double>::infinity(), "normal");
+		RealTimeSearch<TreeWorld> pemberton(world, "a-star", "none", "k-best", lookaheadDepth, numeric_limits<double>::infinity(), "pemberton");
+		RealTimeSearch<TreeWorld> k3(world, "a-star", "none", "k-best", lookaheadDepth, 3, "normal");
+		RealTimeSearch<TreeWorld> k10(world, "a-star", "none", "k-best", lookaheadDepth, 10, "normal");
+		RealTimeSearch<TreeWorld> k30(world, "a-star", "none", "k-best", lookaheadDepth, 30, "normal");
 
 		miniminRes = minimin.search();
 		bellmanRes = bellman.search();
@@ -66,14 +66,14 @@ int main(int argc, char** argv)
 		SlidingTilePuzzle world = SlidingTilePuzzle(cin);
 
 		// Run DFS with differing backup methods for decision making
-		AStarMiniminBackup<SlidingTilePuzzle> minimin(world, lookaheadDepth);
-		AStarBellmanBackup<SlidingTilePuzzle> bellman(world, lookaheadDepth);
-		AStarNancyBackup<SlidingTilePuzzle> nancy(world, lookaheadDepth);
-		AStarCsernaBackup<SlidingTilePuzzle> cserna(world, lookaheadDepth);
-		AStarCsernaBackupPembertonBelief<SlidingTilePuzzle> pemberton(world, lookaheadDepth);
-		AStarKBestCsernaBackup<SlidingTilePuzzle> k3(world, lookaheadDepth, 3);
-		AStarKBestCsernaBackup<SlidingTilePuzzle> k10(world, lookaheadDepth, 10);
-		AStarKBestCsernaBackup<SlidingTilePuzzle> k30(world, lookaheadDepth, 30);
+		RealTimeSearch<SlidingTilePuzzle> bellman(world, "a-star", "learn", "bellman", lookaheadDepth);
+		RealTimeSearch<SlidingTilePuzzle> minimin(world, "a-star", "learn", "minimin", lookaheadDepth);
+		RealTimeSearch<SlidingTilePuzzle> nancy(world, "a-star", "learn", "k-best", lookaheadDepth, 1, "normal");
+		RealTimeSearch<SlidingTilePuzzle> cserna(world, "a-star", "learn", "k-best", lookaheadDepth, numeric_limits<double>::infinity(), "normal");
+		RealTimeSearch<SlidingTilePuzzle> pemberton(world, "a-star", "learn", "k-best", lookaheadDepth, numeric_limits<double>::infinity(), "pemberton");
+		RealTimeSearch<SlidingTilePuzzle> k3(world, "a-star", "learn", "k-best", lookaheadDepth, 3, "normal");
+		RealTimeSearch<SlidingTilePuzzle> k10(world, "a-star", "learn", "k-best", lookaheadDepth, 10, "normal");
+		RealTimeSearch<SlidingTilePuzzle> k30(world, "a-star", "learn", "k-best", lookaheadDepth, 30, "normal");
 
 		miniminRes = minimin.search();
 		bellmanRes = bellman.search();

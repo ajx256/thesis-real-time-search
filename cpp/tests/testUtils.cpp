@@ -1,5 +1,5 @@
-#include "utility/SlidingWindow.h"
-#include "utility/PriorityQueue.h"
+#include "../utility/SlidingWindow.h"
+#include "../utility/PriorityQueue.h"
 #include <stdlib.h>
 #include <time.h>
 #include <iostream>

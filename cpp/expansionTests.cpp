@@ -1,10 +1,14 @@
 #include <iostream>
 #include <string>
 #include <fstream>
-#include "algorithm/BFSNancyBackup.h"
-#include "algorithm/FHatNancyBackup.h"
-#include "algorithm/AStarNancyBackup.h"
-#include "algorithm/RiskNancyBackup.h"
+#include "RealTimeSearch.h"
+#include "decisionAlgorithms/KBestBackup.h"
+#include "expansionAlgorithms/AStar.h"
+#include "expansionAlgorithms/BreadthFirst.h"
+#include "expansionAlgorithms/DepthFirst.h"
+#include "expansionAlgorithms/Risk.h"
+#include "learningAlgorithms/Ignorance.h"
+#include "learningAlgorithms/Dijkstra.h"
 #include "domain/TreeWorld.h"
 #include "domain/SlidingTilePuzzle.h"
 
@@ -35,10 +39,10 @@ int main(int argc, char** argv)
 		// Make a tree world
 		TreeWorld world = TreeWorld(cin);
 
-		BFSNancyBackup<TreeWorld> bfs(world, lookaheadDepth);
-		AStarNancyBackup<TreeWorld> astar(world, lookaheadDepth);
-		FHatNancyBackup<TreeWorld> fhat(world, lookaheadDepth);
-		RiskNancyBackup<TreeWorld> risk(world, lookaheadDepth, 1);
+		RealTimeSearch<TreeWorld> bfs(world, "bfs", "none", "k-best", lookaheadDepth, 1, "normal");
+		RealTimeSearch<TreeWorld> astar(world, "a-star", "none", "k-best", lookaheadDepth, 1, "normal");
+		RealTimeSearch<TreeWorld> fhat(world, "f-hat", "none", "k-best", lookaheadDepth, 1, "normal");
+		RealTimeSearch<TreeWorld> risk(world, "risk", "none", "k-best", lookaheadDepth, 1, "normal");
 
 		bfsRes = bfs.search();
 		astarRes = astar.search();
@@ -50,10 +54,10 @@ int main(int argc, char** argv)
 		// Make a tile puzzle
 		SlidingTilePuzzle world = SlidingTilePuzzle(cin);
 
-		BFSNancyBackup<SlidingTilePuzzle> bfs(world, lookaheadDepth);
-		AStarNancyBackup<SlidingTilePuzzle> astar(world, lookaheadDepth);
-		FHatNancyBackup<SlidingTilePuzzle> fhat(world, lookaheadDepth);
-		RiskNancyBackup<SlidingTilePuzzle> risk(world, lookaheadDepth, 1);
+		RealTimeSearch<SlidingTilePuzzle> bfs(world, "bfs", "learn", "k-best", lookaheadDepth, 1, "normal");
+		RealTimeSearch<SlidingTilePuzzle> astar(world, "a-star", "learn", "k-best", lookaheadDepth, 1, "normal");
+		RealTimeSearch<SlidingTilePuzzle> fhat(world, "f-hat", "learn", "k-best", lookaheadDepth, 1, "normal");
+		RealTimeSearch<SlidingTilePuzzle> risk(world, "risk", "learn", "k-best", lookaheadDepth, 1, "normal");
 
 		bfsRes = bfs.search();
 		astarRes = astar.search();

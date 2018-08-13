@@ -1,12 +1,12 @@
 #include <iostream>
 #include <string>
 #include <fstream>
-#include "algorithm/DFSMiniminBackup.h"
-#include "algorithm/DFSBellmanBackup.h"
-#include "algorithm/DFSNancyBackup.h"
-#include "algorithm/DFSCsernaBackup.h"
-#include "algorithm/DFSCsernaBackupPembertonBelief.h"
-#include "algorithm/DFSKBestCsernaBackup.h"
+#include "RealTimeSearch.h"
+#include "decisionAlgorithms/ScalarBackup.h"
+#include "decisionAlgorithms/KBestBackup.h"
+#include "expansionAlgorithms/DepthFirst.h"
+#include "learningAlgorithms/Ignorance.h"
+#include "learningAlgorithms/Dijkstra.h"
 #include "domain/TreeWorld.h"
 #include "domain/SlidingTilePuzzle.h"
 
@@ -41,15 +41,15 @@ int main(int argc, char** argv)
 		// Make a tree world
 		TreeWorld world = TreeWorld(cin);
 
-		// Run DFS with differing backup methods for decision making
-		DFSMiniminBackup<TreeWorld> minimin(world, lookaheadDepth);
-		DFSBellmanBackup<TreeWorld> bellman(world, lookaheadDepth);
-		DFSNancyBackup<TreeWorld> nancy(world, lookaheadDepth);
-		DFSCsernaBackup<TreeWorld> cserna(world, lookaheadDepth);
-		DFSCsernaBackupPembertonBelief<TreeWorld> pemberton(world, lookaheadDepth);
-		DFSKBestCsernaBackup<TreeWorld> k3(world, lookaheadDepth, 3);
-		DFSKBestCsernaBackup<TreeWorld> k10(world, lookaheadDepth, 10);
-		DFSKBestCsernaBackup<TreeWorld> k30(world, lookaheadDepth, 30);
+		// Run DFS with differing backup methods for decision making	
+		RealTimeSearch<TreeWorld> bellman(world, "dfs", "none", "bellman", lookaheadDepth);
+		RealTimeSearch<TreeWorld> minimin(world, "dfs", "none", "minimin", lookaheadDepth);
+		RealTimeSearch<TreeWorld> nancy(world, "dfs", "none", "k-best", lookaheadDepth, 1, "normal");
+		RealTimeSearch<TreeWorld> cserna(world, "dfs", "none", "k-best", lookaheadDepth, numeric_limits<double>::infinity(), "normal");
+		RealTimeSearch<TreeWorld> pemberton(world, "dfs", "none", "k-best", lookaheadDepth, numeric_limits<double>::infinity(), "pemberton");
+		RealTimeSearch<TreeWorld> k3(world, "dfs", "none", "k-best", lookaheadDepth, 3, "normal");
+		RealTimeSearch<TreeWorld> k10(world, "dfs", "none", "k-best", lookaheadDepth, 10, "normal");
+		RealTimeSearch<TreeWorld> k30(world, "dfs", "none", "k-best", lookaheadDepth, 30, "normal");
 
 		miniminRes = minimin.search();
 		bellmanRes = bellman.search();
@@ -66,14 +66,14 @@ int main(int argc, char** argv)
 		SlidingTilePuzzle world = SlidingTilePuzzle(cin);
 
 		// Run DFS with differing backup methods for decision making
-		DFSMiniminBackup<SlidingTilePuzzle> minimin(world, lookaheadDepth);
-		DFSBellmanBackup<SlidingTilePuzzle> bellman(world, lookaheadDepth);
-		DFSNancyBackup<SlidingTilePuzzle> nancy(world, lookaheadDepth);
-		DFSCsernaBackup<SlidingTilePuzzle> cserna(world, lookaheadDepth);
-		DFSCsernaBackupPembertonBelief<SlidingTilePuzzle> pemberton(world, lookaheadDepth);
-		DFSKBestCsernaBackup<SlidingTilePuzzle> k3(world, lookaheadDepth, 3);
-		DFSKBestCsernaBackup<SlidingTilePuzzle> k10(world, lookaheadDepth, 10);
-		DFSKBestCsernaBackup<SlidingTilePuzzle> k30(world, lookaheadDepth, 30);
+		RealTimeSearch<SlidingTilePuzzle> bellman(world, "dfs", "learn", "bellman", lookaheadDepth);
+		RealTimeSearch<SlidingTilePuzzle> minimin(world, "dfs", "learn", "minimin", lookaheadDepth);
+		RealTimeSearch<SlidingTilePuzzle> nancy(world, "dfs", "learn", "k-best", lookaheadDepth, 1, "normal");
+		RealTimeSearch<SlidingTilePuzzle> cserna(world, "dfs", "learn", "k-best", lookaheadDepth, numeric_limits<double>::infinity(), "normal");
+		RealTimeSearch<SlidingTilePuzzle> pemberton(world, "dfs", "learn", "k-best", lookaheadDepth, numeric_limits<double>::infinity(), "pemberton");
+		RealTimeSearch<SlidingTilePuzzle> k3(world, "dfs", "learn", "k-best", lookaheadDepth, 3, "normal");
+		RealTimeSearch<SlidingTilePuzzle> k10(world, "dfs", "learn", "k-best", lookaheadDepth, 10, "normal");
+		RealTimeSearch<SlidingTilePuzzle> k30(world, "dfs", "learn", "k-best", lookaheadDepth, 30, "normal");
 
 		miniminRes = minimin.search();
 		bellmanRes = bellman.search();
@@ -90,9 +90,9 @@ int main(int argc, char** argv)
 		exit(1);
 	}
 
-	string result = "{ \"Minimin\": " + to_string(miniminRes.solutionCost) + ", \"Bellman\": " + 
-		to_string(bellmanRes.solutionCost) + ", \"Nancy\": " + to_string(nancyRes.solutionCost) + 
-		", \"Cserna\": " + to_string(csernaRes.solutionCost) + ", \"Cserna Pemberton Belief\": " + 
+	string result = "{ \"Minimin\": " + to_string(miniminRes.solutionCost) + ", \"Bellman\": " +
+		to_string(bellmanRes.solutionCost) + ", \"Nancy\": " + to_string(nancyRes.solutionCost) +
+		", \"Cserna\": " + to_string(csernaRes.solutionCost) + ", \"Cserna Pemberton Belief\": " +
 		to_string(pembertonRes.solutionCost) + ", \"K-Best 3\": " + to_string(k3Res.solutionCost) +
 		", \"K-Best 10\": " + to_string(k10Res.solutionCost) + ", \"K-Best 30\": " + to_string(k30Res.solutionCost) +
 		", \"Lookahead\": " + to_string(lookaheadDepth) + " }";
