@@ -195,7 +195,6 @@ struct BFSNancyBackup
 		{
 			// Pop lowest fhat-value off open
 			Node* node = open.front();
-			open.pop();
 			node->close();
 			closed[node->getState().hash()].push_back(node);
 			res.nodesExpanded++;
@@ -206,6 +205,8 @@ struct BFSNancyBackup
 			{
 				return;
 			}
+
+			open.pop();
 
 			// Also remove this node from open of owning TLA
 			priority_queue<Node*, vector<Node*>, CompareNodesFHat> tmpOpen;

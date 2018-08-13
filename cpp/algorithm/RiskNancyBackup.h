@@ -58,45 +58,63 @@ struct RiskNancyBackup
 		{
 			delayCntr = 0;
 		}
-	};
-
-	struct CompareNodesF
-	{
-		bool operator()(const Node* n1, const Node* n2) const
+		
+		static bool compareNodesF(const Node* n1, const Node* n2)
 		{
-			// Tie break on f-value
+			// Tie break on heuristic
 			if (n1->getFValue() == n2->getFValue())
-				return n1->getGValue() > n2->getGValue();
+				return n1->getGValue() < n2->getGValue();
 			return n1->getFValue() > n2->getFValue();
 		}
-	};
 
-	struct CompareNodesFHat
-	{
-		bool operator()(const Node* n1, const Node* n2) const
+		static bool compareNodesFHat(const Node* n1, const Node* n2)
 		{
 			// Tie break on f-value
 			if (n1->getFHatValue() == n2->getFHatValue())
 				return n1->getFValue() > n2->getFValue();
 			return n1->getFHatValue() > n2->getFHatValue();
 		}
-	};
 
-	struct CompareHeuristic
-	{
-		bool operator()(Node* n1, Node* n2) const
+		static bool compareNodesH(const Node* n1, const Node* n2)
 		{
 			return n1->getHValue() > n2->getHValue();
-		}
+		}	
 	};
 
 	struct TopLevelAction
 	{
-		PriorityQueue<Node*, CompareNodesFHat> topLevelOpen;
+	public:
+		PriorityQueue<Node*> topLevelOpen;
 		Cost expectedMinimumPathCost;
 		Node* topLevelNode;
 		vector<Node*> kBestNodes;
 		DiscreteDistribution belief;
+
+		TopLevelAction()
+		{
+			topLevelOpen.swapComparator(Node::compareNodesFHat);
+		}
+
+		TopLevelAction(const TopLevelAction& tla)
+		{
+			topLevelOpen = tla.topLevelOpen;
+			expectedMinimumPathCost = tla.expectedMinimumPathCost;
+			topLevelNode = tla.topLevelNode;
+			kBestNodes = tla.kBestNodes;
+			belief = tla.belief;
+		}
+
+		TopLevelAction& operator=(const TopLevelAction& rhs)
+		{
+			if (&rhs == this)
+				return *this;
+			topLevelOpen = rhs.topLevelOpen;
+			expectedMinimumPathCost = rhs.expectedMinimumPathCost;
+			topLevelNode = rhs.topLevelNode;
+			kBestNodes = rhs.kBestNodes;
+			belief = rhs.belief;
+			return *this;
+		}
 	};
 
 	RiskNancyBackup(D& domain, int lookahead, int expansionAllocation) : domain(domain), lookahead(lookahead), expansionsPerIteration(expansionAllocation) 
@@ -124,6 +142,8 @@ struct RiskNancyBackup
 			default:
 				break;
 		}
+
+		open.swapComparator(Node::compareNodesFHat);
 	}
 
 	~RiskNancyBackup()
@@ -491,7 +511,7 @@ struct RiskNancyBackup
 private:
 	D & domain;
 	vector<TopLevelAction> topLevelActions;
-	PriorityQueue<Node*, CompareNodesFHat> open;
+	PriorityQueue<Node*> open;
 	unordered_map<unsigned long, vector<Node*> > closed;
 	unordered_map<unsigned long, vector<Node*> > openUclosed;
 	int k = 1;

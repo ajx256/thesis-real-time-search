@@ -59,7 +59,7 @@ public:
 		uint64_t seedOffset;
 		int label;
 	};
-
+	
 	struct HashState
 	{
 		std::size_t operator()(const State &s) const
@@ -95,7 +95,7 @@ public:
 		return location.getDepth() == maxDepth;
 	}
 
-	Cost distance(const State& state) const {
+	Cost distance(const State& state) {
 		// Check if the distance of this state has been updated
 		if (correctedD.find(state) != correctedD.end())
 		{
@@ -105,7 +105,7 @@ public:
 		return maxDepth - state.getDepth();
 	}
 
-	Cost heuristic(const State& state) const {
+	Cost heuristic(const State& state) {
 		// Check if the heuristic of this state has been updated
 		if (correctedH.find(state) != correctedH.end())
 		{
@@ -115,11 +115,11 @@ public:
 		return 0;
 	}
 
-	void updateDistance(const State& state, Cost value) const {
+	void updateDistance(const State& state, Cost value) {
 		correctedD[state] = value;
 	}
 
-	void updateHeuristic(const State& state, Cost value) const {
+	void updateHeuristic(const State& state, Cost value) {
 		correctedH[state] = value;
 	}
 
@@ -179,6 +179,11 @@ public:
 		string info = "{ \"TreeSeed\": " + to_string(seed) + ", \"Depth\": " + 
 			to_string(maxDepth) + ", \"BranchingFactor\": " + to_string(TreeWorld::branchingFactor) + " }";
 		return info;
+	}
+
+	string getDomainName()
+	{
+		return "TreeWorld";
 	}
 
 	void pushDelayWindow(int val)

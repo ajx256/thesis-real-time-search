@@ -2,26 +2,75 @@
 #include <vector>
 #include <limits>
 #include <algorithm>
+#include <functional>
 
 using namespace std;
 
-template <class T, class Compare = less<T> >
+template <class T>
 	class PriorityQueue {
 	protected:
 		vector<T> c;
-		Compare comp;
+		std::function<bool(T,T)> comp;
 		double capacity;
+		
+		static bool lessThan(const T n1, const T n2)
+		{
+			return n1 < n2;
+		}
 
 	public:
-		explicit PriorityQueue(double maxCapacity = numeric_limits<double>::infinity(), const Compare& comp_ = Compare())
+		explicit PriorityQueue()
+		{
+			capacity = numeric_limits<double>::infinity();
+			comp = lessThan;
+			make_heap(c.begin(), c.end(), comp);
+		}
+
+		explicit PriorityQueue(double maxCapacity, const std::function<bool(const T, const T)>& comp_)
 			: capacity(maxCapacity), comp(comp_)
 		{
 			make_heap(c.begin(), c.end(), comp);
 		}
 
-		void swapComparator(const Compare& comp_)
+		explicit PriorityQueue(const std::function<bool(const T, const T)>& comp_)
+			: comp(comp_)
+		{
+			capacity = numeric_limits<double>::infinity();
+			make_heap(c.begin(), c.end(), comp);
+		}
+
+		explicit PriorityQueue(double maxCapacity)
+			: capacity(maxCapacity)
+		{
+			comp = lessThan;
+			make_heap(c.begin(), c.end(), comp);
+		}
+
+		explicit PriorityQueue(const PriorityQueue<T>& pq)
+		{
+			c = pq.c;
+			comp = pq.comp;
+			capacity = pq.capacity;
+		}
+
+		PriorityQueue<T>& operator=(const PriorityQueue<T>& rhs)
+		{
+			if (&rhs == this)
+				return *this;
+			c = rhs.c;
+			comp = rhs.comp;
+			capacity = rhs.capacity;
+			return *this;
+		}
+
+		void swapComparator(const std::function<bool(const T, const T)>& comp_)
 		{
 			comp = comp_;
+			make_heap(c.begin(), c.end(), comp);
+		}
+
+		void update()
+		{
 			make_heap(c.begin(), c.end(), comp);
 		}
 

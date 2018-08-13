@@ -82,12 +82,12 @@ public:
 		std::size_t operator()(const State &s) const
 		{
 			unsigned long long val = 0;
-			for (int r = 0; r < board.size(); r++)
+			for (int r = 0; r < s.getBoard().size(); r++)
 			{
-				for (int c = 0; c < board[r].size(); c++)
+				for (int c = 0; c < s.getBoard()[r].size(); c++)
 				{
-					unsigned long long index = (board.size() * r) + c;
-					val |= index << (board[r][c]);
+					unsigned long long index = (s.getBoard().size() * r) + c;
+					val |= index << (s.getBoard()[r][c]);
 				}
 			}
 			return val;
@@ -167,7 +167,7 @@ public:
 		return false;
 	}
 
-	Cost distance(const State& state) const {
+	Cost distance(const State& state) {
 		// Check if the distance of this state has been updated
 		if (correctedD.find(state) != correctedD.end())
 		{
@@ -177,7 +177,7 @@ public:
 		return manhattanDistance(state);
 	}
 
-	Cost heuristic(const State& state) const {
+	Cost heuristic(const State& state) {
 		// Check if the heuristic of this state has been updated
 		if (correctedH.find(state) != correctedH.end())
 		{
@@ -187,11 +187,11 @@ public:
 		return manhattanDistance(state);
 	}
 
-	void updateDistance(const State& state, Cost value) const {
+	void updateDistance(const State& state, Cost value) {
 		correctedD[state] = value;
 	}
 
-	void updateHeuristic(const State& state, Cost value) const {
+	void updateHeuristic(const State& state, Cost value) {
 		correctedH[state] = value;
 	}
 
@@ -375,6 +375,11 @@ public:
 		string info = "{ \"Domain\": \"Sliding Tile Puzzle\", \"Dimensions\": " + 
 			std::to_string(size) + "x" + std::to_string(size) + " }";
 		return info;
+	}
+
+	string getDomainName()
+	{
+		return "SlidingTilePuzzle";
 	}
 
 	void pushDelayWindow(int val)

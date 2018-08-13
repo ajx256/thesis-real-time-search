@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <iostream>
+#include <functional>
 
 using namespace std;
 
@@ -26,16 +27,18 @@ public:
 		: g(g), h(h) {}
 };
 
-struct CompareNodes
+bool comparesNodesF(const Node* n1, const Node* n2)
 {
-	bool operator()(const Node* n1, const Node* n2) const
-	{
-		// Tie break on heuristic
-		if (n1->getFValue() == n2->getFValue())
-			return n1->getGValue() > n2->getGValue();
-		return n1->getFValue() > n2->getFValue();
-	}
-};
+	// Tie break on heuristic
+	if (n1->getFValue() == n2->getFValue())
+		return n1->getGValue() > n2->getGValue();
+	return n1->getFValue() > n2->getFValue();
+}
+
+bool compareNodesG(const Node* n1, const Node* n2)
+{
+	return n1->getGValue() < n2->getGValue();
+}
 
 int main()
 {
@@ -58,7 +61,7 @@ int main()
 
 	cout << "---------------------------------------------" << endl;
 
-	PriorityQueue<Node*, CompareNodes> pq(5);
+	PriorityQueue<Node*> pq(5, comparesNodesF);
 
 	srand(time(NULL));
 	for (int i = 0; i < 5; i++)
@@ -97,7 +100,7 @@ int main()
 
 	cout << pq.top()->getFValue() << endl;
 
-	PriorityQueue<Node*, CompareNodes> pq1;
+	PriorityQueue<Node*> pq1(comparesNodesF);
 
 	for (int i = 0; i < 901; i++)
 	{
@@ -109,8 +112,13 @@ int main()
 		pq1.push(n);
 	}
 
+	pq1.swapComparator(compareNodesG);
+
+	cout << endl;
+	cout << endl;
+
 	for (auto item : pq1)
 	{
-		cout << item->getFValue() << " ";
+		cout << item->getGValue() << " ";
 	}
 }
