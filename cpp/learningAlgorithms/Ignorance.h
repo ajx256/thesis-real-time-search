@@ -17,7 +17,7 @@ public:
 	Ignorance()
 	{}
 
-	void learn(PriorityQueue<Node*>& open, unordered_map<State, Node*, Hash>& closed)
+	void learn(PriorityQueue<Node*> open, unordered_map<State, Node*, Hash> closed)
 	{
 		// Learning is for fucking nerds
 		return;

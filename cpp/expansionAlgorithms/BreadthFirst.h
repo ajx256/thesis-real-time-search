@@ -16,8 +16,8 @@ class BreadthFirst : public ExpansionAlgorithm<Domain, Node, TopLevelAction>
 	typedef typename Domain::HashState Hash;
 
 public:
-	BreadthFirst(Domain& domain, double lookahead, Cost eps)
-		: domain(domain), lookahead(lookahead), eps(eps)
+	BreadthFirst(Domain& domain, double lookahead)
+		: domain(domain), lookahead(lookahead)
 	{}
 
 	void incrementLookahead()
@@ -26,7 +26,8 @@ public:
 	}
 
 	void expand(PriorityQueue<Node*>& open, unordered_map<State, Node*, Hash>& closed, vector<TopLevelAction>& tlas,
-		std::function<bool(State, Cost, Cost, Cost, Node*, set<int>, unordered_map<State, Node*, Hash>&)> duplicateDetection, ResultContainer& res)
+		std::function<bool(Node*, unordered_map<State, Node*, Hash>&, PriorityQueue<Node*>&, vector<TopLevelAction>&)> duplicateDetection,
+		ResultContainer& res)
 	{
 		// Empty any old values out of the queue
 		while (!q.empty())
@@ -34,7 +35,7 @@ public:
 			q.pop();
 		}
 
-		// Start by shoving everything on open onto the stack...
+		// Start by shoving everything on open onto the queue...
 		while (!open.empty())
 		{
 			q.push(open.top());
@@ -49,45 +50,41 @@ public:
 			// Pop lowest fhat-value off open
 			Node* cur = q.front();
 			q.pop();
-			cur->close();
 
 			// Check if current node is goal
 			if (domain.isGoal(cur->getState()))
 			{
-				open.push(cur);
+				if (open.find(cur) == open.end())
+					open.push(cur);
 				return;
 			}
 
 			res.nodesExpanded++;
 			expansions++;
 
+			cur->close();
 			open.remove(cur);
 
 			// Remove this node from the open list of any TLAs
-			for (int tla : cur->getOwningTLAs())
-			{
-				tlas[tla].open.remove(cur);
-			}
+			tlas[cur->getOwningTLA()].open.remove(cur);
 
 			vector<State> children = domain.successors(cur->getState());
 			res.nodesGenerated += children.size();
 			for (State child : children)
 			{
 				Node* childNode = new Node(cur->getGValue() + domain.getEdgeCost(child),
-					domain.heuristic(child), domain.distance(child), eps, 
-					child, cur, cur->getOwningTLAs());
+					domain.heuristic(child), domain.distance(child), domain.epsilon(child), 
+					child, cur, cur->getOwningTLA());
 
 				// Duplicate detection
-				if (!duplicateDetection(child, childNode->getGValue(), childNode->getHValue(),
-					childNode->getDValue(), cur, childNode->getOwningTLAs(), closed))
+				if (!duplicateDetection(childNode, closed, open, tlas))
 				{
 					q.push(childNode);
 					open.push(childNode);
 					closed[child] = childNode;
 
-					// Add to open of TLAs
-					for (int tla : childNode->getOwningTLAs())
-						tlas[tla].open.push(childNode);
+					// Add to open of generating TLA
+					tlas[childNode->getOwningTLA()].open.push(childNode);
 				}
 				else
 					delete childNode;
@@ -99,5 +96,4 @@ protected:
 	Domain & domain;
 	double lookahead;
 	queue<Node*> q;
-	Cost eps;
 };

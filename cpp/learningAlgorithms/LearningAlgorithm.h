@@ -10,7 +10,7 @@ class LearningAlgorithm
 	typedef typename Domain::HashState Hash;
 
 public:
-	virtual void learn(PriorityQueue<Node*>& open, unordered_map<State, Node*, Hash>& closed)
+	virtual void learn(PriorityQueue<Node*> open, unordered_map<State, Node*, Hash> closed)
 	{
 	}
 };

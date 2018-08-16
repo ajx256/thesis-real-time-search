@@ -17,7 +17,8 @@ public:
 	}
 
 	virtual void expand(PriorityQueue<Node*>& open, unordered_map<State, Node*, Hash>& closed, vector<TopLevelAction>& tlas,
-		std::function<bool(State, Cost, Cost, Cost, Node*, set<int>, unordered_map<State, Node*, Hash>&)> duplicateDetection, ResultContainer& res)
+		std::function<bool(Node*, unordered_map<State, Node*, Hash>&, PriorityQueue<Node*>&, vector<TopLevelAction>&)> duplicateDetection,
+		ResultContainer& res)
 	{
 	}
 };

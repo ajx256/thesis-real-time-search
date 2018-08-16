@@ -19,34 +19,34 @@ template <class T>
 		}
 
 	public:
-		explicit PriorityQueue()
+		PriorityQueue()
 		{
 			capacity = numeric_limits<double>::infinity();
 			comp = lessThan;
 			make_heap(c.begin(), c.end(), comp);
 		}
 
-		explicit PriorityQueue(double maxCapacity, const std::function<bool(const T, const T)>& comp_)
+		PriorityQueue(double maxCapacity, const std::function<bool(const T, const T)>& comp_)
 			: capacity(maxCapacity), comp(comp_)
 		{
 			make_heap(c.begin(), c.end(), comp);
 		}
 
-		explicit PriorityQueue(const std::function<bool(const T, const T)>& comp_)
+		PriorityQueue(const std::function<bool(const T, const T)>& comp_)
 			: comp(comp_)
 		{
 			capacity = numeric_limits<double>::infinity();
 			make_heap(c.begin(), c.end(), comp);
 		}
 
-		explicit PriorityQueue(double maxCapacity)
+		PriorityQueue(double maxCapacity)
 			: capacity(maxCapacity)
 		{
 			comp = lessThan;
 			make_heap(c.begin(), c.end(), comp);
 		}
 
-		explicit PriorityQueue(const PriorityQueue<T>& pq)
+		PriorityQueue(const PriorityQueue<T>& pq)
 		{
 			c = pq.c;
 			comp = pq.comp;
@@ -125,6 +125,10 @@ template <class T>
 
 		void pop()
 		{
+			if (c.empty())
+			{
+				return;
+			}
 			pop_heap(c.begin(), c.end(), comp);
 			c.pop_back();
 		}

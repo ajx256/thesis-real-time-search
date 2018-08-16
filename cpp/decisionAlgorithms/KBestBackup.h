@@ -12,8 +12,8 @@ class KBestBackup : public DecisionAlgorithm<Domain, Node, TopLevelAction>
 	typedef typename Domain::Cost Cost;
 
 public:
-	KBestBackup(Domain& domain, double k, string beliefType, double lookahead, Cost eps)
-		: domain(domain), k(k), beliefType(beliefType), lookahead(lookahead), eps(eps)
+	KBestBackup(Domain& domain, double k, string beliefType, double lookahead)
+		: domain(domain), k(k), beliefType(beliefType), lookahead(lookahead)
 	{}
 
 	Node* backup(PriorityQueue<Node*>& open, vector<TopLevelAction>& tlas, Node* start)
@@ -69,30 +69,41 @@ private:
 		{
 			tla.kBestNodes.clear();
 
-			int i = 0;
-			// Add to the best k nodes while i < k and non-selected nodes exist on the frontier
-			while (i < k && !tla.open.empty())
+			if (!tla.open.empty())
 			{
-				Node* best = tla.open.top();
-				tla.open.pop();
+				// If this TLA has unique, probably optimal subtrees beneath it, it is valid
 
-				// Make this node's PDF a discrete distribution...
-				if (beliefType == "normal")
+				int i = 0;
+				// Add to the best k nodes while i < k and non-selected nodes exist on the frontier
+				while (i < k && !tla.open.empty())
 				{
-					best->distribution = DiscreteDistribution(100, best->getFValue(), best->getFHatValue(),
-						best->getD(), eps);
-				}
-				else
-				{
-					best->distribution = DiscreteDistribution(100, best->getGValue(), best->getD(), domain.getBranchingFactor());
+					Node* best = tla.open.top();
+					tla.open.pop();
+
+					// Make this node's PDF a discrete distribution...
+					if (beliefType == "normal")
+					{
+						best->distribution = DiscreteDistribution(100, best->getFValue(), best->getFHatValue(),
+							best->getD(), best->getEpsilon());
+					}
+					else
+					{
+						best->distribution = DiscreteDistribution(100, best->getGValue(), best->getD(), domain.getBranchingFactor());
+					}
+
+					tla.kBestNodes.push_back(best);
+					i++;
 				}
 
-				tla.kBestNodes.push_back(best);
-				i++;
+				// Now that k-best are selected, perform Cserna backup
+				csernaBackup(tla);
 			}
-
-			// Now that k-best are selected, perform Cserna backup
-			csernaBackup(tla);
+			else
+			{
+				// This TLA has no unique subtrees beneath it, thus can be pruned...
+				tla.expectedMinimumPathCost = numeric_limits<double>::infinity();
+				tla.belief = DiscreteDistribution(100, numeric_limits<double>::infinity());
+			}
 		}
 	}
 
@@ -101,5 +112,4 @@ protected:
 	double k;
 	string beliefType;
 	double lookahead;
-	Cost eps;
 };

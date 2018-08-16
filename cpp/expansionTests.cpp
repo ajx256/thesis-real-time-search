@@ -59,10 +59,14 @@ int main(int argc, char** argv)
 		RealTimeSearch<SlidingTilePuzzle> fhat(world, "f-hat", "learn", "k-best", lookaheadDepth, 1, "normal");
 		RealTimeSearch<SlidingTilePuzzle> risk(world, "risk", "learn", "k-best", lookaheadDepth, 1, "normal");
 
+		cout << "------------BFS---------------" << endl;
 		bfsRes = bfs.search();
+		cout << "------------A*---------------" << endl;
 		astarRes = astar.search();
-		fhatRes = fhat.search();
+		cout << "------------RISK---------------" << endl;
 		riskRes = risk.search();
+		cout << "------------FHAT---------------" << endl;
+		fhatRes = fhat.search();
 	}
 	else
 	{

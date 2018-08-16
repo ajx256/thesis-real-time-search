@@ -6,7 +6,7 @@ using namespace std;
 template <typename T>
 class SlidingWindow {
 public:
-	SlidingWindow(unsigned int capacity = 100)
+	SlidingWindow(double capacity = 100)
 		: capacity(capacity) {}
 
 	void push(T item) {
@@ -42,6 +42,6 @@ public:
 	}
 
 private:
-	const unsigned int capacity;
+	const double capacity;
 	vector<T> window;
 };

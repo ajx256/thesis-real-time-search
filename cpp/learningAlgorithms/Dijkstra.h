@@ -18,19 +18,20 @@ public:
 		: domain(domain)
 	{}
 
-	void learn(PriorityQueue<Node*>& open, unordered_map<State, Node*, Hash>& closed)
+	void learn(PriorityQueue<Node*> open, unordered_map<State, Node*, Hash> closed)
 	{
 		// Start by initializing every state in closed to inf h
 		for (typename unordered_map<State, Node*, Hash>::iterator it = closed.begin(); it != closed.end(); it++)
 		{
-			domain.updateHeuristic(it->first, numeric_limits<double>::infinity());
+			if (!it->second->onOpen())
+				domain.updateHeuristic(it->first, numeric_limits<double>::infinity());
 		}
 
 		// Order open by h
 		open.swapComparator(Node::compareNodesH);
 
 		// Perform reverse dijkstra while closed is not empy
-		while (!closed.empty())
+		while (!closed.empty() && !open.empty())
 		{
 			Node* cur = open.top();
 			open.pop();
@@ -42,10 +43,10 @@ public:
 			{
 				typename unordered_map<State, Node*, Hash>::iterator it = closed.find(s);
 				if (it != closed.end() &&
-					domain.heuristic(s) > domain.getEdgeCost(s) + domain.heuristic(cur->getState()))
+					domain.heuristic(s) > domain.getEdgeCost(cur->getState()) + domain.heuristic(cur->getState()))
 				{
 					// Update the heuristic of this pedecessor
-					domain.updateHeuristic(s, domain.getEdgeCost(s) + domain.heuristic(cur->getState()));
+					domain.updateHeuristic(s, domain.getEdgeCost(cur->getState()) + domain.heuristic(cur->getState()));
 					// Update the distance of this predecessor
 					domain.updateDistance(s, domain.distance(cur->getState()));
 
@@ -62,6 +63,12 @@ public:
 					}
 				}
 			}
+		}
+
+		for (typename unordered_map<State, Node*, Hash>::iterator it = closed.begin(); it != closed.end(); it++)
+		{
+			if (domain.heuristic(it->first) == numeric_limits<double>::infinity())
+				domain.updateHeuristic(it->first, it->second->getHValue());
 		}
 	}
 	

@@ -304,6 +304,13 @@ public:
 		this->distribution = uniforms[0].distribution;
 	}
 
+	// Creates a delta spike belief
+	DiscreteDistribution(int maxSamples, double deltaSpikeValue)
+		: maxSamples(maxSamples)
+	{
+		distribution.insert(ProbabilityNode(deltaSpikeValue, 1.0));
+	}
+
 	void createFromUniform(int maxSamples, double g, double d)
 	{
 		this->maxSamples = maxSamples;

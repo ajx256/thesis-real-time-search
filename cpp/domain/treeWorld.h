@@ -42,7 +42,7 @@ public:
 
 		std::string toString() const {
 		std:string s = "";
-			s += seedOffset + " " + depth;
+			s += std::to_string(seedOffset) + " " + std::to_string(depth);
 			return s;
 		}
 
@@ -115,6 +115,63 @@ public:
 		return 0;
 	}
 
+	Cost epsilon(const State& state)
+	{
+		Cost eps;
+
+		if (expansionPolicy == "dfs")
+		{
+			switch (lookahead)
+			{
+			case 3:
+				eps = 0.27;
+				break;
+			case 7:
+				eps = 0.24;
+				break;
+			case 9:
+				eps = 0.23;
+				break;
+			case 10:
+				eps = 0.225;
+				break;
+			case 14:
+				eps = 0.22;
+				break;
+			default:
+				break;
+			}
+		}
+		else
+		{
+			switch (lookahead)
+			{
+			case 3:
+				eps = 0.295;
+				break;
+			case 6:
+				eps = 0.27;
+				break;
+			case 10:
+				eps = 0.26;
+				break;
+			case 30:
+				eps = 0.23;
+				break;
+			case 100:
+				eps = 0.225;
+				break;
+			case 1000:
+				eps = 0.223;
+				break;
+			default:
+				break;
+			}
+		}
+
+		return eps;
+	}
+
 	void updateDistance(const State& state, Cost value) {
 		correctedD[state] = value;
 	}
@@ -167,7 +224,7 @@ public:
 		return startState;
 	}
 
-	Cost getEdgeCost(State& state) const {
+	Cost getEdgeCost(State state) {
 		uint64_t i = state.getSeedOffset();
 		i += seed;
 		i %= maxEdgeCosts;
@@ -184,6 +241,15 @@ public:
 	string getDomainName()
 	{
 		return "TreeWorld";
+	}
+
+	void initialize(string policy, int la)
+	{
+		expansionPolicy = policy;
+		lookahead = la;
+		correctedD.clear();
+		correctedH.clear();
+		expansionDelayWindow.clear();
 	}
 
 	void pushDelayWindow(int val)
@@ -218,6 +284,9 @@ public:
 	unordered_map<State, Cost, HashState> correctedD;
 	int maxEdgeCosts;
 	SlidingWindow<int> expansionDelayWindow;
+
+	string expansionPolicy;
+	int lookahead;
 };
 
 int TreeWorld::branchingFactor = 2;

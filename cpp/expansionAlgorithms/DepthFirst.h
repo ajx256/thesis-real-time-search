@@ -16,8 +16,8 @@ class DepthFirst : public ExpansionAlgorithm<Domain, Node, TopLevelAction>
 	typedef typename Domain::HashState Hash;
 
 public:
-	DepthFirst(Domain& domain, double lookahead, Cost eps)
-		: domain(domain), lookahead(lookahead), eps(eps)
+	DepthFirst(Domain& domain, double lookahead)
+		: domain(domain), lookahead(lookahead)
 	{}
 
 	void incrementLookahead()
@@ -26,13 +26,13 @@ public:
 	}
 
 	void expand(PriorityQueue<Node*>& open, unordered_map<State, Node*, Hash>& closed, vector<TopLevelAction>& tlas,
-		std::function<bool(State, Cost, Cost, Cost, Node*, set<int>, unordered_map<State, Node*, Hash>&)> duplicateDetection, ResultContainer& res)
+		std::function<bool(Node*, unordered_map<State, Node*, Hash>&, PriorityQueue<Node*>&, vector<TopLevelAction>&)> duplicateDetection,
+		ResultContainer& res)
 	{
 		// Start by shoving everything on open onto the stack...
 		while (!open.empty())
 		{
-			for (int tla : open.top()->getOwningTLAs())
-				tlas[tla].open.remove(open.top());
+			tlas[open.top()->getOwningTLA()].open.remove(open.top());
 
 			// Pairs on stack represent <State's node, the depth it was generated in DFS>
 			theStack.push(make_pair(open.top(), 2));
@@ -51,8 +51,7 @@ public:
 			{
 				// Add this node to open and TLA open
 				open.push(cur.first);
-				for (int tla : cur.first->getOwningTLAs())
-					tlas[tla].open.push(cur.first);
+				tlas[cur.first->getOwningTLA()].open.push(cur.first);
 			}
 			else
 			{
@@ -65,12 +64,11 @@ public:
 				for (State child : children)
 				{
 					Node* childNode = new Node(cur.first->getGValue() + domain.getEdgeCost(child),
-						domain.heuristic(child), domain.distance(child), eps, 
-						child, cur.first, cur.first->getOwningTLAs());
+						domain.heuristic(child), domain.distance(child), domain.epsilon(child), 
+						child, cur.first, cur.first->getOwningTLA());
 
 					// Duplicate detection
-					if (!duplicateDetection(child, childNode->getGValue(), childNode->getHValue(), 
-						childNode->getDValue(), cur.first, childNode->getOwningTLAs(), closed))
+					if (!duplicateDetection(childNode, closed, open, tlas))
 					{
 						closed[child] = childNode;
 						theStack.push(make_pair(childNode, cur.second + 1));
@@ -86,5 +84,4 @@ protected:
 	Domain& domain;
 	double lookahead;
 	stack<pair<Node*, int> > theStack;
-	Cost eps;
 };

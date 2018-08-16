@@ -15,8 +15,8 @@ class Risk : public ExpansionAlgorithm<Domain, Node, TopLevelAction>
 	typedef typename Domain::HashState Hash;
 
 public:
-	Risk(Domain& domain, double lookahead, int expansionAllocation, Cost eps)
-		: domain(domain), lookahead(lookahead), expansionsPerIteration(expansionAllocation), eps(eps)
+	Risk(Domain& domain, double lookahead, int expansionAllocation)
+		: domain(domain), lookahead(lookahead), expansionsPerIteration(expansionAllocation)
 	{}
 
 	void incrementLookahead()
@@ -25,7 +25,8 @@ public:
 	}
 
 	void expand(PriorityQueue<Node*>& open, unordered_map<State, Node*, Hash>& closed, vector<TopLevelAction>& tlas,
-		std::function<bool(State, Cost, Cost, Cost, Node*, set<int>, unordered_map<State, Node*, Hash>&)> duplicateDetection, ResultContainer& res)
+		std::function<bool(Node*, unordered_map<State, Node*, Hash>&, PriorityQueue<Node*>&, vector<TopLevelAction>&)> duplicateDetection,
+		ResultContainer& res)
 	{
 		// This starts at 1, because we had to expand start to get the top level actions
 		int expansions = 1;
@@ -57,6 +58,7 @@ public:
 			// Remove the chosen node from open
 			tlas[chosenTLAIndex].open.pop();
 			open.remove(chosenNode);
+			chosenNode->close();
 
 			// Book keeping for expansion count
 			res.nodesExpanded++;
@@ -79,20 +81,18 @@ public:
 			{
 				// Create a node for this state
 				Node* childNode = new Node(chosenNode->getGValue() + domain.getEdgeCost(child),
-					domain.heuristic(child), domain.distance(child), eps,
-					child, chosenNode, chosenNode->getOwningTLAs());
+					domain.heuristic(child), domain.distance(child), domain.epsilon(child),
+					child, chosenNode, chosenNode->getOwningTLA());
 
 				// Duplicate detection performed
-				if (!duplicateDetection(child, childNode->getGValue(), childNode->getHValue(),
-					childNode->getDValue(), chosenNode, childNode->getOwningTLAs(), closed))
+				if (!duplicateDetection(childNode, closed, open, tlas))
 				{
 					// If this state hasn't yet been reached, add this node open 
 					open.push(childNode);
 					closed[child] = childNode;
 
-					// Add to open of TLAs
-					for (int tla : childNode->getOwningTLAs())
-						tlas[tla].open.push(childNode);
+					// Add to open of generating TLA
+					tlas[chosenTLAIndex].open.push(childNode);
 				}
 				else
 				{
@@ -107,7 +107,7 @@ private:
 	int simulateExpansion(vector<TopLevelAction>& tlas)
 	{
 		int minimalRiskTLA = 0;
-		double minimalRisk = 0;
+		double minimalRisk = numeric_limits<double>::infinity();
 
 		// Start by identifying alpha: the TLA with lowest expected cost
 		int alphaTLA = 0;
@@ -124,6 +124,10 @@ private:
 		// Iterate over the top level actions
 		for (int i = 0; i < tlas.size(); i++)
 		{
+			// If this TLA has no unique subtree, skip its risk calc, it is pruned
+			if (tlas[i].open.empty())
+				continue;
+
 			// Simulate how expanding this TLA's best node would affect its belief
 			// Belief of TLA is squished as a result of search. Mean stays the same, but variance is decreased by a factor based on expansion delay.
 			double ds = expansionsPerIteration / domain.averageDelayWindow();
@@ -138,9 +142,7 @@ private:
 			double riskCalculation = riskAnalysis(alphaTLA, squishedTopLevelActions);
 
 			// If this is the first TLA risk has been calculated for, it by default minimizes risk...
-			if (i == 0)
-				minimalRisk = riskCalculation;
-			else if (i > 0 && riskCalculation < minimalRisk)
+			if (riskCalculation < minimalRisk)
 			{
 				// Otherwise the TLA with the lower risk replaces the current lowest
 				minimalRisk = riskCalculation;
@@ -217,29 +219,40 @@ private:
 		{
 			tla.kBestNodes.clear();
 
-			int i = 0;
-			// Add to the best k nodes while i < k and non-selected nodes exist on the frontier
-			while (i < k && !tla.open.empty())
+			if (!tla.open.empty())
 			{
-				Node* best = tla.open.top();
-				tla.open.pop();
+				// If this TLA has unique, probably optimal subtrees beneath it, it is valid
 
-				// Make this node's PDF a discrete distribution...
-				best->distribution = DiscreteDistribution(100, best->getFValue(), best->getFHatValue(), 
-					best->getD(), eps);
+				int i = 0;
+				// Add to the best k nodes while i < k and non-selected nodes exist on the frontier
+				while (i < k && !tla.open.empty())
+				{
+					Node* best = tla.open.top();
+					tla.open.pop();
 
-				tla.kBestNodes.push_back(best);
-				i++;
+					// Make this node's PDF a discrete distribution...
+					best->distribution = DiscreteDistribution(100, best->getFValue(), best->getFHatValue(),
+						best->getD(), best->getEpsilon());
+
+					tla.kBestNodes.push_back(best);
+					i++;
+				}
+
+				// Now put the nodes back in the top level open list
+				for (Node* n : tla.kBestNodes)
+				{
+					tla.open.push(n);
+				}
+
+				// Now that k-best are selected, perform Cserna backup
+				csernaBackup(tla);
 			}
-
-			// Now put the nodes back in the top level open list
-			for (Node* n : tla.kBestNodes)
+			else
 			{
-				tla.open.push(n);
+				// This TLA has no unique subtrees beneath it, thus can be pruned...
+				tla.expectedMinimumPathCost = numeric_limits<double>::infinity();
+				tla.belief = DiscreteDistribution(100, numeric_limits<double>::infinity());
 			}
-
-			// Now that k-best are selected, perform Cserna backup
-			csernaBackup(tla);
 		}
 	}
 
@@ -249,5 +262,4 @@ protected:
 	string sortingFunction;
 	int k = 1;
 	int expansionsPerIteration;
-	Cost eps;
 };

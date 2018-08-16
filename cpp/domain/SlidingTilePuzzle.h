@@ -4,6 +4,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <iomanip>
 #include <algorithm>
 #include <unordered_map>
 #include "../utility/SlidingWindow.h"
@@ -22,7 +23,14 @@ public:
 		State(std::vector<std::vector<int> > b, char l) : board(b), label(l) {}
 		
 		friend std::ostream& operator<<(std::ostream& stream, const SlidingTilePuzzle::State& state) {
-			stream << state.toString();
+			for (int r = 0; r < state.getBoard().size(); r++)
+			{
+				for (int c = 0; c < state.getBoard()[r].size(); c++)
+				{
+					stream << std::setw(3) << state.getBoard()[r][c] << " ";
+				}
+				stream << endl;
+			}
 			return stream;
 		}
 
@@ -163,7 +171,10 @@ public:
 
 	bool isGoal(const State& s) const {
 		if (s.getBoard() == endBoard)
+		{
 			return true;
+		}
+
 		return false;
 	}
 
@@ -171,10 +182,10 @@ public:
 		// Check if the distance of this state has been updated
 		if (correctedD.find(state) != correctedD.end())
 		{
-			return correctedD[state];
+			return 1.25 * correctedD[state];
 		}
 
-		return manhattanDistance(state);
+		return 1.25 * manhattanDistance(state);
 	}
 
 	Cost heuristic(const State& state) {
@@ -187,6 +198,14 @@ public:
 		return manhattanDistance(state);
 	}
 
+	Cost epsilon(const State& state)
+	{
+		Cost h = heuristic(state);
+		Cost d = distance(state);
+
+		return ((1.25 * h) - h) / d;
+	}
+
 	void updateDistance(const State& state, Cost value) {
 		correctedD[state] = value;
 	}
@@ -196,7 +215,7 @@ public:
 	}
 
 	Cost manhattanDistance(const State& state) const {
-		int manhattanSum = 0;
+		Cost manhattanSum = 0;
 
 		for (int r = 0; r < size; r++) {
 			for (int c = 0; c < size; c++) {
@@ -335,29 +354,30 @@ public:
 
 	std::vector<State> successors(const State& state) const {
 		std::vector<State> successors;
-		moveUp(successors, state.getBoard());
-		moveDown(successors, state.getBoard());
-		moveLeft(successors, state.getBoard());
-		moveRight(successors, state.getBoard());
 
-		/*
-		for (State s : successors)
-		{
-			cout << s.getLabel() << endl;
-			cout << "FROM: " << endl;
-			cout << state << endl;
-			cout << endl;
-			cout << "TO: " << endl;
-			cout << s << endl;
-			cout << "------------------------------------------" << endl;
-		}
-		*/
+		// Don't allow inverse actions, to cut down on branching factor
+
+		if (state.getLabel() != 'D')
+			moveUp(successors, state.getBoard());
+		if (state.getLabel() != 'U')
+			moveDown(successors, state.getBoard());
+		if (state.getLabel() != 'R')
+			moveLeft(successors, state.getBoard());
+		if (state.getLabel() != 'L')
+			moveRight(successors, state.getBoard());
 
 		return successors;
 	}
 
 	std::vector<State> predecessors(const State& state) const {
-		return successors(state);
+		std::vector<State> predecessors;
+
+		moveUp(predecessors, state.getBoard());
+		moveDown(predecessors, state.getBoard());
+		moveLeft(predecessors, state.getBoard());
+		moveRight(predecessors, state.getBoard());
+
+		return predecessors;
 	}
 
 	bool safetyPredicate(const State& state) const { return true; }
@@ -366,7 +386,7 @@ public:
 		return startState;
 	}
 
-	Cost getEdgeCost(State& state) const {
+	Cost getEdgeCost(State state) {
 		return 1;
 	}
 
@@ -380,6 +400,15 @@ public:
 	string getDomainName()
 	{
 		return "SlidingTilePuzzle";
+	}
+
+	void initialize(string policy, int la)
+	{
+		expansionPolicy = policy;
+		lookahead = la;
+		correctedD.clear();
+		correctedH.clear();
+		expansionDelayWindow.clear();
 	}
 
 	void pushDelayWindow(int val)
@@ -411,4 +440,7 @@ public:
 	SlidingWindow<int> expansionDelayWindow;
 	unordered_map<State, Cost, HashState> correctedH;
 	unordered_map<State, Cost, HashState> correctedD;
+
+	string expansionPolicy;
+	int lookahead;
 };

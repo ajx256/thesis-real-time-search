@@ -36,7 +36,7 @@ public:
 		Cost eps;
 		Node* parent;
 		State stateRep;
-		set<int> owningTLAs;
+		int owningTLA;
 		bool open;
 		int delayCntr;
 		DiscreteDistribution distribution;
@@ -46,37 +46,35 @@ public:
 		Cost getHValue() const { return h; }
 		Cost getDValue() const { return d; }
 		Cost getFValue() const { return g + h; }
+		Cost getEpsilon() const { return eps; }
 		Cost getFHatValue() const { return g + h + (d * eps); }
 		void setHValue(Cost val) { h = val; }
 		void setGValue(Cost val) { g = val; }
 		void setDValue(Cost val) { d = val; }
+		void setState(State s) { stateRep = s; }
 		State getState() const { return stateRep; }
 		Node* getParent() { return parent; }
-		void addOwningTLA(int tla) { owningTLAs.insert(tla); }
-		set<int> getOwningTLAs() { return owningTLAs; }
+		void setOwningTLA(int tla) { owningTLA = tla; }
+		int getOwningTLA() { return owningTLA; }
 		Cost getD() { return d; }
 		Cost getHeuristicError() { return d * eps; }
 		void setParent(Node* p) { parent = p; }
 		bool onOpen() { return open; }
 		void close() { open = false; }
-		void reopen() { open = true; }
+		void reOpen() { open = true; }
 		void incDelayCntr() { delayCntr++; }
 		int getDelayCntr() { return delayCntr; }
 
-		Node(Cost g, Cost h, Cost d, Cost eps, State state, Node* parent, set<int> tlas)
-			: g(g), h(h), d(d), eps(eps), stateRep(state), parent(parent)
+		Node(Cost g, Cost h, Cost d, Cost eps, State state, Node* parent, int tla)
+			: g(g), h(h), d(d), eps(eps), stateRep(state), parent(parent), owningTLA(tla)
 		{
 			open = true;
 			delayCntr = 0;
-			for (int tla : tlas)
-			{
-				owningTLAs.insert(tla);
-			}
 		}
 
 		static bool compareNodesF(const Node* n1, const Node* n2)
 		{
-			// Tie break on heuristic
+			// Tie break on g-value
 			if (n1->getFValue() == n2->getFValue())
 				return n1->getGValue() < n2->getGValue();
 			return n1->getFValue() > n2->getFValue();
@@ -86,7 +84,12 @@ public:
 		{
 			// Tie break on f-value
 			if (n1->getFHatValue() == n2->getFHatValue())
+			{
+				// Tie break on g-value
+				if (n1->getFValue() == n2->getFValue())
+					return n1->getGValue() < n2->getGValue();
 				return n1->getFValue() > n2->getFValue();
+			}
 			return n1->getFHatValue() > n2->getFHatValue();
 		}
 
@@ -134,29 +137,28 @@ public:
 
 	RealTimeSearch(Domain& domain, string expansionModule, string learningModule,
 		string decisionModule, double lookahead, double k = 1, string belief = "normal")
-		: domain(domain), lookahead(lookahead)
+		: domain(domain), expansionPolicy(expansionModule), learningPolicy(learningModule),
+		decisionPolicy(decisionModule), lookahead(lookahead)
 	{
-		setEpsilon(expansionModule, lookahead);
-
 		if (expansionModule == "a-star")
 		{
-			expansionAlgo = new AStar<Domain, Node, TopLevelAction>(domain, lookahead, "f", eps);
+			expansionAlgo = new AStar<Domain, Node, TopLevelAction>(domain, lookahead, "f");
 		}
 		else if (expansionModule == "f-hat")
 		{
-			expansionAlgo = new AStar<Domain, Node, TopLevelAction>(domain, lookahead, "fhat", eps);
+			expansionAlgo = new AStar<Domain, Node, TopLevelAction>(domain, lookahead, "fhat");
 		}
 		else if (expansionModule == "dfs")
 		{
-			expansionAlgo = new DepthFirst<Domain, Node, TopLevelAction>(domain, lookahead, eps);
+			expansionAlgo = new DepthFirst<Domain, Node, TopLevelAction>(domain, lookahead);
 		}
 		else if (expansionModule == "bfs")
 		{
-			expansionAlgo = new BreadthFirst<Domain, Node, TopLevelAction>(domain, lookahead, eps);
+			expansionAlgo = new BreadthFirst<Domain, Node, TopLevelAction>(domain, lookahead);
 		}
 		else if (expansionModule == "risk")
 		{
-			expansionAlgo = new Risk<Domain, Node, TopLevelAction>(domain, lookahead, 1, eps);
+			expansionAlgo = new Risk<Domain, Node, TopLevelAction>(domain, lookahead, 1);
 		}
 
 		if (learningModule == "none")
@@ -178,7 +180,7 @@ public:
 		}
 		else if (decisionModule == "k-best")
 		{
-			decisionAlgo = new KBestBackup<Domain, Node, TopLevelAction>(domain, k, belief, lookahead, eps);
+			decisionAlgo = new KBestBackup<Domain, Node, TopLevelAction>(domain, k, belief, lookahead);
 		}
 	}
 
@@ -189,12 +191,13 @@ public:
 
 	ResultContainer search()
 	{
+		domain.initialize(expansionPolicy, lookahead);
+
 		ResultContainer res;
 
 		// Get the start node
-		set<int> empty;
-		Node* start = new Node(0, 0, domain.distance(domain.getStartState()), 
-			eps, domain.getStartState(), NULL, empty);
+		Node* start = new Node(0, domain.heuristic(domain.getStartState()), domain.distance(domain.getStartState()),
+			domain.epsilon(domain.getStartState()), domain.getStartState(), NULL, -1);
 
 		while (1)
 		{
@@ -235,12 +238,13 @@ public:
 
 	ResultContainer lastIncrementalDecision()
 	{
+		domain.initialize(expansionPolicy, lookahead);
+
 		ResultContainer res;
 
-		set<int> empty;
 		// Get the start node
-		Node* start = new Node(0, 0, domain.distance(domain.getStartState()),
-			eps, domain.getStartState(), NULL, empty);
+		Node* start = new Node(0, domain.heuristic(domain.getStartState()), domain.distance(domain.getStartState()),
+			domain.epsilon(domain.getStartState()), domain.getStartState(), NULL, -1);
 
 		// Check if a goal has been reached
 		if (domain.isGoal(start->getState()))
@@ -298,10 +302,11 @@ public:
 	}
 
 private:
-	static bool duplicateDetection(State s, Cost g, Cost h, Cost d, Node* parent, set<int> tlas, unordered_map<State, Node*, Hash>& closed)
+	static bool duplicateDetection(Node* node, unordered_map<State, Node*, Hash>& closed, PriorityQueue<Node*>& open, 
+		vector<TopLevelAction>& tlaList)
 	{
 		// Check if this state exists 
-		typename unordered_map<State, Node*, Hash>::iterator it = closed.find(s);
+		typename unordered_map<State, Node*, Hash>::iterator it = closed.find(node->getState());
 
 		if (it != closed.end())
 		{
@@ -309,31 +314,35 @@ private:
 			if (it->second->onOpen())
 			{
 				// This node is on OPEN, keep the better g-value
-				if (g < it->second->getGValue())
+				if (node->getGValue() < it->second->getGValue())
 				{
-					it->second->setGValue(g);
-					it->second->setParent(parent);
+					tlaList[it->second->getOwningTLA()].open.remove(it->second);
+					it->second->setGValue(node->getGValue());
+					it->second->setParent(node->getParent());
+					it->second->setHValue(node->getHValue());
+					it->second->setDValue(node->getD());
+					it->second->setState(node->getState());
+					it->second->setOwningTLA(node->getOwningTLA());
+					tlaList[node->getOwningTLA()].open.push(it->second);
 				}
 			}
 			else
 			{
 				// This node is on CLOSED, compare the f-values. If this new f-value is better, reset g, h, and d. 
 				// Then reopen the node.
-				/*
-				if (g + h < it->second->getFValue())
+				if (node->getFValue() < it->second->getFValue())
 				{
-					it->second->setGValue(g);
-					it->second->setParent(parent);
-					it->second->setHValue(h);
-					it->second->setDValue(d);
+					it->second->setGValue(node->getGValue());
+					it->second->setParent(node->getParent());
+					it->second->setHValue(node->getHValue());
+					it->second->setDValue(node->getD());
+					it->second->setState(node->getState());
+					it->second->setOwningTLA(node->getOwningTLA());
+					tlaList[node->getOwningTLA()].open.push(it->second);
 					it->second->reOpen();
 					open.push(it->second);
 				}
-				*/
 			}
-
-			// Keep track of the TLA this state was generated under
-			//it->second->addOwningTLA(tla);
 
 			return true;
 		}
@@ -353,11 +362,9 @@ private:
 		res.nodesGenerated += children.size();
 		for (State child : children)
 		{
-			set<int> tlaSet;
-			tlaSet.insert(tlas.size());
 			Node* childNode = new Node(start->getGValue() + domain.getEdgeCost(child),
-				domain.heuristic(child), domain.distance(child), eps,
-				child, start, tlaSet);
+				domain.heuristic(child), domain.distance(child), domain.epsilon(child),
+				child, start, tlas.size());
 
 			// No top level action will ever be a duplicate, so no need to check.
 			// Make a new top level action and push this node onto its open
@@ -365,7 +372,7 @@ private:
 			tla.topLevelNode = childNode;
 
 			childNode->distribution = DiscreteDistribution(100, childNode->getFValue(), childNode->getFHatValue(), 
-				childNode->getD(), eps);
+				childNode->getD(), childNode->getEpsilon());
 
 			tla.expectedMinimumPathCost = childNode->distribution.expectedCost();
 
@@ -420,59 +427,6 @@ private:
 		res.solutionCost = solution->getFValue();
 	}
 
-	void setEpsilon(string expansionModule, int la)
-	{
-		if (expansionModule == "dfs")
-		{
-			switch (la)
-			{
-			case 3:
-				eps = 0.27;
-				break;
-			case 7:
-				eps = 0.24;
-				break;
-			case 9:
-				eps = 0.23;
-				break;
-			case 10:
-				eps = 0.225;
-				break;
-			case 14:
-				eps = 0.22;
-				break;
-			default:
-				break;
-			}
-		}
-		else
-		{
-			switch (la)
-			{
-			case 3:
-				eps = 0.295;
-				break;
-			case 6:
-				eps = 0.27;
-				break;
-			case 10:
-				eps = 0.26;
-				break;
-			case 30:
-				eps = 0.23;
-				break;
-			case 100:
-				eps = 0.225;
-				break;
-			case 1000:
-				eps = 0.223;
-				break;
-			default:
-				break;
-			}
-		}
-	}
-
 protected:
 	Domain& domain;
 	ExpansionAlgorithm<Domain, Node, TopLevelAction>* expansionAlgo;
@@ -482,6 +436,8 @@ protected:
 	unordered_map<State, Node*, Hash> closed;
 	vector<TopLevelAction> tlas;
 
-	Cost eps;
 	double lookahead;
+	string expansionPolicy;
+	string learningPolicy;
+	string decisionPolicy;
 };
