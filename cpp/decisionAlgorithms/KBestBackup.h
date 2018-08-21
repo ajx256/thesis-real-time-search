@@ -84,11 +84,11 @@ private:
 					if (beliefType == "normal")
 					{
 						best->distribution = DiscreteDistribution(100, best->getFValue(), best->getFHatValue(),
-							best->getD(), best->getEpsilon());
+							best->getDValue(), best->getFHatValue() - best->getFValue());
 					}
 					else
 					{
-						best->distribution = DiscreteDistribution(100, best->getGValue(), best->getD(), domain.getBranchingFactor());
+						best->distribution = DiscreteDistribution(100, best->getGValue(), best->getDValue(), domain.getBranchingFactor());
 					}
 
 					tla.kBestNodes.push_back(best);

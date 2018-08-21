@@ -33,7 +33,9 @@ public:
 		Cost g;
 		Cost h;
 		Cost d;
-		Cost eps;
+		Cost derr;
+		Cost epsH;
+		Cost epsD;
 		Node* parent;
 		State stateRep;
 		int owningTLA;
@@ -45,31 +47,56 @@ public:
 		Cost getGValue() const { return g; }
 		Cost getHValue() const { return h; }
 		Cost getDValue() const { return d; }
+		Cost getDErrValue() const { return derr; }
 		Cost getFValue() const { return g + h; }
-		Cost getEpsilon() const { return eps; }
-		Cost getFHatValue() const { return g + h + (d * eps); }
+		Cost getEpsilonH() const { return epsH; }
+		Cost getEpsilonD() const { return epsD; }
+		Cost getFHatValue() const { return g + getHHatValue(); }
+		Cost getDHatValue() const { return (derr / (1.0 - epsD)); }
+		Cost getHHatValue() const { return h + getDHatValue() * epsH; }
+		State getState() const { return stateRep; }
+		Node* getParent() const { return parent; }
+		int getOwningTLA() const { return owningTLA; }
+
 		void setHValue(Cost val) { h = val; }
 		void setGValue(Cost val) { g = val; }
 		void setDValue(Cost val) { d = val; }
+		void setDErrValue(Cost val) { derr = val; }
+		void setEpsilonH(Cost val) { epsH = val; }
+		void setEpsilonD(Cost val) { epsD = val; }
 		void setState(State s) { stateRep = s; }
-		State getState() const { return stateRep; }
-		Node* getParent() { return parent; }
 		void setOwningTLA(int tla) { owningTLA = tla; }
-		int getOwningTLA() { return owningTLA; }
-		Cost getD() { return d; }
-		Cost getHeuristicError() { return d * eps; }
 		void setParent(Node* p) { parent = p; }
+
 		bool onOpen() { return open; }
 		void close() { open = false; }
 		void reOpen() { open = true; }
+
 		void incDelayCntr() { delayCntr++; }
 		int getDelayCntr() { return delayCntr; }
 
-		Node(Cost g, Cost h, Cost d, Cost eps, State state, Node* parent, int tla)
-			: g(g), h(h), d(d), eps(eps), stateRep(state), parent(parent), owningTLA(tla)
+		Node(Cost g, Cost h, Cost d, Cost derr, Cost epsH, Cost epsD, State state, Node* parent, int tla)
+			: g(g), h(h), d(d), derr(derr), epsH(epsH), epsD(epsD), stateRep(state), parent(parent), owningTLA(tla)
 		{
 			open = true;
 			delayCntr = 0;
+		}
+
+		friend std::ostream& operator<<(std::ostream& stream, const Node& node) {
+			stream << node.getState() << endl;
+			stream << "f: " << node.getFValue() << endl;
+			stream << "g: " << node.getGValue() << endl;
+			stream << "h: " << node.getHValue() << endl;
+			stream << "derr: " << node.getDErrValue() << endl;
+			stream << "d: " << node.getDValue() << endl;
+			stream << "epsilon-h: " << node.getEpsilonH() << endl;
+			stream << "epsilon-d: " << node.getEpsilonD() << endl;
+			stream << "f-hat: " << node.getFHatValue() << endl;
+			stream << "d-hat: " << node.getDHatValue() << endl;
+			stream << "h-hat: " << node.getHHatValue() << endl;
+			stream << "-----------------------------------------------" << endl;
+			stream << endl;
+			return stream;
 		}
 
 		static bool compareNodesF(const Node* n1, const Node* n2)
@@ -197,7 +224,8 @@ public:
 
 		// Get the start node
 		Node* start = new Node(0, domain.heuristic(domain.getStartState()), domain.distance(domain.getStartState()),
-			domain.epsilon(domain.getStartState()), domain.getStartState(), NULL, -1);
+			domain.distanceErr(domain.getStartState()), domain.epsilonHGlobal(), domain.epsilonDGlobal(), 
+			domain.getStartState(), NULL, -1);
 
 		while (1)
 		{
@@ -213,7 +241,7 @@ public:
 			restartLists(start);
 
 			// Exploration Phase
-
+			domain.updateEpsilons();
 			// First, generate the top-level actions
 			generateTopLevelActions(start, res);
 
@@ -244,7 +272,7 @@ public:
 
 		// Get the start node
 		Node* start = new Node(0, domain.heuristic(domain.getStartState()), domain.distance(domain.getStartState()),
-			domain.epsilon(domain.getStartState()), domain.getStartState(), NULL, -1);
+			domain.distanceErr(domain.getStartState()), domain.epsilonHGlobal(), domain.epsilonDGlobal(), domain.getStartState(), NULL, -1);
 
 		// Check if a goal has been reached
 		if (domain.isGoal(start->getState()))
@@ -258,7 +286,7 @@ public:
 		restartLists(start);
 
 		// Exploration Phase
-
+		domain.updateEpsilons();
 		// First, generate the top-level actions
 		generateTopLevelActions(start, res);
 
@@ -320,7 +348,10 @@ private:
 					it->second->setGValue(node->getGValue());
 					it->second->setParent(node->getParent());
 					it->second->setHValue(node->getHValue());
-					it->second->setDValue(node->getD());
+					it->second->setDValue(node->getDValue());
+					it->second->setDErrValue(node->getDErrValue());
+					it->second->setEpsilonH(node->getEpsilonH());
+					it->second->setEpsilonD(node->getEpsilonD());
 					it->second->setState(node->getState());
 					it->second->setOwningTLA(node->getOwningTLA());
 					tlaList[node->getOwningTLA()].open.push(it->second);
@@ -335,7 +366,10 @@ private:
 					it->second->setGValue(node->getGValue());
 					it->second->setParent(node->getParent());
 					it->second->setHValue(node->getHValue());
-					it->second->setDValue(node->getD());
+					it->second->setDValue(node->getDValue());
+					it->second->setDErrValue(node->getDErrValue());
+					it->second->setEpsilonH(node->getEpsilonH());
+					it->second->setEpsilonD(node->getEpsilonD());
 					it->second->setState(node->getState());
 					it->second->setOwningTLA(node->getOwningTLA());
 					tlaList[node->getOwningTLA()].open.push(it->second);
@@ -360,11 +394,21 @@ private:
 
 		vector<State> children = domain.successors(start->getState());
 		res.nodesGenerated += children.size();
+
+		State bestChild;
+		Cost bestF = numeric_limits<double>::infinity();
+
 		for (State child : children)
 		{
 			Node* childNode = new Node(start->getGValue() + domain.getEdgeCost(child),
-				domain.heuristic(child), domain.distance(child), domain.epsilon(child),
-				child, start, tlas.size());
+				domain.heuristic(child), domain.distance(child), domain.distanceErr(child), domain.epsilonHGlobal(),
+				domain.epsilonDGlobal(), child, start, tlas.size());
+
+			if (childNode->getFValue() < bestF)
+			{
+				bestF = childNode->getFValue();
+				bestChild = child;
+			}
 
 			// No top level action will ever be a duplicate, so no need to check.
 			// Make a new top level action and push this node onto its open
@@ -372,7 +416,7 @@ private:
 			tla.topLevelNode = childNode;
 
 			childNode->distribution = DiscreteDistribution(100, childNode->getFValue(), childNode->getFHatValue(), 
-				childNode->getD(), childNode->getEpsilon());
+				childNode->getDValue(), childNode->getFHatValue() - childNode->getFValue());
 
 			tla.expectedMinimumPathCost = childNode->distribution.expectedCost();
 
@@ -383,6 +427,16 @@ private:
 
 			// Add this top level action to the list
 			tlas.push_back(tla);
+		}
+
+		// Learn one-step error
+		if (!children.empty())
+		{
+			Cost epsD = (1 + domain.distance(bestChild)) - start->getDValue();
+			Cost epsH = (domain.getEdgeCost(bestChild) + domain.heuristic(bestChild)) - start->getHValue();
+
+			domain.pushEpsilonHGlobal(epsH);
+			domain.pushEpsilonDGlobal(epsD);
 		}
 	}
 

@@ -39,9 +39,9 @@ int main(int argc, char** argv)
 		// Make a tree world
 		TreeWorld world = TreeWorld(cin);
 
-		RealTimeSearch<TreeWorld> bfs(world, "bfs", "none", "k-best", lookaheadDepth, 1, "normal");
-		RealTimeSearch<TreeWorld> astar(world, "a-star", "none", "k-best", lookaheadDepth, 1, "normal");
-		RealTimeSearch<TreeWorld> fhat(world, "f-hat", "none", "k-best", lookaheadDepth, 1, "normal");
+		RealTimeSearch<TreeWorld> bfs(world, "bfs", "none", "bellman", lookaheadDepth);
+		RealTimeSearch<TreeWorld> astar(world, "a-star", "none", "bellman", lookaheadDepth);
+		RealTimeSearch<TreeWorld> fhat(world, "f-hat", "none", "bellman", lookaheadDepth);
 		RealTimeSearch<TreeWorld> risk(world, "risk", "none", "k-best", lookaheadDepth, 1, "normal");
 
 		bfsRes = bfs.search();
@@ -54,19 +54,15 @@ int main(int argc, char** argv)
 		// Make a tile puzzle
 		SlidingTilePuzzle world = SlidingTilePuzzle(cin);
 
-		RealTimeSearch<SlidingTilePuzzle> bfs(world, "bfs", "learn", "k-best", lookaheadDepth, 1, "normal");
-		RealTimeSearch<SlidingTilePuzzle> astar(world, "a-star", "learn", "k-best", lookaheadDepth, 1, "normal");
-		RealTimeSearch<SlidingTilePuzzle> fhat(world, "f-hat", "learn", "k-best", lookaheadDepth, 1, "normal");
+		RealTimeSearch<SlidingTilePuzzle> bfs(world, "bfs", "learn", "bellman", lookaheadDepth);
+		RealTimeSearch<SlidingTilePuzzle> astar(world, "a-star", "learn", "bellman", lookaheadDepth);
+		RealTimeSearch<SlidingTilePuzzle> fhat(world, "f-hat", "learn", "bellman", lookaheadDepth);
 		RealTimeSearch<SlidingTilePuzzle> risk(world, "risk", "learn", "k-best", lookaheadDepth, 1, "normal");
 
-		cout << "------------BFS---------------" << endl;
-		bfsRes = bfs.search();
-		cout << "------------A*---------------" << endl;
 		astarRes = astar.search();
-		cout << "------------RISK---------------" << endl;
 		riskRes = risk.search();
-		cout << "------------FHAT---------------" << endl;
 		fhatRes = fhat.search();
+		bfsRes = bfs.search();
 	}
 	else
 	{

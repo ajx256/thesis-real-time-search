@@ -82,9 +82,14 @@ public:
 		maxEdgeCosts = 100000;
 		generator.setSeed(seed);
 
+		maxEdgeCost = -1;
+
 		for (int i = 0; i < maxEdgeCosts; i++)
 		{
 			costMap[i] = generator.random();
+
+			if (costMap[i] > maxEdgeCost)
+				maxEdgeCost = costMap[i];
 		}
 
 		// Make the initial state
@@ -105,6 +110,16 @@ public:
 		return maxDepth - state.getDepth();
 	}
 
+	Cost distanceErr(const State& state) {
+		// Check if the distance error of this state has been updated
+		if (correctedDerr.find(state) != correctedDerr.end())
+		{
+			return correctedDerr[state];
+		}
+
+		return maxDepth - state.getDepth();
+	}
+
 	Cost heuristic(const State& state) {
 		// Check if the heuristic of this state has been updated
 		if (correctedH.find(state) != correctedH.end())
@@ -115,65 +130,59 @@ public:
 		return 0;
 	}
 
-	Cost epsilon(const State& state)
+	Cost epsilonHGlobal()
 	{
-		Cost eps;
+		return curEpsilonH;
+	}
 
-		if (expansionPolicy == "dfs")
+	Cost epsilonDGlobal()
+	{
+		return curEpsilonD;
+	}
+
+	void updateEpsilons()
+	{
+		if (expansionCounter == 0)
 		{
-			switch (lookahead)
-			{
-			case 3:
-				eps = 0.27;
-				break;
-			case 7:
-				eps = 0.24;
-				break;
-			case 9:
-				eps = 0.23;
-				break;
-			case 10:
-				eps = 0.225;
-				break;
-			case 14:
-				eps = 0.22;
-				break;
-			default:
-				break;
-			}
-		}
-		else
-		{
-			switch (lookahead)
-			{
-			case 3:
-				eps = 0.295;
-				break;
-			case 6:
-				eps = 0.27;
-				break;
-			case 10:
-				eps = 0.26;
-				break;
-			case 30:
-				eps = 0.23;
-				break;
-			case 100:
-				eps = 0.225;
-				break;
-			case 1000:
-				eps = 0.223;
-				break;
-			default:
-				break;
-			}
+			curEpsilonD = 0;
+			curEpsilonH = 0;
+
+			return;
 		}
 
-		return eps;
+		curEpsilonD = epsilonDSum / expansionCounter;
+
+		curEpsilonH = epsilonHSum / expansionCounter;
+	}
+
+	void pushEpsilonHGlobal(double eps)
+	{
+		if (eps < 0)
+			eps = 0;
+		else if (eps > 1)
+			eps = maxEdgeCost;
+
+		epsilonHSum += eps;
+		expansionCounter++;
+	}
+
+	void pushEpsilonDGlobal(double eps)
+	{
+		if (eps < 0)
+			eps = 0;
+		else if (eps > 1)
+			eps = 1;
+
+		epsilonDSum += eps;
+		expansionCounter++;
 	}
 
 	void updateDistance(const State& state, Cost value) {
 		correctedD[state] = value;
+	}
+
+	void updateDistanceErr(const State& state, Cost value) {
+		correctedDerr[state] = value;
 	}
 
 	void updateHeuristic(const State& state, Cost value) {
@@ -245,9 +254,14 @@ public:
 
 	void initialize(string policy, int la)
 	{
+		epsilonDSum = 0;
+		epsilonHSum = 0;
+		expansionCounter = 0;
+
 		expansionPolicy = policy;
 		lookahead = la;
 		correctedD.clear();
+		correctedDerr.clear();
 		correctedH.clear();
 		expansionDelayWindow.clear();
 	}
@@ -282,8 +296,16 @@ public:
 	unordered_map<int, Cost> costMap;
 	unordered_map<State, Cost, HashState> correctedH;
 	unordered_map<State, Cost, HashState> correctedD;
+	unordered_map<State, Cost, HashState> correctedDerr;
 	int maxEdgeCosts;
 	SlidingWindow<int> expansionDelayWindow;
+
+	double epsilonHSum;
+	double epsilonDSum;
+	double curEpsilonH;
+	double curEpsilonD;
+	double expansionCounter;
+	Cost maxEdgeCost;
 
 	string expansionPolicy;
 	int lookahead;

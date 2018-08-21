@@ -42,18 +42,22 @@ public:
 			for (State s : domain.predecessors(cur->getState()))
 			{
 				typename unordered_map<State, Node*, Hash>::iterator it = closed.find(s);
+
 				if (it != closed.end() &&
 					domain.heuristic(s) > domain.getEdgeCost(cur->getState()) + domain.heuristic(cur->getState()))
 				{
 					// Update the heuristic of this pedecessor
 					domain.updateHeuristic(s, domain.getEdgeCost(cur->getState()) + domain.heuristic(cur->getState()));
 					// Update the distance of this predecessor
-					domain.updateDistance(s, domain.distance(cur->getState()));
+					domain.updateDistance(s, domain.distance(cur->getState()) + 1);
+					// Update the distance for the heuristic error of this predecessor
+					domain.updateDistanceErr(s, domain.distanceErr(cur->getState()));
 
 					it->second->setDValue(domain.distance(s));
+					it->second->setDErrValue(domain.distanceErr(s));
 					it->second->setHValue(domain.heuristic(s));
 
-					if (open.find(it->second) != open.end())
+					if (open.find(it->second) == open.end())
 					{
 						open.push(it->second);
 					}
@@ -63,12 +67,6 @@ public:
 					}
 				}
 			}
-		}
-
-		for (typename unordered_map<State, Node*, Hash>::iterator it = closed.begin(); it != closed.end(); it++)
-		{
-			if (domain.heuristic(it->first) == numeric_limits<double>::infinity())
-				domain.updateHeuristic(it->first, it->second->getHValue());
 		}
 	}
 	

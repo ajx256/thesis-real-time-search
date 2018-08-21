@@ -182,10 +182,28 @@ public:
 		// Check if the distance of this state has been updated
 		if (correctedD.find(state) != correctedD.end())
 		{
-			return 1.25 * correctedD[state];
+			return correctedD[state];
 		}
 
-		return 1.25 * manhattanDistance(state);
+		Cost d = manhattanDistance(state);
+
+		correctedD[state] = d;
+
+		return correctedD[state];
+	}
+
+	Cost distanceErr(const State& state) {
+		// Check if the distance error of this state has been updated
+		if (correctedDerr.find(state) != correctedDerr.end())
+		{
+			return correctedDerr[state];
+		}
+
+		Cost derr = manhattanDistance(state);
+
+		correctedDerr[state] = derr;
+
+		return correctedDerr[state];
 	}
 
 	Cost heuristic(const State& state) {
@@ -195,19 +213,66 @@ public:
 			return correctedH[state];
 		}
 
-		return manhattanDistance(state);
+		Cost h = manhattanDistance(state);
+
+		correctedH[state] = h;
+
+		return correctedH[state];
 	}
 
-	Cost epsilon(const State& state)
+	Cost epsilonHGlobal()
 	{
-		Cost h = heuristic(state);
-		Cost d = distance(state);
+		return curEpsilonH;
+	}
 
-		return ((1.25 * h) - h) / d;
+	Cost epsilonDGlobal()
+	{
+		return curEpsilonD;
+	}
+
+	void updateEpsilons()
+	{
+		if (expansionCounter == 0)
+		{
+			curEpsilonD = 0;
+			curEpsilonH = 0;
+
+			return;
+		}
+
+		curEpsilonD = epsilonDSum / expansionCounter;
+
+		curEpsilonH = epsilonHSum / expansionCounter;
+	}
+
+	void pushEpsilonHGlobal(double eps)
+	{
+		if (eps < 0)
+			eps = 0;
+		else if (eps > 1)
+			eps = 1;
+
+		epsilonHSum += eps;
+		expansionCounter++;
+	}
+
+	void pushEpsilonDGlobal(double eps)
+	{
+		if (eps < 0)
+			eps = 0;
+		else if (eps > 1)
+			eps = 1;
+		
+		epsilonDSum += eps;
+		expansionCounter++;
 	}
 
 	void updateDistance(const State& state, Cost value) {
 		correctedD[state] = value;
+	}
+
+	void updateDistanceErr(const State& state, Cost value) {
+		correctedDerr[state] = value;
 	}
 
 	void updateHeuristic(const State& state, Cost value) {
@@ -231,9 +296,9 @@ public:
 		return manhattanSum;
 	}
 
-	int getBranchingFactor() const
+	double getBranchingFactor() const
 	{
-		return 4;
+		return 2.13;
 	}
 
 	void moveUp(std::vector<State>& succs, std::vector<std::vector<int> > board) const
@@ -404,10 +469,15 @@ public:
 
 	void initialize(string policy, int la)
 	{
+		epsilonDSum = 0;
+		epsilonHSum = 0;
+		expansionCounter = 0;
+
 		expansionPolicy = policy;
 		lookahead = la;
 		correctedD.clear();
 		correctedH.clear();
+		correctedDerr.clear();
 		expansionDelayWindow.clear();
 	}
 
@@ -440,6 +510,13 @@ public:
 	SlidingWindow<int> expansionDelayWindow;
 	unordered_map<State, Cost, HashState> correctedH;
 	unordered_map<State, Cost, HashState> correctedD;
+	unordered_map<State, Cost, HashState> correctedDerr;
+
+	double epsilonHSum;
+	double epsilonDSum;
+	double curEpsilonH;
+	double curEpsilonD;
+	double expansionCounter;
 
 	string expansionPolicy;
 	int lookahead;

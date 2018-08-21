@@ -173,7 +173,7 @@ public:
 			return;
 		}
 
-		double stdDev = (d * error) / 2.0;
+		double stdDev = error / 2.0;
 		var = pow(stdDev, 2);
 
 		// Create a Discrete Distribution from a gaussian
@@ -357,7 +357,7 @@ public:
 			return;
 		}
 
-		double stdDev = (d * error) / 2.0;
+		double stdDev = error / 2.0;
 		var = pow(stdDev, 2);
 
 		// Create a Discrete Distribution from a gaussian

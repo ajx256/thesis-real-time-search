@@ -41,7 +41,12 @@ public:
 		return window.end();
 	}
 
+	void setCapacity(double c)
+	{
+		capacity = c;
+	}
+
 private:
-	const double capacity;
+	double capacity;
 	vector<T> window;
 };

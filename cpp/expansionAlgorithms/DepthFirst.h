@@ -61,11 +61,21 @@ public:
 				// Expand this node and recurse down for each child
 				vector<State> children = domain.successors(cur.first->getState());
 				res.nodesGenerated += children.size();
+				
+				State bestChild;
+				Cost bestF = numeric_limits<double>::infinity();
+
 				for (State child : children)
 				{
 					Node* childNode = new Node(cur.first->getGValue() + domain.getEdgeCost(child),
-						domain.heuristic(child), domain.distance(child), domain.epsilon(child), 
-						child, cur.first, cur.first->getOwningTLA());
+						domain.heuristic(child), domain.distance(child), domain.distanceErr(child), 
+						domain.epsilonHGlobal(), domain.epsilonDGlobal(), child, cur.first, cur.first->getOwningTLA());
+
+					if (childNode->getFValue() < bestF)
+					{
+						bestF = childNode->getFValue();
+						bestChild = child;
+					}
 
 					// Duplicate detection
 					if (!duplicateDetection(childNode, closed, open, tlas))
@@ -75,6 +85,16 @@ public:
 					}
 					else
 						delete childNode;
+				}
+
+				// Learn the one-step error
+				if (!children.empty())
+				{
+					Cost epsD = (1 + domain.distance(bestChild)) - cur.first->getDValue();
+					Cost epsH = (domain.getEdgeCost(bestChild) + domain.heuristic(bestChild)) - cur.first->getHValue();
+
+					domain.pushEpsilonHGlobal(epsH);
+					domain.pushEpsilonDGlobal(epsD);
 				}
 			}
 		}

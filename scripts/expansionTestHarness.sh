@@ -1,44 +1,44 @@
 #!/bin/bash
 
-if (($# < 5))
+if (($# < 6))
 then
-  echo "./expansionTestHarness.sh <# of instances to test> <# of processes> <Domain Type> <Domain Variables> <Lookahead value 1> <optional: additional lookahead values>"
+  echo "./expansionTestHarness.sh <starting instance #> <# of instances to test> <# of processes> <Domain Type> <Domain Variables> <Lookahead value 1> <optional: additional lookahead values>"
   echo "Available domain types are TreeWorld and SlidingPuzzle"
   echo "Domain variables for TreeWorld: <branching factor> <tree depth>"
   echo "Domain variables for SlidingPuzzle: <puzzle dimensions>"
   exit 1
 fi
 
+# Which instance to start testing on
+firstInstance=$1
+
 # The maximum number of instances to test on
-maxInstances=$1
+maxInstances=$2
+lastInstance=$(( $firstInstance + $maxInstances ))
 
 # Max number of background processes to start, should probably not be more than the number of cores on the machine
-maxProcs=$2
+maxProcs=$3
 
 # The domain to run on
-domainType=$3
+domainType=$4
 
 numProcs=0
 
 if [ "$domainType" = "TreeWorld" ]
 then
-  branchFactors=$4
-  depths=$5
+  branchFactors=$5
+  depths=$6
   for b in ${branchFactors[@]}
   do
     for d in ${depths[@]}
     do
-      for lookahead in "${@:6}"
+      for lookahead in "${@:7}"
       do
         mkdir ../results/TreeWorld/expansionTests/Nancy/b${b}d${d}
-        instance=0
-		testInstancesRun=0
-        for file in ../worlds/treeWorld/b${b}d${d}-*
+        instance=$firstInstance
+        while ((instance < lastInstance))
         do
-		  if ((testInstancesRun >= maxInstances))
-		  then
-		    break
-		  fi
+		  file="../worlds/treeWorld/b${b}d${d}-${instance}.tw"
           if ((numProcs >= ${maxProcs}))
           then
             wait
@@ -52,25 +52,20 @@ then
 	        let instance++
             let numProcs++
 	      fi
-		  let testInstancesRun++
         done
       done
     done
   done
 elif [ "$domainType" = "SlidingPuzzle" ]
 then
-  dimensions=$4
-  for lookahead in "${@:5}"
+  dimensions=$5
+  for lookahead in "${@:6}"
   do
     mkdir ../results/SlidingTilePuzzle/expansionTests/Nancy/${dimensions}x${dimensions}
-    instance=0
-	testInstancesRun=0
-    for file in ../worlds/slidingTile/*
+    instance=$firstInstance
+    while ((instance < lastInstance))
     do
-	  if ((testInstancesRun >= maxInstances))
-	  then
-	    break
-	  fi
+	  file="../worlds/slidingTile/${instance}-${dimensions}x${dimensions}.st"
       if ((numProcs >= ${maxProcs}))
       then
         wait
@@ -84,7 +79,6 @@ then
 	    let instance++
         let numProcs++
 	  fi
-	  let testInstancesRun++
     done
   done
 else

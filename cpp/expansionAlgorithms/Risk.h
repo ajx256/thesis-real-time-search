@@ -76,13 +76,22 @@ public:
 			// Book keeping for number of nodes generated
 			res.nodesGenerated += children.size();
 
+			State bestChild;
+			Cost bestF = numeric_limits<double>::infinity();
+
 			// Iterate over the successor states
 			for (State child : children)
 			{
 				// Create a node for this state
 				Node* childNode = new Node(chosenNode->getGValue() + domain.getEdgeCost(child),
-					domain.heuristic(child), domain.distance(child), domain.epsilon(child),
-					child, chosenNode, chosenNode->getOwningTLA());
+					domain.heuristic(child), domain.distance(child), domain.distanceErr(child), 
+					domain.epsilonHGlobal(), domain.epsilonDGlobal(), child, chosenNode, chosenNode->getOwningTLA());
+
+				if (childNode->getFValue() < bestF)
+				{
+					bestF = childNode->getFValue();
+					bestChild = child;
+				}
 
 				// Duplicate detection performed
 				if (!duplicateDetection(childNode, closed, open, tlas))
@@ -99,6 +108,16 @@ public:
 					// If this state has already been visited, delete the node, one already exists with minimal g-value
 					delete childNode;
 				}
+			}
+
+			// Learn the one-step error
+			if (!children.empty())
+			{
+				Cost epsD = (1 + domain.distance(bestChild)) - chosenNode->getDValue();
+				Cost epsH = (domain.getEdgeCost(bestChild) + domain.heuristic(bestChild)) - chosenNode->getHValue();
+
+				domain.pushEpsilonHGlobal(epsH);
+				domain.pushEpsilonDGlobal(epsD);
 			}
 		}
 	}
@@ -131,7 +150,7 @@ private:
 			// Simulate how expanding this TLA's best node would affect its belief
 			// Belief of TLA is squished as a result of search. Mean stays the same, but variance is decreased by a factor based on expansion delay.
 			double ds = expansionsPerIteration / domain.averageDelayWindow();
-			double dy = tlas[i].open.top()->getD();
+			double dy = tlas[i].open.top()->getDValue();
 			double squishFactor = min(1.0, (ds / dy));
 
 			// Now squish the simulated belief by factor
@@ -232,7 +251,7 @@ private:
 
 					// Make this node's PDF a discrete distribution...
 					best->distribution = DiscreteDistribution(100, best->getFValue(), best->getFHatValue(),
-						best->getD(), best->getEpsilon());
+						best->getDValue(), best->getFHatValue() - best->getFValue());
 
 					tla.kBestNodes.push_back(best);
 					i++;
