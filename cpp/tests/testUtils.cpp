@@ -14,6 +14,7 @@ struct Node
 	bool open;
 
 public:
+	char label;
 	int getGValue() const { return g; }
 	int getHValue() const { return h; }
 	int getFValue() const { return g + h; }
@@ -120,5 +121,26 @@ int main()
 	for (auto item : pq1)
 	{
 		cout << item->getGValue() << " ";
+	}
+
+	cout << endl;
+	cout << "------- C++ Tie Breaking Test --------" << endl;
+	PriorityQueue<Node*> pq2;
+	pq2.swapComparator(compareNodesG);
+
+	for (int i = 0; i < 25; i++)
+	{
+		int h = rand() % 100;
+
+		Node* n = new Node(1, h);
+		n->label = i + 65;
+		pq2.push(n);
+		cout << pq2.top()->label << endl;
+	}
+	cout << "---------------------" << endl;
+	for (int i = 0; i < 50; i++)
+	{
+		pq2.swapComparator(compareNodesG);
+		cout << pq2.top()->label << endl;
 	}
 }
