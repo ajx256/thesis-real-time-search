@@ -36,11 +36,9 @@ public:
 		}
 
 		// Start by shoving everything on open onto the queue...
-		while (!open.empty())
+		for (Node* n : open)
 		{
-			q.push(open.top());
-			
-			open.pop();
+			q.push(n);
 		}
 
 		int expansions = 1;
@@ -54,8 +52,6 @@ public:
 			// Check if current node is goal
 			if (domain.isGoal(cur->getState()))
 			{
-				if (open.find(cur) == open.end())
-					open.push(cur);
 				return;
 			}
 

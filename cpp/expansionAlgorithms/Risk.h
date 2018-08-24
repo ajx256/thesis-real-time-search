@@ -238,40 +238,31 @@ private:
 		{
 			tla.kBestNodes.clear();
 
-			if (!tla.open.empty())
+			// If this TLA has unique, probably optimal subtrees beneath it, it is valid
+
+			int i = 0;
+			// Add to the best k nodes while i < k and non-selected nodes exist on the frontier
+			while (i < k && !tla.open.empty())
 			{
-				// If this TLA has unique, probably optimal subtrees beneath it, it is valid
+				Node* best = tla.open.top();
+				tla.open.pop();
 
-				int i = 0;
-				// Add to the best k nodes while i < k and non-selected nodes exist on the frontier
-				while (i < k && !tla.open.empty())
-				{
-					Node* best = tla.open.top();
-					tla.open.pop();
+				// Make this node's PDF a discrete distribution...
+				best->distribution = DiscreteDistribution(100, best->getFValue(), best->getFHatValue(),
+					best->getDValue(), best->getFHatValue() - best->getFValue());
 
-					// Make this node's PDF a discrete distribution...
-					best->distribution = DiscreteDistribution(100, best->getFValue(), best->getFHatValue(),
-						best->getDValue(), best->getFHatValue() - best->getFValue());
-
-					tla.kBestNodes.push_back(best);
-					i++;
-				}
-
-				// Now put the nodes back in the top level open list
-				for (Node* n : tla.kBestNodes)
-				{
-					tla.open.push(n);
-				}
-
-				// Now that k-best are selected, perform Cserna backup
-				csernaBackup(tla);
+				tla.kBestNodes.push_back(best);
+				i++;
 			}
-			else
+
+			// Now put the nodes back in the top level open list
+			for (Node* n : tla.kBestNodes)
 			{
-				// This TLA has no unique subtrees beneath it, thus can be pruned...
-				tla.expectedMinimumPathCost = numeric_limits<double>::infinity();
-				tla.belief = DiscreteDistribution(100, numeric_limits<double>::infinity());
+				tla.open.push(n);
 			}
+
+			// Now that k-best are selected, perform Cserna backup
+			csernaBackup(tla);
 		}
 	}
 

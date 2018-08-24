@@ -30,6 +30,8 @@ public:
 
 		Node* goalPrime = lowestExpectedPathTLA.topLevelNode;
 
+		goalPrime->markStart();
+
 		return goalPrime;
 	}
 
@@ -69,41 +71,32 @@ private:
 		{
 			tla.kBestNodes.clear();
 
-			if (!tla.open.empty())
+			// If this TLA has unique, probably optimal subtrees beneath it, it is valid
+
+			int i = 0;
+			// Add to the best k nodes while i < k and non-selected nodes exist on the frontier
+			while (i < k && !tla.open.empty())
 			{
-				// If this TLA has unique, probably optimal subtrees beneath it, it is valid
+				Node* best = tla.open.top();
+				tla.open.pop();
 
-				int i = 0;
-				// Add to the best k nodes while i < k and non-selected nodes exist on the frontier
-				while (i < k && !tla.open.empty())
+				// Make this node's PDF a discrete distribution...
+				if (beliefType == "normal")
 				{
-					Node* best = tla.open.top();
-					tla.open.pop();
-
-					// Make this node's PDF a discrete distribution...
-					if (beliefType == "normal")
-					{
-						best->distribution = DiscreteDistribution(100, best->getFValue(), best->getFHatValue(),
-							best->getDValue(), best->getFHatValue() - best->getFValue());
-					}
-					else
-					{
-						best->distribution = DiscreteDistribution(100, best->getGValue(), best->getDValue(), domain.getBranchingFactor());
-					}
-
-					tla.kBestNodes.push_back(best);
-					i++;
+					best->distribution = DiscreteDistribution(100, best->getFValue(), best->getFHatValue(),
+						best->getDValue(), best->getFHatValue() - best->getFValue());
+				}
+				else
+				{
+					best->distribution = DiscreteDistribution(100, best->getGValue(), best->getDValue(), domain.getBranchingFactor());
 				}
 
-				// Now that k-best are selected, perform Cserna backup
-				csernaBackup(tla);
+				tla.kBestNodes.push_back(best);
+				i++;
 			}
-			else
-			{
-				// This TLA has no unique subtrees beneath it, thus can be pruned...
-				tla.expectedMinimumPathCost = numeric_limits<double>::infinity();
-				tla.belief = DiscreteDistribution(100, numeric_limits<double>::infinity());
-			}
+
+			// Now that k-best are selected, perform Cserna backup
+			csernaBackup(tla);
 		}
 	}
 

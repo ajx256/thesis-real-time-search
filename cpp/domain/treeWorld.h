@@ -36,7 +36,7 @@ public:
 			return ((seedOffset != state.seedOffset) || (depth != state.depth));
 		}
 
-		unsigned long long hash() const {
+		unsigned long long key() const {
 			return seedOffset;
 		}
 
@@ -52,6 +52,16 @@ public:
 
 		uint64_t getSeedOffset() const {
 			return seedOffset;
+		}
+
+		int getLabel() const
+		{
+			return label;
+		}
+
+		void markStart()
+		{
+			label = -1;
 		}
 
 	private:
@@ -93,7 +103,7 @@ public:
 		}
 
 		// Make the initial state
-		startState = State(0, 0, 's');
+		startState = State(0, 0, -1);
 	}
 
 	bool isGoal(const State& location) const {

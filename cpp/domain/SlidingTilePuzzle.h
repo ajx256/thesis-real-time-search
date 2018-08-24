@@ -9,6 +9,8 @@
 #include <unordered_map>
 #include "../utility/SlidingWindow.h"
 
+#include <bitset>
+
 using namespace std;
 
 class SlidingTilePuzzle {
@@ -20,7 +22,10 @@ public:
 	public:
 		State() {}
 
-		State(std::vector<std::vector<int> > b, char l) : board(b), label(l) {}
+		State(std::vector<std::vector<int> > b, char l) : board(b), label(l) 
+		{
+			generateKey();
+		}
 		
 		friend std::ostream& operator<<(std::ostream& stream, const SlidingTilePuzzle::State& state) {
 			for (int r = 0; r < state.getBoard().size(); r++)
@@ -35,7 +40,7 @@ public:
 		}
 
 		bool operator==(const State& state) const {
-			return board == state.getBoard();
+			return theKey == state.key();
 		}
 
 
@@ -43,7 +48,7 @@ public:
 			return board != state.getBoard();
 		}
 
-		unsigned long long hash() const {
+		void generateKey() {
 			// This will provide a unique hash for every state in the 15 puzzle,
 			// Other puzzle variants may/will see collisions...
 			unsigned long long val = 0;
@@ -51,11 +56,15 @@ public:
 			{
 				for (int c = 0; c < board[r].size(); c++)
 				{
-					unsigned long long index = (board.size() * r) + c;
-					val |= index << (board[r][c]);
+					val = val << 4;
+					val = val | board[r][c];
 				}
 			}
-			return val;
+			theKey = val;
+		}
+
+		unsigned long long key() const {
+			return theKey;
 		}
 
 		std::string toString() const {
@@ -80,26 +89,52 @@ public:
 			return label;
 		}
 
+		void markStart()
+		{
+			label = 's';
+		}
+
 	private:
 		std::vector<std::vector<int> > board;
 		char label;
+		unsigned long long theKey = 0;
 	};
 
 	struct HashState
 	{
+		HashState()
+		{
+			srand(time(NULL));
+			// Populate the table of random integers
+			for (int i = 0; i < 256; i++)
+			{
+				table.push_back(rand());
+			}
+		}
+
 		std::size_t operator()(const State &s) const
 		{
-			unsigned long long val = 0;
-			for (int r = 0; r < s.getBoard().size(); r++)
+			std::size_t hash = 0;
+
+			unsigned long long key = s.key();
+
+			// For each byte in the key...
+			for (int i = 7; i >= 0; i--)
 			{
-				for (int c = 0; c < s.getBoard()[r].size(); c++)
-				{
-					unsigned long long index = (s.getBoard().size() * r) + c;
-					val |= index << (s.getBoard()[r][c]);
-				}
+				unsigned int byte = key >> (i * 8) & 0x000000FF;
+				hash = leftRotate(hash, 1);
+				hash = hash ^ table[byte];
 			}
-			return val;
+
+			return hash;
 		}
+
+		std::size_t leftRotate(std::size_t n, unsigned int d) const
+		{
+			return (n << d) | (n >> (32 - d));
+		}
+
+		vector<int> table;
 	};
 
 	SlidingTilePuzzle(std::istream& input) {
@@ -187,7 +222,7 @@ public:
 
 		Cost d = manhattanDistance(state);
 
-		correctedD[state] = d;
+		updateDistance(state, d);
 
 		return correctedD[state];
 	}
@@ -201,8 +236,8 @@ public:
 
 		Cost derr = manhattanDistance(state);
 
-		correctedDerr[state] = derr;
-
+		updateDistanceErr(state, derr);
+		
 		return correctedDerr[state];
 	}
 
@@ -215,7 +250,7 @@ public:
 
 		Cost h = manhattanDistance(state);
 
-		correctedH[state] = h;
+		updateHeuristic(state, h);
 
 		return correctedH[state];
 	}
@@ -472,6 +507,8 @@ public:
 		epsilonDSum = 0;
 		epsilonHSum = 0;
 		expansionCounter = 0;
+		curEpsilonD = 0;
+		curEpsilonH = 0;
 
 		expansionPolicy = policy;
 		lookahead = la;
