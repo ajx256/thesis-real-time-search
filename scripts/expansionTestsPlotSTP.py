@@ -6,7 +6,7 @@ from os import listdir
 
 # Hard coded result directories
 resultDirs = {"4x4"}
-limits = [10, 100, 1000]
+limits = [3, 10, 30, 100, 300, 1000]
 
 algorithmsExpA = ["A*", "F-Hat"]
 algorithmsDiffExpA = ["A*", "F-Hat"]

@@ -5,7 +5,7 @@ import seaborn as sns
 from os import listdir
 
 # Hard coded result directories
-resultDirs = {"b2d10", "b2d15"}
+resultDirs = {"b2d10"}
 
 colors=["#e6194b", "#3cb44b", "#ffe119", "#0082c8", "#f58231", "#911eb4",
         "#46f0f0", "#f032e6", "#808000", "#fabebe", "#008080", "#e6beff", 
