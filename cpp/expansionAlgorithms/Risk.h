@@ -28,6 +28,8 @@ public:
 		std::function<bool(Node*, unordered_map<State, Node*, Hash>&, PriorityQueue<Node*>&, vector<TopLevelAction>&)> duplicateDetection,
 		ResultContainer& res)
 	{
+		genIndex = tlas.size();
+
 		// This starts at 1, because we had to expand start to get the top level actions
 		int expansions = 1;
 
@@ -87,15 +89,20 @@ public:
 					domain.heuristic(child), domain.distance(child), domain.distanceErr(child), 
 					domain.epsilonHGlobal(), domain.epsilonDGlobal(), child, chosenNode, chosenNode->getOwningTLA());
 
-				if (childNode->getFValue() < bestF)
+				bool dup = duplicateDetection(childNode, closed, open, tlas);
+
+				if (!dup && childNode->getFValue() < bestF)
 				{
 					bestF = childNode->getFValue();
 					bestChild = child;
 				}
 
 				// Duplicate detection performed
-				if (!duplicateDetection(childNode, closed, open, tlas))
+				if (!dup)
 				{
+					childNode->genIndex = genIndex;
+					genIndex++;
+
 					// If this state hasn't yet been reached, add this node open 
 					open.push(childNode);
 					closed[child] = childNode;
@@ -111,7 +118,7 @@ public:
 			}
 
 			// Learn the one-step error
-			if (!children.empty())
+			if (bestF != numeric_limits<double>::infinity())
 			{
 				Cost epsD = (1 + domain.distance(bestChild)) - chosenNode->getDValue();
 				Cost epsH = (domain.getEdgeCost(bestChild) + domain.heuristic(bestChild)) - chosenNode->getHValue();
@@ -272,4 +279,5 @@ protected:
 	string sortingFunction;
 	int k = 1;
 	int expansionsPerIteration;
+	int genIndex;
 };

@@ -1,6 +1,5 @@
 #pragma once
 #include <unordered_map>
-#include <queue>
 #include <functional>
 #include "ExpansionAlgorithm.h"
 #include "../utility/PriorityQueue.h"
@@ -29,26 +28,18 @@ public:
 		std::function<bool(Node*, unordered_map<State, Node*, Hash>&, PriorityQueue<Node*>&, vector<TopLevelAction>&)> duplicateDetection,
 		ResultContainer& res)
 	{
-		// Empty any old values out of the queue
-		while (!q.empty())
-		{
-			q.pop();
-		}
+		genIndex = tlas.size();
 
-		// Start by shoving everything on open onto the queue...
-		for (Node* n : open)
-		{
-			q.push(n);
-		}
+		// Sort Open...
+		open.swapComparator(Node::compareNodesGenerationTime);
 
 		int expansions = 1;
 
-		while (!q.empty() && expansions < lookahead)
+		while (!open.empty() && expansions < lookahead)
 		{
 			// Pop lowest fhat-value off open
-			Node* cur = q.front();
-			q.pop();
-
+			Node* cur = open.top();
+			
 			// Check if current node is goal
 			if (domain.isGoal(cur->getState()))
 			{
@@ -59,7 +50,7 @@ public:
 			expansions++;
 
 			cur->close();
-			open.remove(cur);
+			open.pop();
 
 			// Remove this node from the open list of any TLAs
 			tlas[cur->getOwningTLA()].open.remove(cur);
@@ -76,16 +67,21 @@ public:
 					domain.heuristic(child), domain.distance(child), domain.distanceErr(child), 
 					domain.epsilonHGlobal(), domain.epsilonDGlobal(), child, cur, cur->getOwningTLA());
 
-				if (childNode->getFValue() < bestF)
+				bool dup = duplicateDetection(childNode, closed, open, tlas);
+
+				if (!dup && childNode->getFValue() < bestF)
 				{
 					bestF = childNode->getFValue();
 					bestChild = child;
 				}
 
 				// Duplicate detection
-				if (!duplicateDetection(childNode, closed, open, tlas))
+				if (!dup)
 				{
-					q.push(childNode);
+					childNode->genIndex = genIndex;
+					genIndex++;
+
+					open.push(childNode);
 					open.push(childNode);
 					closed[child] = childNode;
 
@@ -97,7 +93,7 @@ public:
 			}
 
 			// Learn one-step error
-			if (!children.empty())
+			if (bestF != numeric_limits<double>::infinity())
 			{
 				Cost epsD = (1 + domain.distance(bestChild)) - cur->getDValue();
 				Cost epsH = (domain.getEdgeCost(bestChild) + domain.heuristic(bestChild)) - cur->getHValue();
@@ -111,5 +107,5 @@ public:
 protected:
 	Domain & domain;
 	double lookahead;
-	queue<Node*> q;
+	int genIndex;
 };

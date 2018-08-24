@@ -29,6 +29,8 @@ public:
 		std::function<bool(Node*, unordered_map<State, Node*, Hash>&, PriorityQueue<Node*>&, vector<TopLevelAction>&)> duplicateDetection,
 		ResultContainer& res)
 	{
+		genIndex = tlas.size();
+
 		// Start by shoving everything on open onto the stack...
 		while (!open.empty())
 		{
@@ -71,15 +73,19 @@ public:
 						domain.heuristic(child), domain.distance(child), domain.distanceErr(child), 
 						domain.epsilonHGlobal(), domain.epsilonDGlobal(), child, cur.first, cur.first->getOwningTLA());
 
-					if (childNode->getFValue() < bestF)
+					bool dup = duplicateDetection(childNode, closed, open, tlas);
+
+					if (!dup && childNode->getFValue() < bestF)
 					{
 						bestF = childNode->getFValue();
 						bestChild = child;
 					}
 
 					// Duplicate detection
-					if (!duplicateDetection(childNode, closed, open, tlas))
+					if (!dup)
 					{
+						childNode->genIndex = genIndex;
+						genIndex++;
 						closed[child] = childNode;
 						theStack.push(make_pair(childNode, cur.second + 1));
 					}
@@ -88,7 +94,7 @@ public:
 				}
 
 				// Learn the one-step error
-				if (!children.empty())
+				if (bestF != numeric_limits<double>::infinity())
 				{
 					Cost epsD = (1 + domain.distance(bestChild)) - cur.first->getDValue();
 					Cost epsH = (domain.getEdgeCost(bestChild) + domain.heuristic(bestChild)) - cur.first->getHValue();
@@ -104,4 +110,5 @@ protected:
 	Domain& domain;
 	double lookahead;
 	stack<pair<Node*, int> > theStack;
+	int genIndex;
 };
