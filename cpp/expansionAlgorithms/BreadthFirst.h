@@ -29,11 +29,13 @@ public:
 		std::function<bool(Node*, unordered_map<State, Node*, Hash>&, PriorityQueue<Node*>&, vector<TopLevelAction>&)> duplicateDetection,
 		ResultContainer& res)
 	{
+		// Empty any old values out of the queue
 		while (!q.empty())
 		{
 			q.pop();
 		}
 
+		// Start by shoving everything on open onto the queue...
 		for (Node* n : open)
 		{
 			q.push(n);
@@ -41,10 +43,11 @@ public:
 
 		int expansions = 1;
 
-		while (!open.empty() && expansions < lookahead)
+		while (!q.empty() && expansions < lookahead)
 		{
 			// Pop lowest fhat-value off open
-			Node* cur = open.top();
+			Node* cur = q.front();
+			q.pop();
 			
 			// Check if current node is goal
 			if (domain.isGoal(cur->getState()))
@@ -56,7 +59,6 @@ public:
 			expansions++;
 
 			cur->close();
-			q.pop();
 			open.remove(cur);
 
 			// Remove this node from the open list of any TLAs
