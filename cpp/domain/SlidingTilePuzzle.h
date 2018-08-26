@@ -40,7 +40,7 @@ public:
 		}
 
 		bool operator==(const State& state) const {
-			return theKey == state.key();
+			return board == state.getBoard();
 		}
 
 
@@ -114,7 +114,7 @@ public:
 
 		std::size_t operator()(const State &s) const
 		{
-			std::size_t hash = 0;
+			unsigned int hash = 0;
 
 			unsigned long long key = s.key();
 

@@ -28,8 +28,6 @@ public:
 		std::function<bool(Node*, unordered_map<State, Node*, Hash>&, PriorityQueue<Node*>&, vector<TopLevelAction>&)> duplicateDetection,
 		ResultContainer& res)
 	{
-		genIndex = tlas.size();
-
 		// This starts at 1, because we had to expand start to get the top level actions
 		int expansions = 1;
 
@@ -100,9 +98,6 @@ public:
 				// Duplicate detection performed
 				if (!dup)
 				{
-					childNode->genIndex = genIndex;
-					genIndex++;
-
 					// If this state hasn't yet been reached, add this node open 
 					open.push(childNode);
 					closed[child] = childNode;
@@ -279,5 +274,4 @@ protected:
 	string sortingFunction;
 	int k = 1;
 	int expansionsPerIteration;
-	int genIndex;
 };

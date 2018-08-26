@@ -28,8 +28,6 @@ public:
 		std::function<bool(Node*, unordered_map<State, Node*, Hash>&, PriorityQueue<Node*>&, vector<TopLevelAction>&)> duplicateDetection,
 		ResultContainer& res)
 	{
-		genIndex = tlas.size();
-
 		// First things first, reorder open so it matches our expansion policy needs
 		sortOpen(open);
 
@@ -80,9 +78,6 @@ public:
 				// Duplicate detection
 				if (!dup)
 				{
-					childNode->genIndex = genIndex;
-					genIndex++;
-
 					open.push(childNode);
 					closed[child] = childNode;
 
@@ -118,5 +113,4 @@ protected:
 	Domain & domain;
 	double lookahead;
 	string sortingFunction;
-	int genIndex;
 };

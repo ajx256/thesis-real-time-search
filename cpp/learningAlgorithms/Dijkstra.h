@@ -63,7 +63,7 @@ public:
 					}
 					else
 					{
-						open.update();
+						open.update(it->second);
 					}
 				}
 			}

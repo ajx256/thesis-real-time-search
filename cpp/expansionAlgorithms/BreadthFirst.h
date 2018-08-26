@@ -1,6 +1,7 @@
 #pragma once
 #include <unordered_map>
 #include <functional>
+#include <queue>
 #include "ExpansionAlgorithm.h"
 #include "../utility/PriorityQueue.h"
 #include"../utility/ResultContainer.h"
@@ -28,10 +29,15 @@ public:
 		std::function<bool(Node*, unordered_map<State, Node*, Hash>&, PriorityQueue<Node*>&, vector<TopLevelAction>&)> duplicateDetection,
 		ResultContainer& res)
 	{
-		genIndex = tlas.size();
+		while (!q.empty())
+		{
+			q.pop();
+		}
 
-		// Sort Open...
-		open.swapComparator(Node::compareNodesGenerationTime);
+		for (Node* n : open)
+		{
+			q.push(n);
+		}
 
 		int expansions = 1;
 
@@ -50,7 +56,8 @@ public:
 			expansions++;
 
 			cur->close();
-			open.pop();
+			q.pop();
+			open.remove(cur);
 
 			// Remove this node from the open list of any TLAs
 			tlas[cur->getOwningTLA()].open.remove(cur);
@@ -78,10 +85,7 @@ public:
 				// Duplicate detection
 				if (!dup)
 				{
-					childNode->genIndex = genIndex;
-					genIndex++;
-
-					open.push(childNode);
+					q.push(childNode);
 					open.push(childNode);
 					closed[child] = childNode;
 
@@ -107,5 +111,5 @@ public:
 protected:
 	Domain & domain;
 	double lookahead;
-	int genIndex;
+	queue<Node*> q;
 };

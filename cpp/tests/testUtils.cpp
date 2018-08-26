@@ -33,12 +33,12 @@ bool comparesNodesF(const Node* n1, const Node* n2)
 	// Tie break on heuristic
 	if (n1->getFValue() == n2->getFValue())
 		return n1->getGValue() > n2->getGValue();
-	return n1->getFValue() > n2->getFValue();
+	return n1->getFValue() < n2->getFValue();
 }
 
-bool compareNodesG(const Node* n1, const Node* n2)
+bool compareNodesH(const Node* n1, const Node* n2)
 {
-	return n1->getGValue() < n2->getGValue();
+	return n1->getHValue() < n2->getHValue();
 }
 
 int main()
@@ -113,34 +113,51 @@ int main()
 		pq1.push(n);
 	}
 
-	pq1.swapComparator(compareNodesG);
+	pq1.swapComparator(compareNodesH);
 
 	cout << endl;
 	cout << endl;
 
-	for (auto item : pq1)
+	while (!pq1.empty())
 	{
-		cout << item->getGValue() << " ";
+		cout << pq1.top()->getHValue() << " ";
+		pq1.pop();
 	}
 
 	cout << endl;
 	cout << "------- C++ Tie Breaking Test --------" << endl;
 	PriorityQueue<Node*> pq2;
-	pq2.swapComparator(compareNodesG);
+	pq2.swapComparator(compareNodesH);
 
 	for (int i = 0; i < 25; i++)
 	{
-		int h = rand() % 100;
-
-		Node* n = new Node(1, h);
+		int h = 1;
+		int g = 5;
+		if (i % 2 == 0)
+		{
+			g = 3;
+			h = 2;
+		}
+		Node* n = new Node(g, h);
 		n->label = i + 65;
 		pq2.push(n);
 		cout << pq2.top()->label << endl;
 	}
-	cout << "---------------------" << endl;
+	cout << "------------TEST SWAP COMP------------" << endl;
 	for (int i = 0; i < 50; i++)
 	{
-		pq2.swapComparator(compareNodesG);
-		cout << pq2.top()->label << endl;
+		pq2.swapComparator(comparesNodesF);
+		for (Node* n : pq2)
+		{
+			cout << n->label << " ";
+		}
+		cout << endl;
+		pq2.swapComparator(compareNodesH);
+		for (Node* n : pq2)
+		{
+			cout << n->label << " ";
+		}
+		cout << endl;
+		cout << "---------------------------" << endl;
 	}
 }

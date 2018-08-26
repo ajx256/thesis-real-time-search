@@ -29,8 +29,6 @@ public:
 		std::function<bool(Node*, unordered_map<State, Node*, Hash>&, PriorityQueue<Node*>&, vector<TopLevelAction>&)> duplicateDetection,
 		ResultContainer& res)
 	{
-		genIndex = tlas.size();
-
 		// Start by shoving everything on open onto the stack...
 		while (!open.empty())
 		{
@@ -84,8 +82,6 @@ public:
 					// Duplicate detection
 					if (!dup)
 					{
-						childNode->genIndex = genIndex;
-						genIndex++;
 						closed[child] = childNode;
 						theStack.push(make_pair(childNode, cur.second + 1));
 					}
@@ -110,5 +106,4 @@ protected:
 	Domain& domain;
 	double lookahead;
 	stack<pair<Node*, int> > theStack;
-	int genIndex;
 };

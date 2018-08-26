@@ -44,8 +44,6 @@ public:
 		DiscreteDistribution distribution;
 
 	public:
-		int genIndex;
-
 		Cost getGValue() const { return g; }
 		Cost getHValue() const { return h; }
 		Cost getDValue() const { return d; }
@@ -109,13 +107,9 @@ public:
 			// Tie break on g-value
 			if (n1->getFValue() == n2->getFValue())
 			{
-				if (n1->getGValue() == n2->getGValue())
-				{
-					return n1->genIndex > n2->genIndex;
-				}
-				return n1->getGValue() < n2->getGValue();
+				return n1->getGValue() > n2->getGValue();
 			}
-			return n1->getFValue() > n2->getFValue();
+			return n1->getFValue() < n2->getFValue();
 		}
 
 		static bool compareNodesFHat(const Node* n1, const Node* n2)
@@ -123,31 +117,18 @@ public:
 			// Tie break on g-value
 			if (n1->getFHatValue() == n2->getFHatValue())
 			{
-				if (n1->getGValue() == n2->getGValue()) 
-				{
-					return n1->genIndex > n2->genIndex;
-				}
-				return n1->getGValue() < n2->getGValue();
+				return n1->getGValue() > n2->getGValue();
 			}
-			return n1->getFHatValue() > n2->getFHatValue();
+			return n1->getFHatValue() < n2->getFHatValue();
 		}
 
 		static bool compareNodesH(const Node* n1, const Node* n2)
 		{
 			if (n1->getHValue() == n2->getHValue())
 			{
-				if (n1->getGValue() == n2->getGValue())
-				{
-					return n1->genIndex > n2->genIndex;
-				}
-				return n1->getGValue() < n2->getGValue();
+				return n1->getGValue() > n2->getGValue();
 			}
-			return n1->getHValue() > n2->getHValue();
-		}
-
-		static bool compareNodesGenerationTime(const Node* n1, const Node* n2)
-		{
-			return n1->genIndex > n2->genIndex;
+			return n1->getHValue() < n2->getHValue();
 		}
 	};
 
@@ -445,8 +426,6 @@ private:
 				childNode->getDValue(), childNode->getFHatValue() - childNode->getFValue());
 
 			tla.expectedMinimumPathCost = childNode->distribution.expectedCost();
-
-			childNode->genIndex = tlas.size();
 
 			// Push this node onto open and closed
 			closed[child] = childNode;
