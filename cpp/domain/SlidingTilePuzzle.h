@@ -97,23 +97,16 @@ public:
 	private:
 		std::vector<std::vector<int> > board;
 		char label;
-		unsigned long long theKey = 0;
+		unsigned long long theKey = -1;
 	};
 
 	struct HashState
 	{
-		HashState()
-		{
-			srand(time(NULL));
-			// Populate the table of random integers
-			for (int i = 0; i < 256; i++)
-			{
-				table.push_back(rand());
-			}
-		}
-
 		std::size_t operator()(const State &s) const
 		{
+			return s.key();
+
+			/*This tabulation hashing causes mad bugs and non-deterministic behavior. Fix later, use shitty hash now and get results...
 			unsigned int hash = 0;
 
 			unsigned long long key = s.key();
@@ -123,18 +116,17 @@ public:
 			{
 				unsigned int byte = key >> (i * 8) & 0x000000FF;
 				hash = leftRotate(hash, 1);
-				hash = hash ^ table[byte];
+				hash = hash ^ SlidingTilePuzzle::table[byte];
 			}
-
+			cout << key << " " << hash << endl;
 			return hash;
+			*/
 		}
 
 		std::size_t leftRotate(std::size_t n, unsigned int d) const
 		{
 			return (n << d) | (n >> (32 - d));
 		}
-
-		vector<int> table;
 	};
 
 	SlidingTilePuzzle(std::istream& input) {
@@ -198,6 +190,17 @@ public:
 			if (c >= size - 1)
 			{
 				r++;
+			}
+		}
+
+		// If the table of random numbers for the hash function hasn't been filled
+		// then it should be filled now...
+		if (SlidingTilePuzzle::table.empty())
+		{
+			srand(time(NULL));
+			for (int i = 0; i < 256; i++)
+			{
+				table.push_back(rand());
 			}
 		}
 
@@ -557,4 +560,8 @@ public:
 
 	string expansionPolicy;
 	int lookahead;
+
+	static vector<int> table;
 };
+
+vector<int> SlidingTilePuzzle::table;
