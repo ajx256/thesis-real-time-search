@@ -70,14 +70,12 @@ int main(int argc, char** argv)
 		RealTimeSearch<SlidingTilePuzzle> minimin(world, "dfs", "learn", "minimin", lookaheadDepth);
 		RealTimeSearch<SlidingTilePuzzle> nancy(world, "dfs", "learn", "k-best", lookaheadDepth, 1, "normal");
 		RealTimeSearch<SlidingTilePuzzle> cserna(world, "dfs", "learn", "k-best", lookaheadDepth, numeric_limits<double>::infinity(), "normal");
-		RealTimeSearch<SlidingTilePuzzle> pemberton(world, "dfs", "learn", "k-best", lookaheadDepth, numeric_limits<double>::infinity(), "pemberton");
 		RealTimeSearch<SlidingTilePuzzle> k3(world, "dfs", "learn", "k-best", lookaheadDepth, 3, "normal");
 		RealTimeSearch<SlidingTilePuzzle> k10(world, "dfs", "learn", "k-best", lookaheadDepth, 10, "normal");
 		RealTimeSearch<SlidingTilePuzzle> k30(world, "dfs", "learn", "k-best", lookaheadDepth, 30, "normal");
 
 		miniminRes = minimin.search();
 		bellmanRes = bellman.search();
-		pembertonRes = pemberton.search();
 		nancyRes = nancy.search();
 		csernaRes = cserna.search();
 		k3Res = k3.search();

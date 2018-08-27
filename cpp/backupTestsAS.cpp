@@ -65,19 +65,17 @@ int main(int argc, char** argv)
 		// Make a tile puzzle
 		SlidingTilePuzzle world = SlidingTilePuzzle(cin);
 
-		// Run DFS with differing backup methods for decision making
+		// Run AS with differing backup methods for decision making
 		RealTimeSearch<SlidingTilePuzzle> bellman(world, "a-star", "learn", "bellman", lookaheadDepth);
 		RealTimeSearch<SlidingTilePuzzle> minimin(world, "a-star", "learn", "minimin", lookaheadDepth);
 		RealTimeSearch<SlidingTilePuzzle> nancy(world, "a-star", "learn", "k-best", lookaheadDepth, 1, "normal");
 		RealTimeSearch<SlidingTilePuzzle> cserna(world, "a-star", "learn", "k-best", lookaheadDepth, numeric_limits<double>::infinity(), "normal");
-		RealTimeSearch<SlidingTilePuzzle> pemberton(world, "a-star", "learn", "k-best", lookaheadDepth, numeric_limits<double>::infinity(), "pemberton");
 		RealTimeSearch<SlidingTilePuzzle> k3(world, "a-star", "learn", "k-best", lookaheadDepth, 3, "normal");
 		RealTimeSearch<SlidingTilePuzzle> k10(world, "a-star", "learn", "k-best", lookaheadDepth, 10, "normal");
 		RealTimeSearch<SlidingTilePuzzle> k30(world, "a-star", "learn", "k-best", lookaheadDepth, 30, "normal");
 
 		miniminRes = minimin.search();
 		bellmanRes = bellman.search();
-		pembertonRes = pemberton.search();
 		nancyRes = nancy.search();
 		csernaRes = cserna.search();
 		k3Res = k3.search();
