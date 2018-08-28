@@ -83,8 +83,7 @@ for instance in resultDirs:
 
     plt.ylabel("Solution Cost", color='black', fontsize=18)
     plt.xlabel("Depth Limit", color='black', fontsize=18)
-    plt.tight_layout()
-    plt.savefig("../plots/Experiment1AViolin" + instance + ".pdf")
+    plt.savefig("../plots/Experiment1AViolin" + instance + ".pdf", bbox_inches="tight", pad_inches=0)
     
     plt.close()
     plt.clf()
@@ -98,8 +97,7 @@ for instance in resultDirs:
     ax.tick_params(colors='black', labelsize=12)
     plt.ylabel("Algorithm Cost - Cserna Cost", color='black', fontsize=18)
     plt.xlabel("Depth Limit", color='black', fontsize=18)
-    plt.tight_layout()
-    plt.savefig("../plots/Experiment1ADifference" + instance + ".pdf")
+    plt.savefig("../plots/Experiment1ADifference" + instance + ".pdf", bbox_inches="tight", pad_inches=0)
     
     plt.close()
     plt.clf()

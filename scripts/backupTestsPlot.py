@@ -110,8 +110,7 @@ for instance in resultDirs:
 
     plt.ylabel("Solution Cost", color='black', fontsize=18)
     plt.xlabel("Depth Limit", color='black', fontsize=18)
-    plt.tight_layout()
-    plt.savefig("../plots/Experiment1BViolin" + instance + ".pdf")
+    plt.savefig("../plots/Experiment1BViolin" + instance + ".pdf", bbox_inches="tight", pad_inches=0)
     
     plt.close()
     plt.clf()
@@ -125,8 +124,7 @@ for instance in resultDirs:
     ax.tick_params(colors='black', labelsize=12)
     plt.ylabel("Algorithm Cost - Cserna Cost", color='black', fontsize=18)
     plt.xlabel("Depth Limit", color='black', fontsize=18)
-    plt.tight_layout()
-    plt.savefig("../plots/Experiment1BDifference" + instance + ".pdf")
+    plt.savefig("../plots/Experiment1BDifference" + instance + ".pdf", bbox_inches="tight", pad_inches=0)
     
     plt.close()
     plt.clf()
@@ -146,8 +144,7 @@ for instance in resultDirs:
     sns.violinplot(x="Node Expansion Limit", y="Solution Cost", hue="Algorithm", order=depthsAS, hue_order=algorithms, data=instanceDataAS, palette="Set2")    
     plt.ylabel("Solution Cost", color='black', fontsize=18)
     plt.xlabel("Node Expansion Limit", color='black', fontsize=18)
-    plt.tight_layout()
-    plt.savefig("../plots/Experiment1CViolin" + instance + ".pdf")
+    plt.savefig("../plots/Experiment1CViolin" + instance + ".pdf", bbox_inches="tight", pad_inches=0)
     
     plt.close()
     plt.clf()
@@ -161,8 +158,7 @@ for instance in resultDirs:
     ax.tick_params(colors='black', labelsize=12)
     plt.ylabel("Algorithm Cost - Cserna Cost", color='black', fontsize=18)
     plt.xlabel("Node Expansion Limit", color='black', fontsize=18)
-    plt.tight_layout()
-    plt.savefig("../plots/Experiment1CDifference" + instance + ".pdf")
+    plt.savefig("../plots/Experiment1CDifference" + instance + ".pdf", bbox_inches="tight", pad_inches=0)
     
     plt.close()
     plt.clf()

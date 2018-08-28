@@ -155,8 +155,7 @@ for instance in resultDirs:
 
     plt.ylabel("Solution Cost", color='black', fontsize=18)
     plt.xlabel("Node Expansion Limit", color='black', fontsize=18)
-    plt.tight_layout()
-    plt.savefig("../plots/Experiment2AViolin" + instance + ".pdf")
+    plt.savefig("../plots/Experiment2AViolin" + instance + ".pdf", bbox_inches="tight", pad_inches=0)
     
     plt.close()
     plt.clf()
@@ -170,8 +169,7 @@ for instance in resultDirs:
     ax.tick_params(colors='black', labelsize=12)
     plt.ylabel("Algorithm Cost - A* Cost", color='black', fontsize=18)
     plt.xlabel("Node Expansion Limit", color='black', fontsize=18)
-    plt.tight_layout()
-    plt.savefig("../plots/Experiment2ADifference" + instance + ".pdf")
+    plt.savefig("../plots/Experiment2ADifference" + instance + ".pdf", bbox_inches="tight", pad_inches=0)
     
     plt.close()
     plt.clf()
@@ -192,8 +190,7 @@ for instance in resultDirs:
 
     plt.ylabel("Solution Cost", color='black', fontsize=18)
     plt.xlabel("Node Expansion Limit", color='black', fontsize=18)
-    plt.tight_layout()
-    plt.savefig("../plots/Experiment2BViolin" + instance + ".pdf")
+    plt.savefig("../plots/Experiment2BViolin" + instance + ".pdf", bbox_inches="tight", pad_inches=0)
     
     plt.close()
     plt.clf()
@@ -207,8 +204,7 @@ for instance in resultDirs:
     ax.tick_params(colors='black', labelsize=12)
     plt.ylabel("Algorithm Cost - A* Cost", color='black', fontsize=18)
     plt.xlabel("Node Expansion Limit", color='black', fontsize=18)
-    plt.tight_layout()
-    plt.savefig("../plots/Experiment2BDifference" + instance + ".pdf")
+    plt.savefig("../plots/Experiment2BDifference" + instance + ".pdf", bbox_inches="tight", pad_inches=0)
     
     plt.close()
     plt.clf()
@@ -219,7 +215,7 @@ for instance in resultDirs:
     sns.set_style("white")
     sns.set(rc={'figure.figsize': (11, 8), 'font.size': 26, 'text.color': 'black'})
 
-    ax = sns.pointplot(x="Node Expansion Limit", y="Solution Cost", hue="Algorithm", order=limits, hue_order=algorithmsExpC, data=instanceDataExpC, join=False, dodge=0.53, palette=sns.color_palette(["red"]), markers="_", errwidth=3, ci=95)
+    ax = sns.pointplot(x="Node Expansion Limit", y="Solution Cost", hue="Algorithm", order=limits, hue_order=algorithmsExpC, data=instanceDataExpC, join=False, dodge=0.59, palette=sns.color_palette(["red"]), markers="_", errwidth=3, ci=95)
     ax.tick_params(colors='black', labelsize=12)
     plt.setp(ax.lines, zorder=100)
     plt.setp(ax.collections, zorder=100, label="")
@@ -229,8 +225,7 @@ for instance in resultDirs:
 
     plt.ylabel("Solution Cost", color='black', fontsize=18)
     plt.xlabel("Node Expansion Limit", color='black', fontsize=18)
-    plt.tight_layout()
-    plt.savefig("../plots/Experiment2CViolin" + instance + ".pdf")
+    plt.savefig("../plots/Experiment2CViolin" + instance + ".pdf", bbox_inches="tight", pad_inches=0)
     
     plt.close()
     plt.clf()
@@ -244,8 +239,7 @@ for instance in resultDirs:
     ax.tick_params(colors='black', labelsize=12)
     plt.ylabel("Algorithm Cost - A* Cost", color='black', fontsize=18)
     plt.xlabel("Node Expansion Limit", color='black', fontsize=18)
-    plt.tight_layout()
-    plt.savefig("../plots/Experiment2CDifference" + instance + ".pdf")
+    plt.savefig("../plots/Experiment2CDifference" + instance + ".pdf", bbox_inches="tight", pad_inches=0)
     
     plt.close()
     plt.clf()
