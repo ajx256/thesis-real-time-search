@@ -39,10 +39,10 @@ int main(int argc, char** argv)
 		// Make a tree world
 		TreeWorld world = TreeWorld(cin);
 
-		RealTimeSearch<TreeWorld> bfs(world, "bfs", "learn", "k-best", lookaheadDepth, 1, "normal");
-		RealTimeSearch<TreeWorld> astar(world, "a-star", "learn", "k-best", lookaheadDepth, 1, "normal");
-		RealTimeSearch<TreeWorld> fhat(world, "f-hat", "learn", "k-best", lookaheadDepth, 1, "normal");
-		RealTimeSearch<TreeWorld> risk(world, "risk", "learn", "k-best", lookaheadDepth, 1, "normal");
+		RealTimeSearch<TreeWorld> bfs(world, "bfs", "none", "k-best", lookaheadDepth, 1, "normal");
+		RealTimeSearch<TreeWorld> astar(world, "a-star", "none", "k-best", lookaheadDepth, 1, "normal");
+		RealTimeSearch<TreeWorld> fhat(world, "f-hat", "none", "k-best", lookaheadDepth, 1, "normal");
+		RealTimeSearch<TreeWorld> risk(world, "risk", "none", "k-best", lookaheadDepth, 1, "normal");
 
 		bfsRes = bfs.search();
 		astarRes = astar.search();
