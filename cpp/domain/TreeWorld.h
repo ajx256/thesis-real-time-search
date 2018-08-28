@@ -157,7 +157,7 @@ public:
 		// Shut the fuck up about it.
 		curEpsilonD = 0.0;
 
-		curEpsilonH = 0.221;
+		curEpsilonH = 0.241;
 	}
 
 	void pushEpsilonHGlobal(double eps)
