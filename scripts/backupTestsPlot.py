@@ -110,7 +110,8 @@ for instance in resultDirs:
 
     plt.ylabel("Solution Cost", color='black', fontsize=18)
     plt.xlabel("Depth Limit", color='black', fontsize=18)
-    plt.savefig("../plots/BackupComparisonExpB" + instance + ".pdf")
+    plt.tight_layout()
+    plt.savefig("../plots/Experiment1BViolin" + instance + ".pdf")
     
     plt.close()
     plt.clf()
@@ -124,7 +125,8 @@ for instance in resultDirs:
     ax.tick_params(colors='black', labelsize=12)
     plt.ylabel("Algorithm Cost - Cserna Cost", color='black', fontsize=18)
     plt.xlabel("Depth Limit", color='black', fontsize=18)
-    plt.savefig("../plots/BackupDifferenceExpB" + instance + ".pdf")
+    plt.tight_layout()
+    plt.savefig("../plots/Experiment1BDifference" + instance + ".pdf")
     
     plt.close()
     plt.clf()
@@ -144,7 +146,8 @@ for instance in resultDirs:
     sns.violinplot(x="Node Expansion Limit", y="Solution Cost", hue="Algorithm", order=depthsAS, hue_order=algorithms, data=instanceDataAS, palette="Set2")    
     plt.ylabel("Solution Cost", color='black', fontsize=18)
     plt.xlabel("Node Expansion Limit", color='black', fontsize=18)
-    plt.savefig("../plots/BackupComparisonExpC" + instance + ".pdf")
+    plt.tight_layout()
+    plt.savefig("../plots/Experiment1CViolin" + instance + ".pdf")
     
     plt.close()
     plt.clf()
@@ -158,7 +161,8 @@ for instance in resultDirs:
     ax.tick_params(colors='black', labelsize=12)
     plt.ylabel("Algorithm Cost - Cserna Cost", color='black', fontsize=18)
     plt.xlabel("Node Expansion Limit", color='black', fontsize=18)
-    plt.savefig("../plots/BackupDifferenceExpC" + instance + ".pdf")
+    plt.tight_layout()
+    plt.savefig("../plots/Experiment1CDifference" + instance + ".pdf")
     
     plt.close()
     plt.clf()

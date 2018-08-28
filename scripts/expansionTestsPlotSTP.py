@@ -94,8 +94,8 @@ dfDiffExpB = pd.DataFrame({
     "Algorithm":algorithmDiffExpB
 })
 
-algorithmsExpC = ["A*", "F-Hat", "Risk"]
-algorithmsDiffExpC = ["A*", "F-Hat", "Risk"]
+algorithmsExpC = ["A*", "F-Hat", "BFS", "Risk"]
+algorithmsDiffExpC = ["A*", "F-Hat", "BFS", "Risk"]
 
 instanceExpC = []
 lookAheadValsExpC = []
@@ -155,7 +155,8 @@ for instance in resultDirs:
 
     plt.ylabel("Solution Cost", color='black', fontsize=18)
     plt.xlabel("Node Expansion Limit", color='black', fontsize=18)
-    plt.savefig("../plots/ExpansionExpA" + instance + ".pdf")
+    plt.tight_layout()
+    plt.savefig("../plots/Experiment2AViolin" + instance + ".pdf")
     
     plt.close()
     plt.clf()
@@ -169,7 +170,8 @@ for instance in resultDirs:
     ax.tick_params(colors='black', labelsize=12)
     plt.ylabel("Algorithm Cost - A* Cost", color='black', fontsize=18)
     plt.xlabel("Node Expansion Limit", color='black', fontsize=18)
-    plt.savefig("../plots/ExpansionDifferenceExpA" + instance + ".pdf")
+    plt.tight_layout()
+    plt.savefig("../plots/Experiment2ADifference" + instance + ".pdf")
     
     plt.close()
     plt.clf()
@@ -190,7 +192,8 @@ for instance in resultDirs:
 
     plt.ylabel("Solution Cost", color='black', fontsize=18)
     plt.xlabel("Node Expansion Limit", color='black', fontsize=18)
-    plt.savefig("../plots/ExpansionExpB" + instance + ".pdf")
+    plt.tight_layout()
+    plt.savefig("../plots/Experiment2BViolin" + instance + ".pdf")
     
     plt.close()
     plt.clf()
@@ -204,7 +207,8 @@ for instance in resultDirs:
     ax.tick_params(colors='black', labelsize=12)
     plt.ylabel("Algorithm Cost - A* Cost", color='black', fontsize=18)
     plt.xlabel("Node Expansion Limit", color='black', fontsize=18)
-    plt.savefig("../plots/ExpansionDifferenceExpB" + instance + ".pdf")
+    plt.tight_layout()
+    plt.savefig("../plots/Experiment2BDifference" + instance + ".pdf")
     
     plt.close()
     plt.clf()
@@ -225,7 +229,8 @@ for instance in resultDirs:
 
     plt.ylabel("Solution Cost", color='black', fontsize=18)
     plt.xlabel("Node Expansion Limit", color='black', fontsize=18)
-    plt.savefig("../plots/ExpansionExpC" + instance + ".pdf")
+    plt.tight_layout()
+    plt.savefig("../plots/Experiment2CViolin" + instance + ".pdf")
     
     plt.close()
     plt.clf()
@@ -239,7 +244,8 @@ for instance in resultDirs:
     ax.tick_params(colors='black', labelsize=12)
     plt.ylabel("Algorithm Cost - A* Cost", color='black', fontsize=18)
     plt.xlabel("Node Expansion Limit", color='black', fontsize=18)
-    plt.savefig("../plots/ExpansionDifferenceExpC" + instance + ".pdf")
+    plt.tight_layout()
+    plt.savefig("../plots/Experiment2CDifference" + instance + ".pdf")
     
     plt.close()
     plt.clf()

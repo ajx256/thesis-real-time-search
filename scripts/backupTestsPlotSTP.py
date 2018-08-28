@@ -7,9 +7,10 @@ from os import listdir
 # Hard coded result directories
 resultDirs = {"4x4"}
 
-algorithms = ["Minimin", "Bellman", "Nancy", "K-Best 3", "K-Best 10", "K-Best 30", "Cserna", "Cserna Pemberton Belief"]
-algorithmsDiff = ["Minimin", "Bellman", "Nancy", "K-Best 3", "K-Best 10", "K-Best 30", "Cserna", "Cserna Pemberton Belief"]
+algorithms = ["Minimin", "Bellman", "Nancy", "K-Best 3", "K-Best 10", "K-Best 30", "Cserna"]
+algorithmsDiff = ["Minimin", "Bellman", "Nancy", "K-Best 3", "K-Best 10", "K-Best 30", "Cserna"]
 
+'''
 depthsDFS = [3, 7, 10]
 
 instanceDFS = []
@@ -21,6 +22,7 @@ instanceDFSDiff = []
 lookAheadValsDFSDiff = []
 algorithmDFSDiff = []
 differenceCostDFS = []
+'''
 
 depthsAS = [10, 100, 1000]
 
@@ -36,6 +38,7 @@ differenceCostAS = []
 
 print("reading in data...")
 
+'''
 for dir in resultDirs:
     for file in listdir("../results/SlidingTilePuzzle/backupTests/DFS/" + dir):
         with open("../results/SlidingTilePuzzle/backupTests/DFS/" + dir + "/" + file) as json_data:
@@ -63,6 +66,7 @@ dfDiffDFS = pd.DataFrame({
     "Algorithm Cost - Cserna Cost":differenceCostDFS,
     "Algorithm":algorithmDFSDiff
 })
+'''
 
 for dir in resultDirs:
     for file in listdir("../results/SlidingTilePuzzle/backupTests/AS/" + dir):
@@ -95,6 +99,7 @@ dfDiffAS = pd.DataFrame({
 print("building plots...")
 
 for instance in resultDirs:
+    '''
     instanceDataDFS = dfDFS.loc[dfDFS["instance"] == instance]
     
     sns.set_style("white")
@@ -110,7 +115,8 @@ for instance in resultDirs:
 
     plt.ylabel("Solution Cost", color='black', fontsize=18)
     plt.xlabel("Depth Limit", color='black', fontsize=18)
-    plt.savefig("../plots/BackupComparisonExpB" + instance + ".pdf")
+    plt.tight_layout()
+    plt.savefig("../plots/Experiment1BViolin" + instance + ".pdf")
     
     plt.close()
     plt.clf()
@@ -124,12 +130,13 @@ for instance in resultDirs:
     ax.tick_params(colors='black', labelsize=12)
     plt.ylabel("Algorithm Cost - Cserna Cost", color='black', fontsize=18)
     plt.xlabel("Depth Limit", color='black', fontsize=18)
-    plt.savefig("../plots/BackupDifferenceExpB" + instance + ".pdf")
+    plt.tight_layout()
+    plt.savefig("../plots/Experiment1BDifference" + instance + ".pdf")
     
     plt.close()
     plt.clf()
     plt.cla()
-
+    '''
     instanceDataAS = dfAS.loc[dfAS["instance"] == instance]
     
     sns.set_style("white")
@@ -144,7 +151,8 @@ for instance in resultDirs:
     sns.violinplot(x="Node Expansion Limit", y="Solution Cost", hue="Algorithm", order=depthsAS, hue_order=algorithms, data=instanceDataAS, palette="Set2")    
     plt.ylabel("Solution Cost", color='black', fontsize=18)
     plt.xlabel("Node Expansion Limit", color='black', fontsize=18)
-    plt.savefig("../plots/BackupComparisonExpC" + instance + ".pdf")
+    plt.tight_layout()
+    plt.savefig("../plots/Experiment1CViolin" + instance + ".pdf")
     
     plt.close()
     plt.clf()
@@ -158,7 +166,8 @@ for instance in resultDirs:
     ax.tick_params(colors='black', labelsize=12)
     plt.ylabel("Algorithm Cost - Cserna Cost", color='black', fontsize=18)
     plt.xlabel("Node Expansion Limit", color='black', fontsize=18)
-    plt.savefig("../plots/BackupDifferenceExpC" + instance + ".pdf")
+    plt.tight_layout()
+    plt.savefig("../plots/Experiment1CDifference" + instance + ".pdf")
     
     plt.close()
     plt.clf()

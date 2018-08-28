@@ -83,7 +83,8 @@ for instance in resultDirs:
 
     plt.ylabel("Solution Cost", color='black', fontsize=18)
     plt.xlabel("Depth Limit", color='black', fontsize=18)
-    plt.savefig("../plots/BackupComparisonExpA" + instance + ".pdf")
+    plt.tight_layout()
+    plt.savefig("../plots/Experiment1AViolin" + instance + ".pdf")
     
     plt.close()
     plt.clf()
@@ -97,7 +98,8 @@ for instance in resultDirs:
     ax.tick_params(colors='black', labelsize=12)
     plt.ylabel("Algorithm Cost - Cserna Cost", color='black', fontsize=18)
     plt.xlabel("Depth Limit", color='black', fontsize=18)
-    plt.savefig("../plots/BackupDifferenceExpA" + instance + ".pdf")
+    plt.tight_layout()
+    plt.savefig("../plots/Experiment1ADifference" + instance + ".pdf")
     
     plt.close()
     plt.clf()
