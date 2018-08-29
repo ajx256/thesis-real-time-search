@@ -152,17 +152,63 @@ public:
 
 	void updateEpsilons()
 	{
-		if (expansionCounter == 0)
+		curEpsilonD = 0;
+		
+		// heuristic error varies by lookahead policy and expansion limit
+		if (expansionPolicy == "dfs")
 		{
-			curEpsilonD = 0;
-			curEpsilonH = 0;
-			
-			return;
+			if (lookahead == 3)
+			{
+				curEpsilonH = 0.27;
+			}
+			else if (lookahead == 7)
+			{
+				curEpsilonH = 0.24;
+			}
+			else if (lookahead == 9)
+			{
+				curEpsilonH = 0.23;
+			}
+			else if (lookahead == 10)
+			{
+				curEpsilonH = 0.225;
+			}
+			else
+			{
+				curEpsilonH = 0.241;
+			}
 		}
-
-		curEpsilonD = epsilonDSum / expansionCounter;
-
-		curEpsilonH = epsilonHSum / expansionCounter;
+		else
+		{
+			if (lookahead == 3)
+			{
+				curEpsilonH = 0.295;
+			}
+			else if (lookahead == 10)
+			{
+				curEpsilonH = 0.26;
+			}
+			else if (lookahead == 30)
+			{
+				curEpsilonH = 0.23;
+			}
+			else if (lookahead == 100)
+			{
+				curEpsilonH = 0.225;
+			}
+			else if (lookahead == 300)
+			{
+				curEpsilonH = 0.223;
+			}
+			else if (lookahead == 1000)
+			{
+				curEpsilonH = 0.221;
+			}
+			else
+			{
+				curEpsilonH = 0.241;
+			}
+		}
 	}
 
 	void pushEpsilonHGlobal(double eps)
