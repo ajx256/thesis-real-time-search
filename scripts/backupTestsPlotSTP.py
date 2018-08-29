@@ -4,6 +4,11 @@ import json
 import seaborn as sns
 from os import listdir
 
+korfCosts = {}
+
+with open("KorfTrueCosts.json") as costs:
+	korfCosts = json.load(costs)
+
 # Hard coded result directories
 resultDirs = {"4x4"}
 

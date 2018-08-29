@@ -175,7 +175,17 @@ public:
 			}
 			else
 			{
-				curEpsilonH = 0.241;
+				if (expansionCounter == 0)
+				{
+					curEpsilonD = 0;
+					curEpsilonH = 0;
+
+					return;
+				}
+
+				curEpsilonD = epsilonDSum / expansionCounter;
+
+				curEpsilonH = epsilonHSum / expansionCounter;
 			}
 		}
 		else
@@ -206,7 +216,17 @@ public:
 			}
 			else
 			{
-				curEpsilonH = 0.241;
+				if (expansionCounter == 0)
+				{
+					curEpsilonD = 0;
+					curEpsilonH = 0;
+
+					return;
+				}
+
+				curEpsilonD = epsilonDSum / expansionCounter;
+
+				curEpsilonH = epsilonHSum / expansionCounter;
 			}
 		}
 	}
