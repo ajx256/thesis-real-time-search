@@ -152,12 +152,17 @@ public:
 
 	void updateEpsilons()
 	{
-		// Listen, I don't think these were learned properly on this domain. My results were kind of funky, 
-		// the heuristic is shit anyway. We're just gonna hard code this based on empirical evidence. 
-		// Shut the fuck up about it.
-		curEpsilonD = 0.0;
+		if (expansionCounter == 0)
+		{
+			curEpsilonD = 0;
+			curEpsilonH = 0;
+			
+			return;
+		}
 
-		curEpsilonH = 0.241;
+		curEpsilonD = epsilonDSum / expansionCounter;
+
+		curEpsilonH = epsilonHSum / expansionCounter;
 	}
 
 	void pushEpsilonHGlobal(double eps)
@@ -262,6 +267,8 @@ public:
 		epsilonDSum = 0;
 		epsilonHSum = 0;
 		expansionCounter = 0;
+		curEpsilonD = 0;
+		curEpsilonH = 0;
 
 		expansionPolicy = policy;
 		lookahead = la;
