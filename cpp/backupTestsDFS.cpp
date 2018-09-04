@@ -35,6 +35,9 @@ int main(int argc, char** argv)
 	ResultContainer k3Res;
 	ResultContainer k10Res;
 	ResultContainer k30Res;
+	ResultContainer pk3Res;
+	ResultContainer pk10Res;
+	ResultContainer pk30Res;
 
 	if (domain == "TreeWorld")
 	{
@@ -50,6 +53,9 @@ int main(int argc, char** argv)
 		RealTimeSearch<TreeWorld> k3(world, "dfs", "none", "k-best", lookaheadDepth, 3, "normal");
 		RealTimeSearch<TreeWorld> k10(world, "dfs", "none", "k-best", lookaheadDepth, 10, "normal");
 		RealTimeSearch<TreeWorld> k30(world, "dfs", "none", "k-best", lookaheadDepth, 30, "normal");
+		RealTimeSearch<TreeWorld> pk3(world, "dfs", "none", "k-best", lookaheadDepth, 3, "pemberton");
+		RealTimeSearch<TreeWorld> pk10(world, "dfs", "none", "k-best", lookaheadDepth, 10, "pemberton");
+		RealTimeSearch<TreeWorld> pk30(world, "dfs", "none", "k-best", lookaheadDepth, 30, "pemberton");
 
 		miniminRes = minimin.search();
 		bellmanRes = bellman.search();
@@ -59,6 +65,9 @@ int main(int argc, char** argv)
 		k3Res = k3.search();
 		k10Res = k10.search();
 		k30Res = k30.search();
+		pk3Res = pk3.search();
+		pk10Res = pk10.search();
+		pk30Res = pk30.search();
 	}
 	else if (domain == "SlidingPuzzle")
 	{
@@ -92,7 +101,10 @@ int main(int argc, char** argv)
 		to_string(bellmanRes.solutionCost) + ", \"Nancy\": " + to_string(nancyRes.solutionCost) +
 		", \"Cserna\": " + to_string(csernaRes.solutionCost) + ", \"Cserna Pemberton Belief\": " +
 		to_string(pembertonRes.solutionCost) + ", \"K-Best 3\": " + to_string(k3Res.solutionCost) +
-		", \"K-Best 10\": " + to_string(k10Res.solutionCost) + ", \"K-Best 30\": " + to_string(k30Res.solutionCost) +
+		", \"K-Best 10\": " + to_string(k10Res.solutionCost) + ", \"K-Best 30\": " + to_string(k30Res.solutionCost) + 
+		", \"K-Best 3 Pemberton Belief\": " + to_string(pk3Res.solutionCost) +
+		", \"K-Best 10 Pemberton Belief\": " + to_string(pk10Res.solutionCost) + 
+		", \"K-Best 30 Pemberton Belief\": " + to_string(pk30Res.solutionCost) +
 		", \"Lookahead\": " + to_string(lookaheadDepth) + " }";
 
 	if (argc < 4)

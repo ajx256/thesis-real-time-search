@@ -12,6 +12,7 @@ with open("KorfTrueCosts.json") as costs:
 # Hard coded result directories
 resultDirs = {"4x4"}
 limits = [3, 10, 30, 100, 300, 1000]
+revisedLimits = [30, 100, 300, 1000]
 
 algorithmsExpA = ["A*", "F-Hat"]
 algorithmsDiffExpA = ["A*", "F-Hat"]
@@ -142,6 +143,88 @@ dfDiffExpC = pd.DataFrame({
     "Algorithm":algorithmDiffExpC
 })
 
+algorithmsExpCZoom = ["A*", "F-Hat", "Risk"]
+algorithmsDiffExpCZoom = ["A*", "F-Hat", "Risk"]
+
+instanceExpCZoom = []
+lookAheadValsExpCZoom = []
+algorithmExpCZoom = []
+solutionCostExpCZoom = []
+
+instanceDiffExpCZoom = []
+lookAheadValsDiffExpCZoom = []
+algorithmDiffExpCZoom = []
+differenceCostExpCZoom = []
+
+print("reading in data...")
+
+for dir in resultDirs:
+    for file in listdir("../results/SlidingTilePuzzle/expansionTests/Nancy/" + dir):
+        with open("../results/SlidingTilePuzzle/expansionTests/Nancy/" + dir + "/" + file) as json_data:
+            resultData = json.load(json_data)
+            for algo in algorithmsExpCZoom:
+                instanceExpCZoom.append(str(dir))
+                lookAheadValsExpCZoom.append(resultData["Lookahead"])
+                algorithmExpCZoom.append(algo)
+                solutionCostExpCZoom.append(resultData[algo])
+                differenceCostExpCZoom.append(resultData[algo] - resultData["A*"])
+                instanceDiffExpCZoom.append(str(dir))
+                lookAheadValsDiffExpCZoom.append(resultData["Lookahead"])
+                algorithmDiffExpCZoom.append(algo)
+
+dfExpCZoom = pd.DataFrame({
+    "instance":instanceExpCZoom,
+    "Node Expansion Limit":lookAheadValsExpCZoom,
+    "Solution Cost":solutionCostExpCZoom,
+    "Algorithm":algorithmExpCZoom
+})
+
+dfDiffExpCZoom = pd.DataFrame({
+    "instance":instanceDiffExpCZoom,
+    "Node Expansion Limit":lookAheadValsDiffExpCZoom,
+    "Algorithm Cost - A* Cost":differenceCostExpCZoom,
+    "Algorithm":algorithmDiffExpCZoom
+})
+
+algorithmsDiffExpCOpt = ["A*", "F-Hat", "Risk"]
+
+gapSums = {}
+
+print("reading in data...")
+
+for dir in resultDirs:
+    for file in listdir("../results/SlidingTilePuzzle/expansionTests/Nancy/" + dir):
+        with open("../results/SlidingTilePuzzle/expansionTests/Nancy/" + dir + "/" + file) as json_data:
+            resultData = json.load(json_data)
+			
+            if resultData["Lookahead"] not in gapSums:
+                gapSums[resultData["Lookahead"]] = {"A*" : 0, "Risk" : 0, "F-Hat" : 0, "BFS" : 0}
+
+            # Find the optimal cost
+            instanceKorf = file.split('-')[1].split('.')[0]
+
+            for algo in algorithmsDiffExpCOpt:
+               gapSums[resultData["Lookahead"]][algo] =  gapSums[resultData["Lookahead"]][algo] + (resultData[algo] - korfCosts[instanceKorf])
+
+instanceDiffExpCOpt = []
+lookAheadValsDiffExpCOpt = []
+optimalGap = []
+algorithmDiffExpCOpt = []
+
+for la in gapSums:
+    for algo in gapSums[la]:
+        instanceDiffExpCOpt.append("4x4")
+        lookAheadValsDiffExpCOpt.append(la);
+        optimalGap.append((gapSums[la][algo] / 100) / (gapSums[la]["A*"] / 100))
+        algorithmDiffExpCOpt.append(algo)
+
+dfDiffExpCOpt = pd.DataFrame({
+    "instance":instanceDiffExpCOpt,
+    "Node Expansion Limit":lookAheadValsDiffExpCOpt,
+    "Average Optimality Gap":optimalGap,
+    "Algorithm":algorithmDiffExpCOpt
+})
+
 print("building plots...")
 
 for instance in resultDirs:
@@ -218,7 +301,7 @@ for instance in resultDirs:
     instanceDataExpC = dfExpC.loc[dfExpC["instance"] == instance]
     
     sns.set_style("white")
-    sns.set(rc={'figure.figsize': (11, 8), 'font.size': 26, 'text.color': 'black'})
+    sns.set(rc={'figure.figsize': (11, 12), 'font.size': 26, 'text.color': 'black'})
 
     ax = sns.pointplot(x="Node Expansion Limit", y="Solution Cost", hue="Algorithm", order=limits, hue_order=algorithmsExpC, data=instanceDataExpC, join=False, dodge=0.59, palette=sns.color_palette(["red"]), markers="_", errwidth=3, ci=95)
     ax.tick_params(colors='black', labelsize=12)
@@ -250,3 +333,57 @@ for instance in resultDirs:
     plt.clf()
     plt.cla()
 
+	
+    instanceDataExpCZoom = dfExpCZoom.loc[dfExpCZoom["instance"] == instance]
+    
+    sns.set_style("white")
+    sns.set(rc={'figure.figsize': (11, 8), 'font.size': 26, 'text.color': 'black'})
+
+    ax = sns.pointplot(x="Node Expansion Limit", y="Solution Cost", hue="Algorithm", order=revisedLimits, hue_order=algorithmsExpCZoom, data=instanceDataExpCZoom, join=False, dodge=0.53, palette=sns.color_palette(["red"]), markers="_", errwidth=3, ci=95)
+    ax.tick_params(colors='black', labelsize=12)
+    plt.setp(ax.lines, zorder=100)
+    plt.setp(ax.collections, zorder=100, label="")
+    ax.legend_.remove()
+    
+    sns.violinplot(x="Node Expansion Limit", y="Solution Cost", hue="Algorithm", order=revisedLimits, hue_order=algorithmsExpCZoom, data=instanceDataExpCZoom, palette="Set2")    
+
+    plt.ylabel("Solution Cost", color='black', fontsize=18)
+    plt.xlabel("Node Expansion Limit", color='black', fontsize=18)
+    plt.savefig("../plots/Experiment2CZoomViolin" + instance + ".pdf", bbox_inches="tight", pad_inches=0)
+    
+    plt.close()
+    plt.clf()
+    plt.cla()
+    
+    instanceDataDiffExpCZoom = dfDiffExpCZoom.loc[dfDiffExpCZoom["instance"] == instance]
+
+    sns.set_style("white")
+    sns.set(rc={'figure.figsize': (11, 8), 'font.size': 26, 'text.color': 'black'})
+    ax = sns.pointplot(x="Node Expansion Limit", y="Algorithm Cost - A* Cost", hue="Algorithm", order=revisedLimits, hue_order=algorithmsDiffExpCZoom, data=instanceDataDiffExpCZoom, ci=95, join=False, dodge=0.35, palette="Set2")
+    ax.tick_params(colors='black', labelsize=12)
+    plt.ylabel("Algorithm Cost - A* Cost", color='black', fontsize=18)
+    plt.xlabel("Node Expansion Limit", color='black', fontsize=18)
+    plt.savefig("../plots/Experiment2CZoomDifference" + instance + ".pdf", bbox_inches="tight", pad_inches=0)
+    
+    plt.close()
+    plt.clf()
+    plt.cla()
+
+
+
+
+
+
+    instanceDataDiffExpCOpt = dfDiffExpCOpt.loc[dfDiffExpCOpt["instance"] == instance]
+   
+    sns.set_style("white")
+    sns.set(rc={'figure.figsize': (11, 8), 'font.size': 26, 'text.color': 'black'})
+    ax = sns.pointplot(x="Node Expansion Limit", y="Average Optimality Gap", hue="Algorithm", order=revisedLimits, hue_order=algorithmsDiffExpCOpt, data=instanceDataDiffExpCOpt, ci=95, join=False, dodge=0.35, palette="Set2")
+    ax.tick_params(colors='black', labelsize=12)
+    plt.ylabel("Average Optimality Gap (% of A*)", color='black', fontsize=18)
+    plt.xlabel("Node Expansion Limit", color='black', fontsize=18)
+    plt.savefig("../plots/Experiment2COptimalityGap" + instance + ".pdf", bbox_inches="tight", pad_inches=0)
+    
+    plt.close()
+    plt.clf()
+    plt.cla()
