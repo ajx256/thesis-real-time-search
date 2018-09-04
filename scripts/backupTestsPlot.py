@@ -6,9 +6,9 @@ from os import listdir
 
 # Hard coded result directories
 resultDirs = {"b2d100"}
-
-algorithms = ["Minimin", "Bellman", "Nancy", "K-Best 3", "K-Best 10", "K-Best 30", "Cserna", "Cserna Pemberton Belief"]
-algorithmsDiff = ["Minimin", "Bellman", "Nancy", "K-Best 3", "K-Best 10", "K-Best 30", "Cserna", "Cserna Pemberton Belief"]
+#"K-Best 3 One Level Belief", "K-Best 10 One Level Belief", "K-Best 30 One Level Belief", 
+algorithms = ["Minimin", "Bellman", "Nancy", "K-Best 3", "K-Best 10", "K-Best 30", "Cserna", "Cserna One Level Belief"]
+algorithmsDiff = ["Minimin", "Bellman", "Nancy", "K-Best 3", "K-Best 10", "K-Best 30", "Cserna", "Cserna One Level Belief"]
 
 depthsDFS = [3, 7, 10]
 
@@ -44,8 +44,8 @@ for dir in resultDirs:
                 instanceDFS.append(str(dir))
                 lookAheadValsDFS.append(resultData["Lookahead"])
                 algorithmDFS.append(algo)
-                solutionCostDFS.append(resultData[algo])
-                differenceCostDFS.append(resultData[algo] - resultData["Cserna"])
+                solutionCostDFS.append(resultData[algo.replace("One Level", "Pemberton")])
+                differenceCostDFS.append(resultData[algo.replace("One Level", "Pemberton")] - resultData["Cserna Pemberton Belief"])
                 instanceDFSDiff.append(str(dir))
                 lookAheadValsDFSDiff.append(resultData["Lookahead"])
                 algorithmDFSDiff.append(algo)
@@ -72,8 +72,8 @@ for dir in resultDirs:
                 instanceAS.append(str(dir))
                 lookAheadValsAS.append(resultData["Lookahead"])
                 algorithmAS.append(algo)
-                solutionCostAS.append(resultData[algo])
-                differenceCostAS.append(resultData[algo] - resultData["Cserna"])
+                solutionCostAS.append(resultData[algo.replace("One Level", "Pemberton")])
+                differenceCostAS.append(resultData[algo.replace("One Level", "Pemberton")] - resultData["Cserna Pemberton Belief"])
                 instanceASDiff.append(str(dir))
                 lookAheadValsASDiff.append(resultData["Lookahead"])
                 algorithmASDiff.append(algo)
@@ -122,7 +122,7 @@ for instance in resultDirs:
     sns.set(rc={'figure.figsize': (11, 8), 'font.size': 26, 'text.color': 'black'})
     ax = sns.pointplot(x="Depth Limit", y="Algorithm Cost - Cserna Cost", hue="Algorithm", order=depthsDFS, hue_order=algorithmsDiff, data=instanceDataDiffDFS, ci=95, join=False, dodge=0.35, palette="Set2")
     ax.tick_params(colors='black', labelsize=12)
-    plt.ylabel("Algorithm Cost - Cserna Cost", color='black', fontsize=18)
+    plt.ylabel("Algorithm Cost - Cserna One Level Belief Cost", color='black', fontsize=18)
     plt.xlabel("Depth Limit", color='black', fontsize=18)
     plt.savefig("../plots/Experiment1BDifference" + instance + ".pdf", bbox_inches="tight", pad_inches=0)
     
@@ -156,7 +156,7 @@ for instance in resultDirs:
     sns.set(rc={'figure.figsize': (11, 8), 'font.size': 26, 'text.color': 'black'})
     ax = sns.pointplot(x="Node Expansion Limit", y="Algorithm Cost - Cserna Cost", hue="Algorithm", order=depthsAS, hue_order=algorithmsDiff, data=instanceDataDiffAS, ci=95, join=False, dodge=0.35, palette="Set2")
     ax.tick_params(colors='black', labelsize=12)
-    plt.ylabel("Algorithm Cost - Cserna Cost", color='black', fontsize=18)
+    plt.ylabel("Algorithm Cost - Cserna One Level Belief Cost", color='black', fontsize=18)
     plt.xlabel("Node Expansion Limit", color='black', fontsize=18)
     plt.savefig("../plots/Experiment1CDifference" + instance + ".pdf", bbox_inches="tight", pad_inches=0)
     

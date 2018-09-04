@@ -11,11 +11,11 @@ colors=["#e6194b", "#3cb44b", "#ffe119", "#0082c8", "#f58231", "#911eb4",
         "#46f0f0", "#f032e6", "#808000", "#fabebe", "#008080", "#e6beff", 
         "#aa6e28", "#800000"]
 
-algorithms = ["Minimin", "Bellman", "Nancy", "K-Best 1 Pemberton Belief", "K-Best 3 Pemberton Belief", "K-Best 5 Pemberton Belief", 
-              "K-Best 7 Pemberton Belief", "Cserna Pemberton Belief", "K-Best 1", "K-Best 3", "K-Best 5", 
+algorithms = ["Minimin", "Bellman", "Nancy", "K-Best 1 Correct Belief", "K-Best 3 Correct Belief", "K-Best 5 Correct Belief", 
+              "K-Best 7 Correct Belief", "Cserna Correct Belief", "K-Best 1", "K-Best 3", "K-Best 5", 
               "K-Best 7", "Cserna",]
-algorithmsDiff = ["Minimin", "Bellman", "Nancy", "K-Best 1 Pemberton Belief", "K-Best 3 Pemberton Belief", "K-Best 5 Pemberton Belief", 
-              "K-Best 7 Pemberton Belief", "Cserna Pemberton Belief", "K-Best 1", "K-Best 3", "K-Best 5", 
+algorithmsDiff = ["Minimin", "Bellman", "Nancy", "K-Best 1 Correct Belief", "K-Best 3 Correct Belief", "K-Best 5 Correct Belief", 
+              "K-Best 7 Correct Belief", "Cserna Correct Belief", "K-Best 1", "K-Best 3", "K-Best 5", 
               "K-Best 7", "Cserna"]
 
 instance = []
@@ -38,8 +38,8 @@ for dir in resultDirs:
                 instance.append(str(dir))
                 lookAheadVals.append(resultData["Lookahead"])
                 algorithm.append(algo)
-                solutionCost.append(resultData[algo])
-                differenceCost.append(resultData[algo] - resultData["Cserna"])
+                solutionCost.append(resultData[algo.replace("Correct", "Pemberton")])
+                differenceCost.append(resultData[algo.replace("Correct", "Pemberton")] - resultData["Cserna Pemberton Belief"])
                 instanceDiff.append(str(dir))
                 lookAheadValsDiff.append(resultData["Lookahead"])
                 algorithmDiff.append(algo)
@@ -95,7 +95,7 @@ for instance in resultDirs:
     sns.set(rc={'figure.figsize': (11, 8), 'font.size': 26, 'text.color': 'black'})
     ax = sns.pointplot(x="Depth Limit", y="Algorithm Cost - Cserna Cost", hue="Algorithm", order=depths, hue_order=algorithmsDiff, data=instanceDataDiff, ci=95, join=False, dodge=0.3, palette=sns.color_palette(colors))
     ax.tick_params(colors='black', labelsize=12)
-    plt.ylabel("Algorithm Cost - Cserna Cost", color='black', fontsize=18)
+    plt.ylabel("Algorithm Cost - Cserna Correct Belief Cost", color='black', fontsize=18)
     plt.xlabel("Depth Limit", color='black', fontsize=18)
     plt.savefig("../plots/Experiment1ADifference" + instance + ".pdf", bbox_inches="tight", pad_inches=0)
     
