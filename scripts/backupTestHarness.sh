@@ -2,7 +2,7 @@
 
 if (($# < 6))
 then
-  echo "./backupTestHarness.sh <# of instances to test> <Lookahead Type> <# of processes> <Domain Type> <Domain Variables> <Lookahead value 1> <optional: additional lookahead values>"
+  echo "./backupTestHarness.sh <starting instance #> <# of instances to test> <Lookahead Type> <# of processes> <Domain Type> <Domain Variables> <Lookahead value 1> <optional: additional lookahead values>"
   echo "Available lookahead types are AS and DFS"
   echo "Available domain types are TreeWorld and SlidingPuzzle"
   echo "Domain variables for TreeWorld: <branching factor> <tree depth>"
@@ -10,40 +10,40 @@ then
   exit 1
 fi
 
+# Which instance to start testing on
+firstInstance=$1
+
 # The maximum number of instances to test on
-maxInstances=$1
+maxInstances=$2
+lastInstance=$(( $firstInstance + $maxInstances ))
 
 # The type of lookahead to use
-laType=$2
+laType=$3
 
 # Max number of background processes to start, should probably not be more than the number of cores on the machine
-maxProcs=$3
+maxProcs=$4
 
 # The domain to run on
-domainType=$4
+domainType=$5
 
 numProcs=0
 if [ "$laType" = "AS" ]
 then
   if [ "$domainType" = "TreeWorld" ]
   then
-    branchFactors=$5
-	depths=$6
+    branchFactors=$6
+	depths=$7
     for b in ${branchFactors[@]}
     do
       for d in ${depths[@]}
       do
-        for lookahead in "${@:7}"
+        for lookahead in "${@:8}"
         do
           mkdir ../results/TreeWorld/backupTests/AS/b${b}d${d}
-          instance=0
-		  testInstancesRun=0
-          for file in ../worlds/treeWorld/b${b}d${d}-*
+          instance=$firstInstance
+          while ((instance < lastInstance))
           do
-		    if ((testInstancesRun >= maxInstances))
-			then
-			  break
-			fi
+		    file="../worlds/treeWorld/b${b}d${d}-${instance}.tw"
             if ((numProcs >= ${maxProcs}))
             then
               wait
@@ -57,25 +57,20 @@ then
 		      let instance++
               let numProcs++
 		    fi
-			let testInstancesRun++
           done
         done
       done
     done
   elif [ "$domainType" = "SlidingPuzzle" ]
   then
-    dimensions=$5
-    for lookahead in "${@:6}"
+    dimensions=$6
+    for lookahead in "${@:7}"
     do
       mkdir ../results/SlidingTilePuzzle/backupTests/AS/${dimensions}x${dimensions}
-      instance=0
-	  testInstancesRun=0
-      for file in ../worlds/slidingTile/*
+      instance=$firstInstance
+	  while ((instance < lastInstance))
       do
-	  	if ((testInstancesRun >= maxInstances))
-		then
-		  break
-		fi
+	    file="../worlds/slidingTile/${instance}-${dimensions}x${dimensions}.st"
         if ((numProcs >= ${maxProcs}))
         then
           wait
@@ -89,7 +84,6 @@ then
 	      let instance++
           let numProcs++
 	    fi
-		let testInstancesRun++
       done
     done
   else
@@ -102,23 +96,19 @@ elif [ "$laType" = "DFS" ]
 then
   if [ "$domainType" = "TreeWorld" ]
   then
-    branchFactors=$5
-	depths=$6
+    branchFactors=$6
+	depths=$7
     for b in ${branchFactors[@]}
     do
       for d in ${depths[@]}
       do
-        for lookahead in "${@:7}"
+        for lookahead in "${@:8}"
         do
           mkdir ../results/TreeWorld/backupTests/DFS/b${b}d${d}
-          instance=0
-		  testInstancesRun=0
-          for file in ../worlds/treeWorld/b${b}d${d}-*
+          instance=$firstInstance
+          while ((instance < lastInstance))
           do
-		  	if ((testInstancesRun >= maxInstances))
-			then
-			  break
-			fi
+		    file="../worlds/treeWorld/b${b}d${d}-${instance}.tw"
             if ((numProcs >= ${maxProcs}))
             then
               wait
@@ -132,25 +122,20 @@ then
 		      let instance++
               let numProcs++
 		    fi
-			let testInstancesRun++
           done
         done
       done
     done
   elif [ "$domainType" = "SlidingPuzzle" ]
   then
-    dimensions=$5
-    for lookahead in "${@:6}"
+    dimensions=$6
+    for lookahead in "${@:7}"
     do
       mkdir ../results/SlidingTilePuzzle/backupTests/DFS/${dimensions}x${dimensions}
-      instance=0
-	  testInstancesRun=0
-      for file in ../worlds/slidingTile/*
+      instance=$firstInstance
+	  while ((instance < lastInstance))
       do
-	  	if ((testInstancesRun >= maxInstances))
-		then
-		  break
-		fi
+	    file="../worlds/slidingTile/${instance}-${dimensions}x${dimensions}.st"
         if ((numProcs >= ${maxProcs}))
         then
           wait
@@ -164,7 +149,6 @@ then
 	      let instance++
           let numProcs++
 	    fi
-		let testInstancesRun++
       done
     done
   else
