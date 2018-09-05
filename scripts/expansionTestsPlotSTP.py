@@ -100,8 +100,8 @@ dfDiffExpB = pd.DataFrame({
     "Algorithm":algorithmDiffExpB
 })
 
-algorithmsExpC = ["A*", "F-Hat", "BFS", "Risk"]
-algorithmsDiffExpC = ["A*", "F-Hat", "BFS", "Risk"]
+algorithmsExpC = ["A*", "F-Hat", "BFS", "Risk", "LSS-LRTA*"]
+algorithmsDiffExpC = ["A*", "F-Hat", "BFS", "Risk", "LSS-LRTA*"]
 
 instanceExpC = []
 lookAheadValsExpC = []
@@ -143,8 +143,8 @@ dfDiffExpC = pd.DataFrame({
     "Algorithm":algorithmDiffExpC
 })
 
-algorithmsExpCZoom = ["A*", "F-Hat", "Risk"]
-algorithmsDiffExpCZoom = ["A*", "F-Hat", "Risk"]
+algorithmsExpCZoom = ["A*", "F-Hat", "Risk", "LSS-LRTA*"]
+algorithmsDiffExpCZoom = ["A*", "F-Hat", "Risk", "LSS-LRTA*"]
 
 instanceExpCZoom = []
 lookAheadValsExpCZoom = []
@@ -186,7 +186,7 @@ dfDiffExpCZoom = pd.DataFrame({
     "Algorithm":algorithmDiffExpCZoom
 })
 
-algorithmsDiffExpCOpt = ["A*", "F-Hat", "Risk"]
+algorithmsDiffExpCOpt = ["A*", "F-Hat", "Risk", "LSS-LRTA*"]
 
 gapSums = {}
 
@@ -198,7 +198,7 @@ for dir in resultDirs:
             resultData = json.load(json_data)
 			
             if resultData["Lookahead"] not in gapSums:
-                gapSums[resultData["Lookahead"]] = {"A*" : 0, "Risk" : 0, "F-Hat" : 0, "BFS" : 0}
+                gapSums[resultData["Lookahead"]] = {"A*" : 0, "Risk" : 0, "F-Hat" : 0, "BFS" : 0, "LSS-LRTA*" : 0}
 
             # Find the optimal cost
             instanceKorf = file.split('-')[1].split('.')[0]

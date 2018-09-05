@@ -77,7 +77,7 @@ int main(int argc, char** argv)
 
 	string result = "{ \"BFS\": " + to_string(bfsRes.solutionCost) + ", \"A*\": " +
 		to_string(astarRes.solutionCost) + ", \"F-Hat\": " + to_string(fhatRes.solutionCost) +
-		", \"Risk\": " + to_string(riskRes.solutionCost) + ", \"LSSLRTA*\": " + to_string(lsslrtaRes.solutionCost) +
+		", \"Risk\": " + to_string(riskRes.solutionCost) + ", \"LSS-LRTA*\": " + to_string(lsslrtaRes.solutionCost) +
 		", \"Lookahead\": " + to_string(lookaheadDepth) + " }";
 
 	if (argc < 4)
