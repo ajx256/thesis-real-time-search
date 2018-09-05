@@ -1,1 +1,1 @@
-{ "Minimin": 30.661855, "Bellman": 21.408284, "Nancy": 21.408284, "Cserna": 22.887778, "Cserna Pemberton Belief": 24.820187, "K-Best 3": 21.500753, "K-Best 10": 21.487607, "K-Best 30": 22.378907, "Lookahead": 1000 }
+{ "Minimin": 40.204210, "Bellman": 20.922955, "Nancy": 20.922955, "Cserna": 23.604825, "Cserna Pemberton Belief": 24.352228, "K-Best 3": 22.489231, "K-Best 10": 20.592937, "K-Best 30": 21.902399, "K-Best 3 Pemberton Belief": 39.388541, "K-Best 10 Pemberton Belief": 45.333386, "K-Best 30 Pemberton Belief": 42.827861, "Lookahead": 1000 }
