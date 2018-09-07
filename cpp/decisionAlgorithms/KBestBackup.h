@@ -1,5 +1,6 @@
 #pragma once
 #include <functional>
+#include <limits>
 #include "DecisionAlgorithm.h"
 #include "../utility/PriorityQueue.h"
 
@@ -58,8 +59,7 @@ private:
 		else
 		{
 			// If nothing was expanded under this TLA, use the expected value of the TLA
-			tla.expectedMinimumPathCost = tla.topLevelNode->distribution.expectedCost();
-			tla.belief = tla.topLevelNode->distribution;
+			tla.expectedMinimumPathCost = numeric_limits<double>::infinity();
 		}
 	}
 

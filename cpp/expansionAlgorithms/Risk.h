@@ -1,6 +1,7 @@
 #pragma once
 #include <unordered_map>
 #include <functional>
+#include <limits>
 #include "ExpansionAlgorithm.h"
 #include "../utility/PriorityQueue.h"
 #include"../utility/ResultContainer.h"
@@ -227,8 +228,7 @@ private:
 		else
 		{
 			// If nothing was expanded under this TLA, use the expected value of the TLA
-			tla.expectedMinimumPathCost = tla.topLevelNode->distribution.expectedCost();
-			tla.belief = tla.topLevelNode->distribution;
+			tla.expectedMinimumPathCost = numeric_limits<double>::infinity();
 		}
 	}
 
