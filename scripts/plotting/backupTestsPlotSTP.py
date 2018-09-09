@@ -4,6 +4,37 @@ import json
 import seaborn as sns
 from os import listdir
 
+def makeViolinPlot(width, height, xAxis, yAxis, dataframe, dodge, hue, orderList, hueOrderList, xLabel, yLabel, outputName):
+    sns.set(rc={'figure.figsize': (width, height), 'font.size': 26, 'text.color': 'black'})
+    ax = sns.pointplot(x=xAxis, y=yAxis, hue=hue, order=orderList, hue_order=hueOrderList, data=dataframe, join=False, dodge=dodge, palette=sns.color_palette(["red"]), markers="_", errwidth=3, ci=95)
+    ax.tick_params(colors='black', labelsize=12)
+    plt.setp(ax.lines, zorder=100)
+    plt.setp(ax.collections, zorder=100, label="")
+    ax.legend_.remove()
+    
+    sns.violinplot(x=xAxis, y=yAxis, hue=hue, order=orderList, hue_order=hueOrderList, data=dataframe, palette="Set2")    
+
+    plt.ylabel(yLabel, color='black', fontsize=18)
+    plt.xlabel(xLabel, color='black', fontsize=18)
+    plt.savefig(outputName, bbox_inches="tight", pad_inches=0)
+    
+    plt.close()
+    plt.clf()
+    plt.cla()
+    return
+
+def makeDifferencePlot(width, height, xAxis, yAxis, dataframe, dodge, hue, orderList, hueOrderList, xLabel, yLabel, outputName):
+    sns.set(rc={'figure.figsize': (width, height), 'font.size': 26, 'text.color': 'black'})
+    ax = sns.pointplot(x=xAxis, y=yAxis, hue=hue, order=orderList, hue_order=hueOrderList, data=dataframe, ci=95, join=False, dodge=dodge, palette="Set2")
+    ax.tick_params(colors='black', labelsize=12)
+    plt.ylabel(yLabel, color='black', fontsize=18)
+    plt.xlabel(xLabel, color='black', fontsize=18)
+    plt.savefig(outputName, bbox_inches="tight", pad_inches=0)
+    plt.close()
+    plt.clf()
+    plt.cla()
+    return
+
 korfCosts = {}
 
 with open("../utility/KorfTrueCosts.json") as costs:
@@ -13,7 +44,6 @@ with open("../utility/KorfTrueCosts.json") as costs:
 resultDirs = {"4x4"}
 
 algorithms = ["Minimin", "Bellman", "Nancy", "K-Best 3", "K-Best 10", "K-Best 30", "Cserna"]
-algorithmsDiff = ["Minimin", "Bellman", "Nancy", "K-Best 3", "K-Best 10", "K-Best 30", "Cserna"]
 
 '''
 depthsDFS = [3, 7, 10]
@@ -35,10 +65,6 @@ instanceAS = []
 lookAheadValsAS = []
 algorithmAS = []
 solutionCostAS = []
-
-instanceASDiff = []
-lookAheadValsASDiff = []
-algorithmASDiff = []
 differenceCostAS = []
 
 print("reading in data...")
@@ -83,9 +109,6 @@ for dir in resultDirs:
                 algorithmAS.append(algo)
                 solutionCostAS.append(resultData[algo])
                 differenceCostAS.append(resultData[algo] - resultData["Cserna"])
-                instanceASDiff.append(str(dir))
-                lookAheadValsASDiff.append(resultData["Lookahead"])
-                algorithmASDiff.append(algo)
 
 dfAS = pd.DataFrame({
     "instance":instanceAS,
@@ -95,15 +118,16 @@ dfAS = pd.DataFrame({
 })
 
 dfDiffAS = pd.DataFrame({
-    "instance":instanceASDiff,
-    "Node Expansion Limit":lookAheadValsASDiff,
+    "instance":instanceAS,
+    "Node Expansion Limit":lookAheadValsAS,
     "Algorithm Cost - Cserna Cost":differenceCostAS,
-    "Algorithm":algorithmASDiff
+    "Algorithm":algorithmAS
 })
 
 print("building plots...")
 
 for instance in resultDirs:
+    sns.set(rc={'figure.figsize': (11, 8), 'font.size': 26, 'text.color': 'black'})
     '''
     instanceDataDFS = dfDFS.loc[dfDFS["instance"] == instance]
     
@@ -141,35 +165,9 @@ for instance in resultDirs:
     plt.cla()
     '''
     instanceDataAS = dfAS.loc[dfAS["instance"] == instance]
-    
-    sns.set_style("white")
-    sns.set(rc={'figure.figsize': (11, 8), 'font.size': 26, 'text.color': 'black'})
-
-    ax = sns.pointplot(x="Node Expansion Limit", y="Solution Cost", hue="Algorithm", order=depthsAS, hue_order=algorithms, data=instanceDataAS, join=False, dodge=0.7, palette=sns.color_palette(["red"]), markers="_", errwidth=3, ci=95)
-    ax.tick_params(colors='black', labelsize=12)
-    plt.setp(ax.lines, zorder=100)
-    plt.setp(ax.collections, zorder=100, label="")
-    ax.legend_.remove()
-    
-    sns.violinplot(x="Node Expansion Limit", y="Solution Cost", hue="Algorithm", order=depthsAS, hue_order=algorithms, data=instanceDataAS, palette="Set2")    
-    plt.ylabel("Solution Cost", color='black', fontsize=18)
-    plt.xlabel("Node Expansion Limit", color='black', fontsize=18)
-    plt.savefig("../../plots/Experiment1CViolin" + instance + ".pdf", bbox_inches="tight", pad_inches=0)
-    
-    plt.close()
-    plt.clf()
-    plt.cla()
-    
     instanceDataDiffAS = dfDiffAS.loc[dfDiffAS["instance"] == instance]
 
-    sns.set_style("white")
-    sns.set(rc={'figure.figsize': (11, 8), 'font.size': 26, 'text.color': 'black'})
-    ax = sns.pointplot(x="Node Expansion Limit", y="Algorithm Cost - Cserna Cost", hue="Algorithm", order=depthsAS, hue_order=algorithmsDiff, data=instanceDataDiffAS, ci=95, join=False, dodge=0.35, palette="Set2")
-    ax.tick_params(colors='black', labelsize=12)
-    plt.ylabel("Algorithm Cost - Cserna Cost", color='black', fontsize=18)
-    plt.xlabel("Node Expansion Limit", color='black', fontsize=18)
-    plt.savefig("../../plots/Experiment1CDifference" + instance + ".pdf", bbox_inches="tight", pad_inches=0)
+    makeViolinPlot(11, 8, "Node Expansion Limit", "Solution Cost", instanceDataAS, 0.7, "Algorithm", depthsAS, algorithms, "Node Expansion Limit", "Solution Cost", "../../plots/Experiment1CViolin" + instance + ".pdf")
     
-    plt.close()
-    plt.clf()
-    plt.cla()
+    makeDifferencePlot(11, 8, "Node Expansion Limit", "Algorithm Cost - Cserna Cost", instanceDataDiffAS, 0.35, "Algorithm", depthsAS, algorithms, "Node Expansion Limit", "Algorithm Cost - Cserna Cost", "../../plots/Experiment1CDifference" + instance + ".pdf")
+

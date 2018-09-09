@@ -4,6 +4,38 @@ import json
 import seaborn as sns
 from os import listdir
 
+def makeViolinPlot(width, height, xAxis, yAxis, dataframe, dodge, hue, orderList, hueOrderList, xLabel, yLabel, outputName):
+    sns.set(rc={'figure.figsize': (width, height), 'font.size': 26, 'text.color': 'black'})
+
+    ax = sns.pointplot(x=xAxis, y=yAxis, hue=hue, order=orderList, hue_order=hueOrderList, data=dataframe, join=False, dodge=dodge, palette=sns.color_palette(["red"]), markers="_", errwidth=3, ci=95)
+    ax.tick_params(colors='black', labelsize=12)
+    plt.setp(ax.lines, zorder=100)
+    plt.setp(ax.collections, zorder=100, label="")
+    ax.legend_.remove()
+    
+    sns.violinplot(x=xAxis, y=yAxis, hue=hue, order=orderList, hue_order=hueOrderList, data=dataframe, palette=sns.color_palette(colors))    
+
+    plt.ylabel(yLabel, color='black', fontsize=18)
+    plt.xlabel(xLabel, color='black', fontsize=18)
+    plt.savefig(outputName, bbox_inches="tight", pad_inches=0)
+    
+    plt.close()
+    plt.clf()
+    plt.cla()
+    return
+
+def makeDifferencePlot(width, height, xAxis, yAxis, dataframe, dodge, hue, orderList, hueOrderList, xLabel, yLabel, outputName, colorPalette):
+    sns.set(rc={'figure.figsize': (width, height), 'font.size': 26, 'text.color': 'black'})
+    ax = sns.pointplot(x=xAxis, y=yAxis, hue=hue, order=orderList, hue_order=hueOrderList, data=dataframe, ci=95, join=False, dodge=dodge, palette=sns.color_palette(colorPalette))
+    ax.tick_params(colors='black', labelsize=12)
+    plt.ylabel(yLabel, color='black', fontsize=18)
+    plt.xlabel(xLabel, color='black', fontsize=18)
+    plt.savefig(outputName, bbox_inches="tight", pad_inches=0)
+    plt.close()
+    plt.clf()
+    plt.cla()
+    return
+
 # Hard coded result directories
 resultDirs = {"b2d10"}
 
@@ -13,19 +45,12 @@ colors=["#e6194b", "#3cb44b", "#ffe119", "#0082c8", "#f58231", "#911eb4",
 
 algorithms = ["Minimin", "Bellman", "Nancy", "K-Best 1 Correct Belief", "K-Best 3 Correct Belief", "K-Best 5 Correct Belief", 
               "K-Best 7 Correct Belief", "Cserna Correct Belief", "K-Best 1", "K-Best 3", "K-Best 5", 
-              "K-Best 7", "Cserna",]
-algorithmsDiff = ["Minimin", "Bellman", "Nancy", "K-Best 1 Correct Belief", "K-Best 3 Correct Belief", "K-Best 5 Correct Belief", 
-              "K-Best 7 Correct Belief", "Cserna Correct Belief", "K-Best 1", "K-Best 3", "K-Best 5", 
               "K-Best 7", "Cserna"]
 
 instance = []
 lookAheadVals = []
 algorithm = []
 solutionCost = []
-
-instanceDiff = []
-lookAheadValsDiff = []
-algorithmDiff = []
 differenceCost = []
 
 print("reading in data...")
@@ -40,9 +65,6 @@ for dir in resultDirs:
                 algorithm.append(algo)
                 solutionCost.append(resultData[algo.replace("Correct", "Pemberton")])
                 differenceCost.append(resultData[algo.replace("Correct", "Pemberton")] - resultData["Cserna Pemberton Belief"])
-                instanceDiff.append(str(dir))
-                lookAheadValsDiff.append(resultData["Lookahead"])
-                algorithmDiff.append(algo)
 
 df = pd.DataFrame({
     "instance":instance,
@@ -52,10 +74,10 @@ df = pd.DataFrame({
 })
 
 dfDiff = pd.DataFrame({
-    "instance":instanceDiff,
-    "Depth Limit":lookAheadValsDiff,
+    "instance":instance,
+    "Depth Limit":lookAheadVals,
     "Algorithm Cost - Cserna Cost":differenceCost,
-    "Algorithm":algorithmDiff
+    "Algorithm":algorithm
 })
 
 print("building plots...")
@@ -69,36 +91,9 @@ for instance in resultDirs:
         depths.append(14)
     elif instanceData["Depth Limit"].iloc[0] == 9:
         depths.append(9)
-        
-    sns.set_style("white")
-    sns.set(rc={'figure.figsize': (11, 8), 'font.size': 26, 'text.color': 'black'})
-
-    ax = sns.pointplot(x="Depth Limit", y="Solution Cost", hue="Algorithm", order=depths, hue_order=algorithms, data=instanceData, join=False, dodge=0.741, palette=sns.color_palette(["red"]), markers="_", errwidth=3, ci=95)
-    ax.tick_params(colors='black', labelsize=12)
-    plt.setp(ax.lines, zorder=100)
-    plt.setp(ax.collections, zorder=100, label="")
-    ax.legend_.remove()
     
-    sns.violinplot(x="Depth Limit", y="Solution Cost", hue="Algorithm", order=depths, hue_order=algorithms, data=instanceData, palette=sns.color_palette(colors))    
-
-    plt.ylabel("Solution Cost", color='black', fontsize=18)
-    plt.xlabel("Depth Limit", color='black', fontsize=18)
-    plt.savefig("../../plots/Experiment1AViolin" + instance + ".pdf", bbox_inches="tight", pad_inches=0)
-    
-    plt.close()
-    plt.clf()
-    plt.cla()
-    
+    makeViolinPlot(11, 8, "Depth Limit", "Solution Cost", instanceData, 0.741, "Algorithm", depths, algorithms, "Depth Limit", "Solution Cost", "../../plots/Experiment1AViolin" + instance + ".pdf")
+	    
     instanceDataDiff = dfDiff.loc[dfDiff["instance"] == instance]
 
-    sns.set_style("white")
-    sns.set(rc={'figure.figsize': (11, 8), 'font.size': 26, 'text.color': 'black'})
-    ax = sns.pointplot(x="Depth Limit", y="Algorithm Cost - Cserna Cost", hue="Algorithm", order=depths, hue_order=algorithmsDiff, data=instanceDataDiff, ci=95, join=False, dodge=0.3, palette=sns.color_palette(colors))
-    ax.tick_params(colors='black', labelsize=12)
-    plt.ylabel("Algorithm Cost - Cserna Correct Belief Cost", color='black', fontsize=18)
-    plt.xlabel("Depth Limit", color='black', fontsize=18)
-    plt.savefig("../../plots/Experiment1ADifference" + instance + ".pdf", bbox_inches="tight", pad_inches=0)
-    
-    plt.close()
-    plt.clf()
-    plt.cla()
+    makeDifferencePlot(11, 8, "Depth Limit", "Algorithm Cost - Cserna Cost", instanceDataDiff, 0.3, "Algorithm", depths, algorithms, "Depth Limit", "Algorithm Cost - Cserna Cost", "../../plots/Experiment1ADifference" + instance + ".pdf", colors)

@@ -4,7 +4,8 @@
 #include <ctime>
 
 using namespace std;
-
+// TODO: This hashtable doesn't really work. Tabulation hashing results in non-deterministic search behavior. Very odd.
+// Perhaps due to duplicates not being detected (collisions). Compare number of collisions to another, more basic hash function.
 template <class Key, class Value>
 class HashTable
 {
