@@ -1,5 +1,14 @@
 #!/bin/bash
 
+if [ "$1" = "help" ] || [ "$1" = "-help" ] || [ "$1" = "?" ]
+then
+  echo "./expansionTestHarness.sh <starting instance #> <# of instances to test> <# of processes> <Domain Type> <Domain Variables> <Lookahead value 1> <optional: additional lookahead values>"
+  echo "Available domain types are TreeWorld and SlidingPuzzle"
+  echo "Domain variables for TreeWorld: <branching factor> <tree depth>"
+  echo "Domain variables for SlidingPuzzle: <puzzle dimensions>"
+  exit 1
+fi
+
 if (($# < 6))
 then
   echo "./expansionTestHarness.sh <starting instance #> <# of instances to test> <# of processes> <Domain Type> <Domain Variables> <Lookahead value 1> <optional: additional lookahead values>"

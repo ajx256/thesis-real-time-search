@@ -7,6 +7,13 @@ then
   exit 1
 fi
 
+if [ "$1" = "help" ] || [ "$1" = "-help" ] || [ "$1" = "?" ]
+then
+  echo "./lastIncrementalDecisionHarness.sh <# of instances to test>"
+
+  exit 1
+fi
+
 # The maximum number of instances to test on
 maxInstances=$1
 

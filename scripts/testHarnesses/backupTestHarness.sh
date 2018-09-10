@@ -1,5 +1,15 @@
 #!/bin/bash
 
+if [ "$1" = "help" ] || [ "$1" = "-help" ] || [ "$1" = "?" ]
+then
+  echo "./backupTestHarness.sh <starting instance #> <# of instances to test> <Lookahead Type> <# of processes> <Domain Type> <Domain Variables> <Lookahead value 1> <optional: additional lookahead values>"
+  echo "Available lookahead types are AS and DFS"
+  echo "Available domain types are TreeWorld and SlidingPuzzle"
+  echo "Domain variables for TreeWorld: <branching factor> <tree depth>"
+  echo "Domain variables for SlidingPuzzle: <puzzle dimensions>"
+  exit 1
+fi
+
 if (($# < 6))
 then
   echo "./backupTestHarness.sh <starting instance #> <# of instances to test> <Lookahead Type> <# of processes> <Domain Type> <Domain Variables> <Lookahead value 1> <optional: additional lookahead values>"
