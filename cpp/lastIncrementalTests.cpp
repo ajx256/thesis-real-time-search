@@ -25,11 +25,13 @@ int main(int argc, char** argv)
 	TreeWorld world = TreeWorld(cin);
 	
 	RealTimeSearch<TreeWorld> k1P(world, "dfs", "none", "k-best", lookaheadDepth, 1, "pemberton");
+	RealTimeSearch<TreeWorld> k2P(world, "dfs", "none", "k-best", lookaheadDepth, 2, "pemberton");
 	RealTimeSearch<TreeWorld> k3P(world, "dfs", "none", "k-best", lookaheadDepth, 3, "pemberton");
 	RealTimeSearch<TreeWorld> k5P(world, "dfs", "none", "k-best", lookaheadDepth, 5, "pemberton");
 	RealTimeSearch<TreeWorld> k7P(world, "dfs", "none", "k-best", lookaheadDepth, 7, "pemberton");
 	RealTimeSearch<TreeWorld> pemberton(world, "dfs", "none", "k-best", lookaheadDepth, numeric_limits<double>::infinity(), "pemberton");
 	RealTimeSearch<TreeWorld> k1(world, "dfs", "none", "k-best", lookaheadDepth, 1, "normal");
+	RealTimeSearch<TreeWorld> k2(world, "dfs", "none", "k-best", lookaheadDepth, 2, "normal");
 	RealTimeSearch<TreeWorld> k3(world, "dfs", "none", "k-best", lookaheadDepth, 3, "normal");
 	RealTimeSearch<TreeWorld> k5(world, "dfs", "none", "k-best", lookaheadDepth, 5, "normal");
 	RealTimeSearch<TreeWorld> k7(world, "dfs", "none", "k-best", lookaheadDepth, 7, "normal");
@@ -40,11 +42,13 @@ int main(int argc, char** argv)
 
 	ResultContainer pembertonRes = pemberton.lastIncrementalDecision();
 	ResultContainer k1PRes = k1P.lastIncrementalDecision();
+	ResultContainer k2PRes = k2P.lastIncrementalDecision();
 	ResultContainer k3PRes = k3P.lastIncrementalDecision();
 	ResultContainer k5PRes = k5P.lastIncrementalDecision();
 	ResultContainer k7PRes = k7P.lastIncrementalDecision();
 	ResultContainer csernaRes = cserna.lastIncrementalDecision();
 	ResultContainer k1Res = k1.lastIncrementalDecision();
+	ResultContainer k2Res = k2.lastIncrementalDecision();
 	ResultContainer k3Res = k3.lastIncrementalDecision();
 	ResultContainer k5Res = k5.lastIncrementalDecision();
 	ResultContainer k7Res = k7.lastIncrementalDecision();
@@ -53,11 +57,13 @@ int main(int argc, char** argv)
 	ResultContainer nancyRes = nancy.lastIncrementalDecision();
 
 	string result = "{ \"K-Best 1 Pemberton Belief\": " + to_string(k1PRes.solutionCost) +
+		", \"K-Best 2 Pemberton Belief\": " + to_string(k2PRes.solutionCost) +
 		", \"K-Best 3 Pemberton Belief\": " + to_string(k3PRes.solutionCost) +
 		", \"K-Best 5 Pemberton Belief\": " + to_string(k5PRes.solutionCost) +
 		", \"K-Best 7 Pemberton Belief\": " + to_string(k7PRes.solutionCost) +
 		", \"Cserna Pemberton Belief\": " + to_string(pembertonRes.solutionCost) +
 		", \"K-Best 1\": " + to_string(k1Res.solutionCost) +
+		", \"K-Best 2\": " + to_string(k2Res.solutionCost) +
 		", \"K-Best 3\": " + to_string(k3Res.solutionCost) +
 		", \"K-Best 5\": " + to_string(k5Res.solutionCost) +
 		", \"K-Best 7\": " + to_string(k7Res.solutionCost) +
