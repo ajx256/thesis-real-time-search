@@ -92,7 +92,7 @@ for instance in resultDirs:
     elif instanceData["Depth Limit"].iloc[0] == 9:
         depths.append(9)
     
-    makeViolinPlot(11, 8, "Depth Limit", "Solution Cost", instanceData, 0.741, "Algorithm", depths, algorithms, "Depth Limit", "Solution Cost", "../../plots/Experiment1AViolin" + instance + ".pdf")
+    makeViolinPlot(11, 8, "Depth Limit", "Solution Cost", instanceData, 0.75, "Algorithm", depths, algorithms, "Depth Limit", "Solution Cost", "../../plots/Experiment1AViolin" + instance + ".pdf")
 	    
     instanceDataDiff = dfDiff.loc[dfDiff["instance"] == instance]
 
