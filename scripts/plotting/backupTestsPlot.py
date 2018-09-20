@@ -4,7 +4,7 @@ import json
 import seaborn as sns
 from os import listdir
 
-def makeViolinPlot(width, height, xAxis, yAxis, dataframe, dodge, hue, orderList, hueOrderList, xLabel, yLabel, outputName):
+def makeViolinPlot(width, height, xAxis, yAxis, dataframe, dodge, hue, orderList, hueOrderList, xLabel, yLabel, outputName, colorPalette):
     sns.set(rc={'figure.figsize': (width, height), 'font.size': 26, 'text.color': 'black'})
     ax = sns.pointplot(x=xAxis, y=yAxis, hue=hue, order=orderList, hue_order=hueOrderList, data=dataframe, join=False, dodge=dodge, palette=sns.color_palette(["red"]), markers="_", errwidth=3, ci=95)
     ax.tick_params(colors='black', labelsize=12)
@@ -12,7 +12,7 @@ def makeViolinPlot(width, height, xAxis, yAxis, dataframe, dodge, hue, orderList
     plt.setp(ax.collections, zorder=100, label="")
     ax.legend_.remove()
     
-    sns.violinplot(x=xAxis, y=yAxis, hue=hue, order=orderList, hue_order=hueOrderList, data=dataframe, palette="Set2")    
+    sns.violinplot(x=xAxis, y=yAxis, hue=hue, order=orderList, hue_order=hueOrderList, data=dataframe, palette=colorPalette)    
 
     plt.ylabel(yLabel, color='black', fontsize=18)
     plt.xlabel(xLabel, color='black', fontsize=18)
@@ -23,9 +23,9 @@ def makeViolinPlot(width, height, xAxis, yAxis, dataframe, dodge, hue, orderList
     plt.cla()
     return
 
-def makeDifferencePlot(width, height, xAxis, yAxis, dataframe, dodge, hue, orderList, hueOrderList, xLabel, yLabel, outputName):
+def makeDifferencePlot(width, height, xAxis, yAxis, dataframe, dodge, hue, orderList, hueOrderList, xLabel, yLabel, outputName, colorPalette):
     sns.set(rc={'figure.figsize': (width, height), 'font.size': 26, 'text.color': 'black'})
-    ax = sns.pointplot(x=xAxis, y=yAxis, hue=hue, order=orderList, hue_order=hueOrderList, data=dataframe, ci=95, join=False, dodge=dodge, palette="Set2")
+    ax = sns.pointplot(x=xAxis, y=yAxis, hue=hue, order=orderList, hue_order=hueOrderList, data=dataframe, ci=95, join=False, dodge=dodge, palette=colorPalette)
     ax.tick_params(colors='black', labelsize=12)
     plt.ylabel(yLabel, color='black', fontsize=18)
     plt.xlabel(xLabel, color='black', fontsize=18)
@@ -37,8 +37,12 @@ def makeDifferencePlot(width, height, xAxis, yAxis, dataframe, dodge, hue, order
 
 # Hard coded result directories
 resultDirs = {"b2d100"}
-#"K-Best 3 One Level Belief", "K-Best 10 One Level Belief", "K-Best 30 One Level Belief", 
-algorithms = ["Minimin", "Bellman", "Nancy", "K-Best 3", "K-Best 10", "K-Best 30", "Cserna", "Cserna One Level Belief"]
+ 
+colors=["#e6194b", "#3cb44b", "#ffe119", "#0082c8", "#f58231", "#911eb4",
+        "#46f0f0", "#f032e6", "#808000", "#fabebe", "#008080", "#e6beff", 
+        "#aa6e28", "#800000", "#229954", "#D35400"]
+
+algorithms = ["Minimin", "Bellman", "Nancy", "K-Best 3", "K-Best 10", "K-Best 30", "Cserna", "K-Best 3 One Level Belief", "K-Best 10 One Level Belief", "K-Best 30 One Level Belief", "Cserna One Level Belief"]
 
 depthsDFS = [3, 7, 10]
 
@@ -117,8 +121,8 @@ for instance in resultDirs:
     instanceDataAS = dfAS.loc[dfAS["instance"] == instance]
     instanceDataDiffAS = dfDiffAS.loc[dfDiffAS["instance"] == instance]
 
-    makeViolinPlot(11, 8, "Depth Limit", "Solution Cost", instanceDataDFS, 0.70, "Algorithm", depthsDFS, algorithms, "Depth Limit", "Solution Cost", "../../plots/Experiment1BViolin" + instance + ".pdf")
-    makeDifferencePlot(11, 8, "Depth Limit", "Algorithm Cost - Cserna Cost", instanceDataDiffDFS, 0.35, "Algorithm", depthsDFS, algorithms, "Depth Limit", "Algorithm Cost - Cserna One Level Belief Cost", "../../plots/Experiment1BDifference" + instance + ".pdf")
+    makeViolinPlot(11, 8, "Depth Limit", "Solution Cost", instanceDataDFS, 0.725, "Algorithm", depthsDFS, algorithms, "Depth Limit", "Solution Cost", "../../plots/Experiment1BViolin" + instance + ".pdf", colors)
+    makeDifferencePlot(11, 8, "Depth Limit", "Algorithm Cost - Cserna Cost", instanceDataDiffDFS, 0.5, "Algorithm", depthsDFS, algorithms, "Depth Limit", "Algorithm Cost - Cserna One Level Belief Cost", "../../plots/Experiment1BDifference" + instance + ".pdf", colors)
 
-    makeViolinPlot(11, 8, "Node Expansion Limit", "Solution Cost", instanceDataAS, 0.70, "Algorithm", depthsAS, algorithms, "Node Expansion Limit", "Solution Cost", "../../plots/Experiment1CViolin" + instance + ".pdf")
-    makeDifferencePlot(11, 8, "Node Expansion Limit", "Algorithm Cost - Cserna Cost", instanceDataDiffAS, 0.35, "Algorithm", depthsAS, algorithms, "Node Expansion Limit", "Algorithm Cost - Cserna One Level Belief Cost", "../../plots/Experiment1CDifference" + instance + ".pdf")
+    makeViolinPlot(11, 8, "Node Expansion Limit", "Solution Cost", instanceDataAS, 0.725, "Algorithm", depthsAS, algorithms, "Node Expansion Limit", "Solution Cost", "../../plots/Experiment1CViolin" + instance + ".pdf", colors)
+    makeDifferencePlot(11, 8, "Node Expansion Limit", "Algorithm Cost - Cserna Cost", instanceDataDiffAS, 0.5, "Algorithm", depthsAS, algorithms, "Node Expansion Limit", "Algorithm Cost - Cserna One Level Belief Cost", "../../plots/Experiment1CDifference" + instance + ".pdf", colors)
