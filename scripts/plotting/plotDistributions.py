@@ -7,15 +7,20 @@ import seaborn as sns
 
 sns.set(color_codes=True)
 
-node1 = pd.read_csv("../../distributions/ConvUniformNode1.csv")
-node2 = pd.read_csv("../../distributions/ConvUniformNode2.csv")
-cserna = pd.read_csv("../../distributions/ConvUniformCserna.csv")
+node1 = pd.read_csv("../../distributions/NormalBeliefNode1.csv")
+node2 = pd.read_csv("../../distributions/NormalBeliefNode2.csv")
+cserna = pd.read_csv("../../distributions/NormalBeliefCserna.csv")
 
-plt.plot(cserna["Path Cost Cserna"], cserna["CDF Cserna"])
-plt.plot(node1["Path Cost Node 1"], node1["CDF Node 1"])
-plt.plot(node2["Path Cost Node 2"], node2["CDF Node 2"])
-plt.title("Probability that Complete Path Cost is Less Than Given X")
+plt.rcParams['figure.figsize'] = (11, 8) 
+plt.rcParams['font.size'] = 26
+plt.rcParams['text.color'] = 'black'
+plt.tick_params(labelsize=12)
+
+plt.plot(cserna["Path Cost Cserna"], cserna["Probability Cserna"])
+plt.plot(node1["Path Cost Node 1"], node1["Probability Node 1"])
+plt.plot(node2["Path Cost Node 2"], node2["Probability Node 2"])
+plt.title("Probability that Complete Path Cost is x", color='black', fontsize=18)
 plt.legend()
-plt.ylabel("Probability")
-plt.xlabel("Solution Cost")
-plt.show()
+plt.ylabel("Density", color='black', fontsize=18)
+plt.xlabel("Path Cost", color='black', fontsize=18)
+plt.savefig("../../plots/outputName.pdf", bbox_inches="tight", pad_inches=0)
