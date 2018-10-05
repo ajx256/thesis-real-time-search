@@ -119,7 +119,7 @@ algorithmDiffExpCOpt = []
 for la in gapSums:
     for algo in gapSums[la]:
         instanceDiffExpCOpt.append("4x4")
-        lookAheadValsDiffExpCOpt.append(la);
+        lookAheadValsDiffExpCOpt.append(la)
         optimalGap.append((gapSums[la][algo] / 100) / (gapSums[la]["A*"] / 100))
         algorithmDiffExpCOpt.append(algo)
 
@@ -146,7 +146,7 @@ for instance in resultDirs:
 
     makeDifferencePlot(11, 8, "Node Expansion Limit", "Algorithm Cost - A* Cost", instanceDataDiffExp, 0.35, "Algorithm", limits, algorithmsExpB, "Node Expansion Limit", "Algorithm Cost - A* Cost", "../../plots/Experiment2BDifference" + instance + ".pdf")
 
-    makeViolinPlot(11, 12, "Node Expansion Limit", "Solution Cost", instanceDataExp, 0.59, "Algorithm", limits, algorithmsExpC, "Node Expansion Limit", "Solution Cost", "../../plots/Experiment2CViolin" + instance + ".pdf")
+    makeViolinPlot(11, 12, "Node Expansion Limit", "Solution Cost", instanceDataExp, 0.65, "Algorithm", limits, algorithmsExpC, "Node Expansion Limit", "Solution Cost", "../../plots/Experiment2CViolin" + instance + ".pdf")
 
     makeDifferencePlot(11, 8, "Node Expansion Limit", "Algorithm Cost - A* Cost", instanceDataDiffExp, 0.35, "Algorithm", limits, algorithmsExpC, "Node Expansion Limit", "Algorithm Cost - A* Cost", "../../plots/Experiment2CDifference" + instance + ".pdf")
 

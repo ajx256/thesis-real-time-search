@@ -96,4 +96,4 @@ for instance in resultDirs:
 	    
     instanceDataDiff = dfDiff.loc[dfDiff["instance"] == instance]
 
-    makeDifferencePlot(11, 8, "Depth Limit", "Algorithm Cost - Cserna Cost", instanceDataDiff, 0.3, "Algorithm", depths, algorithms, "Depth Limit", "Algorithm Cost - Cserna Cost", "../../plots/Experiment1ADifference" + instance + ".pdf", colors)
+    makeDifferencePlot(11, 8, "Depth Limit", "Algorithm Cost - Cserna Cost", instanceDataDiff, 0.3, "Algorithm", depths, algorithms, "Depth Limit", "Algorithm Cost - Cserna Correct Belief Cost", "../../plots/Experiment1ADifference" + instance + ".pdf", colors)
