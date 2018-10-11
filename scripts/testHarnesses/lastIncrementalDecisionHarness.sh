@@ -47,7 +47,7 @@ do
 	  then 
 		let instance++
 	  else
-		./../../lastIncremental.sh "$((d - 1))" ../../results/TreeWorld/lastIncrementalDecision/b${b}d${d}/LID-b${b}d${d}-${instance}.json < $file &
+		./../../lastIncremental "$((d - 1))" ../../results/TreeWorld/lastIncrementalDecision/b${b}d${d}/LID-b${b}d${d}-${instance}.json < $file &
 		let instance++
 		let numProcs++
 	  fi

@@ -63,7 +63,7 @@ then
 		    then 
 		      let instance++
 		    else
-		      ./../../backupTestsAS.sh ${domainType} ${lookahead} ../../results/TreeWorld/backupTests/AS/b${b}d${d}/LA${lookahead}-${instance}.json < ${file} &
+		      ./../../backupTestsAS ${domainType} ${lookahead} ../../results/TreeWorld/backupTests/AS/b${b}d${d}/LA${lookahead}-${instance}.json < ${file} &
 		      let instance++
               let numProcs++
 		    fi
@@ -90,7 +90,7 @@ then
 	    then 
 	      let instance++
 	    else
-	      ./../../backupTestsAS.sh ${domainType} ${lookahead} ../../results/SlidingTilePuzzle/backupTests/AS/${dimensions}x${dimensions}/LA${lookahead}-${instance}.json < ${file} &
+	      ./../../backupTestsAS ${domainType} ${lookahead} ../../results/SlidingTilePuzzle/backupTests/AS/${dimensions}x${dimensions}/LA${lookahead}-${instance}.json < ${file} &
 	      let instance++
           let numProcs++
 	    fi
@@ -128,7 +128,7 @@ then
 		    then 
 		      let instance++
 		    else
-		      ./../../backupTestsDFS.sh ${domainType} ${lookahead} ../../results/TreeWorld/backupTests/DFS/b${b}d${d}/LA${lookahead}-${instance}.json < ${file} &
+		      ./../../backupTestsDFS ${domainType} ${lookahead} ../../results/TreeWorld/backupTests/DFS/b${b}d${d}/LA${lookahead}-${instance}.json < ${file} &
 		      let instance++
               let numProcs++
 		    fi
@@ -155,7 +155,7 @@ then
 	    then 
 	      let instance++
 	    else
-	      ./../../backupTestsDFS.sh ${domainType} ${lookahead} ../../results/SlidingTilePuzzle/backupTests/DFS/${dimensions}x${dimensions}/LA${lookahead}-${instance}.json < ${file} &
+	      ./../../backupTestsDFS ${domainType} ${lookahead} ../../results/SlidingTilePuzzle/backupTests/DFS/${dimensions}x${dimensions}/LA${lookahead}-${instance}.json < ${file} &
 	      let instance++
           let numProcs++
 	    fi

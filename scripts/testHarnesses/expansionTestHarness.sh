@@ -57,7 +57,7 @@ then
 	      then 
 	        let instance++
 	      else
-	        ./../../expansionTests.sh ${domainType} ${lookahead} ../../results/TreeWorld/expansionTests/Nancy/b${b}d${d}/LA${lookahead}-${instance}.json < ${file} &
+	        ./../../expansionTests ${domainType} ${lookahead} ../../results/TreeWorld/expansionTests/Nancy/b${b}d${d}/LA${lookahead}-${instance}.json < ${file} &
 	        let instance++
             let numProcs++
 	      fi
@@ -84,7 +84,7 @@ then
 	  then 
 	    let instance++
 	  else
-	    ./../../expansionTests.sh ${domainType} ${lookahead} ../../results/SlidingTilePuzzle/expansionTests/Nancy/${dimensions}x${dimensions}/LA${lookahead}-${instance}.json < ${file} &
+	    ./../../expansionTests ${domainType} ${lookahead} ../../results/SlidingTilePuzzle/expansionTests/Nancy/${dimensions}x${dimensions}/LA${lookahead}-${instance}.json < ${file} &
 	    let instance++
         let numProcs++
 	  fi
