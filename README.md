@@ -8,7 +8,7 @@ cd scripts/
 
 TO RUN TESTS FOR MY THESIS AND AAAI SUBMISSION:
 
-cd scripts/
+cd scripts/testHarnesses/
 
 To run backup rule tests for last incremental decision:
 
