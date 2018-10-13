@@ -1,3 +1,17 @@
+ABOUT:
+
+This repo contains code for studying real-time heuristic search algorithms. These algorithms can be broken down into three phases: expansion, decision, and learning. The code is this repo is mainly concerned bout exploring the topic of which node is best to expand (by comparing expansion policies) and how best to aggregate information at the search frontier for decision-making (backup rules).
+
+In regards to decision-making and backup rules, we have implementations of minimin, Bellman, Cserna, k-best, and Nancy backups.
+
+As for expansion policies, implementations are of breadth-first search, depth-first search, A*, f^, and risk-based expansion.
+
+Learning policies, such as the reverse Dijkstra method utilized by LSS-LRTA*, are also implemented.
+
+These various policies can be combined to create real-time search algorithms.  For example, A* expansion can be combined with reverse Dijkstra learning and minimin backups to yield LSS-LRTA*.  f^ expansion can be combined with Bellman backups and reverse Dijkstra learning to yield f^, a variation of LSS-LRTA* that expands and makes decisions based on expected value rather than f.  Risk-based expansion can be combined with reverse Dijkstra learning and Nancy backups to yield the Nancy algorithm.
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 TO BUILD:
 
 cd scripts/
