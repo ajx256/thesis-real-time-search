@@ -14,6 +14,7 @@
 #include "expansionAlgorithms/BreadthFirst.h"
 #include "expansionAlgorithms/DepthFirst.h"
 #include "expansionAlgorithms/Risk.h"
+#include "expansionAlgorithms/Confidence.h"
 #include "learningAlgorithms/LearningAlgorithm.h"
 #include "learningAlgorithms/Dijkstra.h"
 #include "learningAlgorithms/Ignorance.h"
@@ -192,6 +193,10 @@ public:
 		else if (expansionModule == "risk")
 		{
 			expansionAlgo = new Risk<Domain, Node, TopLevelAction>(domain, lookahead, 1);
+		}
+        else if (expansionModule == "confidence")
+		{
+			expansionAlgo = new Confidence<Domain, Node, TopLevelAction>(domain, lookahead, 1);
 		}
 
 		if (learningModule == "none")
