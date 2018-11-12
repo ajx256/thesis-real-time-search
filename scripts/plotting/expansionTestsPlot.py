@@ -38,7 +38,7 @@ def makeDifferencePlot(width, height, xAxis, yAxis, dataframe, dodge, hue, order
 # Hard coded result directories
 resultDirs = {"b2d100"}
 limits = [3, 10, 30, 100, 300, 1000]
-algorithms = ["A*", "F-Hat", "BFS", "Risk", "LSS-LRTA*"]
+algorithms = ["A*", "F-Hat", "BFS", "Risk", "LSS-LRTA*", "Confidence"]
 
 instance = []
 lookAheadVals = []
@@ -97,3 +97,5 @@ for instance in resultDirs:
     makeViolinPlot(11, 8, "Node Expansion Limit", "Solution Cost", instanceDataExp, 0.59, "Algorithm", limits, algorithmsExpC, "Node Expansion Limit", "Solution Cost", "../../plots/Experiment2CViolin" + instance + ".pdf")
 
     makeDifferencePlot(11, 8, "Node Expansion Limit", "Algorithm Cost - A* Cost", instanceDataDiffExp, 0.35, "Algorithm", limits, algorithmsExpC, "Node Expansion Limit", "Algorithm Cost - A* Cost", "../../plots/Experiment2CDifference" + instance + ".pdf")
+
+    makeDifferencePlot(11, 8, "Node Expansion Limit", "Algorithm Cost - A* Cost", instanceDataDiffExp, 0.35, "Algorithm", limits, algorithmsExpC, "Node Expansion Limit", "Algorithm Cost - A* Cost", "../../plots/Experiment2CDifference" + instance + "AAAI19Slides.pdf")

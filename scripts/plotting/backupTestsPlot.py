@@ -44,6 +44,8 @@ colors=["#e6194b", "#3cb44b", "#ffe119", "#0082c8", "#f58231", "#911eb4",
 
 algorithms = ["Minimin", "Bellman", "Nancy", "K-Best 3", "K-Best 10", "K-Best 30", "Cserna", "K-Best 3 One Level Belief", "K-Best 10 One Level Belief", "K-Best 30 One Level Belief", "Cserna One Level Belief"]
 
+algorithmsAAAI19Slides = ["Minimin", "Bellman", "Nancy", "Cserna", "Cserna One Level Belief"]
+
 depthsDFS = [3, 7, 10]
 
 instanceDFS = []
@@ -126,3 +128,5 @@ for instance in resultDirs:
 
     makeViolinPlot(11, 8, "Node Expansion Limit", "Solution Cost", instanceDataAS, 0.725, "Algorithm", depthsAS, algorithms, "Node Expansion Limit", "Solution Cost", "../../plots/Experiment1CViolin" + instance + ".pdf", colors)
     makeDifferencePlot(11, 8, "Node Expansion Limit", "Algorithm Cost - Cserna Cost", instanceDataDiffAS, 0.5, "Algorithm", depthsAS, algorithms, "Node Expansion Limit", "Algorithm Cost - Cserna One Level Belief Cost", "../../plots/Experiment1CDifference" + instance + ".pdf", colors)
+
+    makeDifferencePlot(11, 8, "Node Expansion Limit", "Algorithm Cost - Cserna Cost", instanceDataDiffAS, 0.5, "Algorithm", depthsAS, algorithmsAAAI19Slides, "Node Expansion Limit", "Algorithm Cost - Cserna One Level Belief Cost", "../../plots/Experiment1CDifference" + instance + "AAAI19Slides.pdf", colors)

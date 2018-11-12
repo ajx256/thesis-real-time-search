@@ -58,7 +58,7 @@ resultDirs = {"4x4"}
 limits = [3, 10, 30, 100, 300, 1000]
 revisedLimits = [30, 100, 300, 1000]
 
-algorithms = ["A*", "F-Hat", "BFS", "Risk", "LSS-LRTA*"]
+algorithms = ["A*", "F-Hat", "BFS", "Risk", "LSS-LRTA*", "Confidence"]
 
 instance = []
 lookAheadVals = []
@@ -76,7 +76,7 @@ for dir in resultDirs:
             resultData = json.load(json_data)
 
             if resultData["Lookahead"] not in gapSums:
-                gapSums[resultData["Lookahead"]] = {"A*" : 0, "Risk" : 0, "F-Hat" : 0, "BFS" : 0, "LSS-LRTA*" : 0}
+                gapSums[resultData["Lookahead"]] = {"A*" : 0, "Risk" : 0, "F-Hat" : 0, "BFS" : 0, "LSS-LRTA*" : 0, "Confidence" : 0}
 
             # Find the optimal cost
             instanceKorf = file.split('-')[1].split('.')[0]
@@ -149,5 +149,7 @@ for instance in resultDirs:
     makeViolinPlot(11, 12, "Node Expansion Limit", "Solution Cost", instanceDataExp, 0.65, "Algorithm", limits, algorithmsExpC, "Node Expansion Limit", "Solution Cost", "../../plots/Experiment2CViolin" + instance + ".pdf")
 
     makeDifferencePlot(11, 8, "Node Expansion Limit", "Algorithm Cost - A* Cost", instanceDataDiffExp, 0.35, "Algorithm", limits, algorithmsExpC, "Node Expansion Limit", "Algorithm Cost - A* Cost", "../../plots/Experiment2CDifference" + instance + ".pdf")
+
+    makeDifferencePlot(11, 8, "Node Expansion Limit", "Algorithm Cost - A* Cost", instanceDataDiffExp, 0.35, "Algorithm", limits, algorithmsExpC, "Node Expansion Limit", "Algorithm Cost - A* Cost", "../../plots/Experiment2CDifference" + instance + "AAAI19Slides.pdf")
 
     makeOptimalityGapPlot(11, 8, "Node Expansion Limit", "Average Optimality Gap", instanceDataOpt, 0.35, "Algorithm", revisedLimits, algorithmsOpt, "Node Expansion Limit", "Average Optimality Gap (% of A*)", "../../plots/Experiment2COptimalityGap" + instance + ".pdf")

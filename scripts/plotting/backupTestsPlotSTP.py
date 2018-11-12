@@ -44,6 +44,7 @@ with open("../utility/KorfTrueCosts.json") as costs:
 resultDirs = {"4x4"}
 
 algorithms = ["Minimin", "Bellman", "Nancy", "K-Best 3", "K-Best 10", "K-Best 30", "Cserna"]
+algorithmsAAAI19Slide = ["Minimin", "Bellman", "Nancy", "Cserna"]
 
 '''
 depthsDFS = [3, 7, 10]
@@ -171,3 +172,4 @@ for instance in resultDirs:
     
     makeDifferencePlot(11, 8, "Node Expansion Limit", "Algorithm Cost - Cserna Cost", instanceDataDiffAS, 0.35, "Algorithm", depthsAS, algorithms, "Node Expansion Limit", "Algorithm Cost - Cserna Cost", "../../plots/Experiment1CDifference" + instance + ".pdf")
 
+    makeDifferencePlot(11, 8, "Node Expansion Limit", "Algorithm Cost - Cserna Cost", instanceDataDiffAS, 0.35, "Algorithm", depthsAS, algorithmsAAAI19Slide, "Node Expansion Limit", "Algorithm Cost - Cserna Cost", "../../plots/Experiment1CDifference" + instance + "AAAI19Slides.pdf")
