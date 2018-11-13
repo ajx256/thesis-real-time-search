@@ -38,13 +38,13 @@ def makeDifferencePlot(width, height, xAxis, yAxis, dataframe, dodge, hue, order
 # Hard coded result directories
 resultDirs = {"b2d100"}
  
-colors=["#e6194b", "#3cb44b", "#ffe119", "#0082c8", "#f58231", "#911eb4",
-        "#46f0f0", "#f032e6", "#808000", "#fabebe", "#008080", "#e6beff", 
+colors=["#e6194b", "#3cb44b", "#f58231", "#0082c8", "#808000", "#911eb4",
+        "#46f0f0", "#f032e6", "#ffe119", "#fabebe", "#008080", "#e6beff", 
         "#aa6e28", "#800000", "#229954", "#D35400"]
 
 algorithms = ["Minimin", "Bellman", "Nancy", "K-Best 3", "K-Best 10", "K-Best 30", "Cserna", "K-Best 3 One Level Belief", "K-Best 10 One Level Belief", "K-Best 30 One Level Belief", "Cserna One Level Belief"]
 
-algorithmsAAAI19Slides = ["Minimin", "Bellman", "Nancy", "Cserna", "Cserna One Level Belief"]
+algorithmsAAAI19Slides = ["Minimin", "Bellman", "Nancy", "Cserna"]
 
 depthsDFS = [3, 7, 10]
 
@@ -61,6 +61,7 @@ lookAheadValsAS = []
 algorithmAS = []
 solutionCostAS = []
 differenceCostAS = []
+differenceCostASAAAISlide = []
 
 print("reading in data...")
 
@@ -99,6 +100,7 @@ for dir in resultDirs:
                 algorithmAS.append(algo)
                 solutionCostAS.append(resultData[algo.replace("One Level", "Pemberton")])
                 differenceCostAS.append(resultData[algo.replace("One Level", "Pemberton")] - resultData["Cserna Pemberton Belief"])
+                differenceCostASAAAISlide.append(resultData[algo.replace("One Level", "Pemberton")] - resultData["Cserna"])
 
 dfAS = pd.DataFrame({
     "instance":instanceAS,
@@ -114,6 +116,13 @@ dfDiffAS = pd.DataFrame({
     "Algorithm":algorithmAS
 })
 
+dfDiffASAAAISlide = pd.DataFrame({
+    "instance":instanceAS,
+    "Node Expansion Limit":lookAheadValsAS,
+    "Algorithm Cost - Cserna Cost":differenceCostASAAAISlide,
+    "Algorithm":algorithmAS
+})
+
 print("building plots...")
 
 for instance in resultDirs:
@@ -122,6 +131,7 @@ for instance in resultDirs:
     instanceDataDiffDFS = dfDiffDFS.loc[dfDiffDFS["instance"] == instance]
     instanceDataAS = dfAS.loc[dfAS["instance"] == instance]
     instanceDataDiffAS = dfDiffAS.loc[dfDiffAS["instance"] == instance]
+    instanceDataDiffASAAAISlide = dfDiffASAAAISlide.loc[dfDiffASAAAISlide["instance"] == instance]
 
     makeViolinPlot(11, 8, "Depth Limit", "Solution Cost", instanceDataDFS, 0.725, "Algorithm", depthsDFS, algorithms, "Depth Limit", "Solution Cost", "../../plots/Experiment1BViolin" + instance + ".pdf", colors)
     makeDifferencePlot(11, 8, "Depth Limit", "Algorithm Cost - Cserna Cost", instanceDataDiffDFS, 0.5, "Algorithm", depthsDFS, algorithms, "Depth Limit", "Algorithm Cost - Cserna One Level Belief Cost", "../../plots/Experiment1BDifference" + instance + ".pdf", colors)
@@ -129,4 +139,4 @@ for instance in resultDirs:
     makeViolinPlot(11, 8, "Node Expansion Limit", "Solution Cost", instanceDataAS, 0.725, "Algorithm", depthsAS, algorithms, "Node Expansion Limit", "Solution Cost", "../../plots/Experiment1CViolin" + instance + ".pdf", colors)
     makeDifferencePlot(11, 8, "Node Expansion Limit", "Algorithm Cost - Cserna Cost", instanceDataDiffAS, 0.5, "Algorithm", depthsAS, algorithms, "Node Expansion Limit", "Algorithm Cost - Cserna One Level Belief Cost", "../../plots/Experiment1CDifference" + instance + ".pdf", colors)
 
-    makeDifferencePlot(11, 8, "Node Expansion Limit", "Algorithm Cost - Cserna Cost", instanceDataDiffAS, 0.5, "Algorithm", depthsAS, algorithmsAAAI19Slides, "Node Expansion Limit", "Algorithm Cost - Cserna One Level Belief Cost", "../../plots/Experiment1CDifference" + instance + "AAAI19Slides.pdf", colors)
+    makeDifferencePlot(11, 8, "Node Expansion Limit", "Algorithm Cost - Cserna Cost", instanceDataDiffASAAAISlide, 0.5, "Algorithm", depthsAS, algorithmsAAAI19Slides, "Node Expansion Limit", "Algorithm Cost - Cserna Cost", "../../plots/Experiment1CDifference" + instance + "AAAI19Slides.pdf", colors)
