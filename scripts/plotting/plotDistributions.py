@@ -16,9 +16,13 @@ plt.rcParams['font.size'] = 26
 plt.rcParams['text.color'] = 'black'
 plt.tick_params(labelsize=12)
 
-plt.plot(cserna["Path Cost Cserna"], cserna["Probability Cserna"])
-plt.plot(node1["Path Cost Node 1"], node1["Probability Node 1"])
-plt.plot(node2["Path Cost Node 2"], node2["Probability Node 2"])
+
+plt.plot(cserna["Path Cost Cserna"], cserna["Probability Cserna"], color="blue")
+#plt.bar(cserna["Path Cost Cserna"], cserna["CDF Cserna"], 0.03, color="blue")
+plt.plot(node1["Path Cost Node 1"], node1["Probability Node 1"], color="green")
+#plt.bar(node1["Path Cost Node 1"], node1["Probability Node 1"], 0.03, color="green")
+plt.plot(node2["Path Cost Node 2"], node2["Probability Node 2"], color="red")
+#plt.bar(node2["Path Cost Node 2"], node2["Probability Node 2"], 0.03, color="red")
 plt.title("Probability that Complete Path Cost is x", color='black', fontsize=18)
 plt.legend()
 plt.ylabel("Density", color='black', fontsize=18)
