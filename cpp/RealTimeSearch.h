@@ -118,7 +118,11 @@ public:
 			// Tie break on g-value
 			if (n1->getFHatValue() == n2->getFHatValue())
 			{
-				return n1->getGValue() > n2->getGValue();
+                if (n1->getFValue() == n2->getFValue())
+                {
+				    return n1->getGValue() > n2->getGValue();
+                }
+                return n1->getFValue() > n2->getFValue();
 			}
 			return n1->getFHatValue() < n2->getFHatValue();
 		}

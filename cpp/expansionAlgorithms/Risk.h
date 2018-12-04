@@ -164,7 +164,29 @@ private:
 			double riskCalculation = riskAnalysis(alphaTLA, squishedTopLevelActions);
 
 			// If this is the first TLA risk has been calculated for, it by default minimizes risk...
-			if (riskCalculation < minimalRisk)
+            // If two actions minimize risk by same value, tie break on f-hat -> f -> g in this order.
+            if (riskCalculation == minimalRisk)
+            {
+                if (tlas[i].topLevelNode->getFHatValue() == tlas[minimalRiskTLA].topLevelNode->getFHatValue())
+                {
+                    if (tlas[i].topLevelNode->getFValue() == tlas[minimalRiskTLA].topLevelNode->getFValue())
+                    {
+                        if (tlas[i].topLevelNode->getGValue() < tlas[minimalRiskTLA].topLevelNode->getGValue())
+                        {
+                            minimalRiskTLA = i;
+                        }
+                    }
+                    else if (tlas[i].topLevelNode->getFValue() < tlas[minimalRiskTLA].topLevelNode->getFValue())
+                    {
+                        minimalRiskTLA = i;
+                    }
+                }
+                else if (tlas[i].topLevelNode->getFHatValue() < tlas[minimalRiskTLA].topLevelNode->getFHatValue())
+                {
+                    minimalRiskTLA = i;
+                }
+            }
+			else if (riskCalculation < minimalRisk)
 			{
 				// Otherwise the TLA with the lower risk replaces the current lowest
 				minimalRisk = riskCalculation;
