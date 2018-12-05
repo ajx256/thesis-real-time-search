@@ -28,8 +28,6 @@ public:
 		while (goalPrime->getParent() != start)
 			goalPrime = goalPrime->getParent();
 
-		goalPrime->markStart();
-
 		return goalPrime;
 	}
 

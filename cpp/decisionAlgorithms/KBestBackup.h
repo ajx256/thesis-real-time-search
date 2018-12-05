@@ -32,8 +32,6 @@ public:
 
 		shared_ptr<Node> goalPrime = lowestExpectedPathTLA.topLevelNode;
 
-		goalPrime->markStart();
-
 		return goalPrime;
 	}
 

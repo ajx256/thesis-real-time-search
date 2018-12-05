@@ -74,10 +74,10 @@ public:
 		void close() { open = false; }
 		void reOpen() { open = true; }
 
+        void markStart() { stateRep.markStart(); }
+
 		void incDelayCntr() { delayCntr++; }
 		int getDelayCntr() { return delayCntr; }
-
-		void markStart() { stateRep.markStart(); }
 
 		Node(Cost g, Cost h, Cost d, Cost derr, Cost epsH, Cost epsD, State state, shared_ptr<Node> parent, int tla)
 			: g(g), h(h), d(d), derr(derr), epsH(epsH), epsD(epsD), stateRep(state), parent(parent), owningTLA(tla)
@@ -257,6 +257,9 @@ public:
 
 		while (1)
 		{
+            // mark this node as the start of the current search (to prevent state pruning based on label)
+            start->markStart();
+
 			// Check if a goal has been reached
 			if (domain.isGoal(start->getState()))
 			{
@@ -283,11 +286,14 @@ public:
 				break;
 			}
 
-			//  Learning Phase
+			// Learning Phase
 			learningAlgo->learn(open, closed);
 
 			// Decision-making Phase
 			start = decisionAlgo->backup(open, tlas, start);
+
+            // Add this step to the path taken so far
+            res.path.push(start->getState().getLabel());
 		}
 
 		return res;
@@ -327,6 +333,9 @@ public:
 
 		// Decision-making Phase
 		start = decisionAlgo->backup(open, tlas, start);
+
+        // mark this node as the start of the current search (to prevent state pruning based on label)
+        start->markStart();
 
 		// Empty OPEN and CLOSED
 		open.clear();

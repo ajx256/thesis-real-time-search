@@ -59,10 +59,10 @@ public:
 			return label;
 		}
 
-		void markStart()
-		{
-			label = -1;
-		}
+        void markStart() 
+        {
+            label = -1;
+        }
 
 	private:
 		int depth;

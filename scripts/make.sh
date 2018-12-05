@@ -1,3 +1,9 @@
+rm ../generateTrees
+rm ../lastIncremental
+rm ../backupTestsDFS
+rm ../backupTestsAS
+rm ../expansionTests
+
 g++ -std=c++11 ../cpp/generateTrees.cpp -o ../generateTrees
 g++ -std=c++11 ../cpp/lastIncrementalTests.cpp -o ../lastIncremental
 g++ -std=c++11 ../cpp/backupTestsDFS.cpp -o ../backupTestsDFS

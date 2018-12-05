@@ -7,9 +7,8 @@
 #include <iomanip>
 #include <algorithm>
 #include <unordered_map>
-#include "../utility/SlidingWindow.h"
-
 #include <bitset>
+#include "../utility/SlidingWindow.h"
 
 using namespace std;
 
@@ -22,7 +21,8 @@ public:
 	public:
 		State() {}
 
-		State(std::vector<std::vector<int> > b, char l) : board(b), label(l) 
+		State(std::vector<std::vector<int> > b, int l) 
+            : board(b), label(l) 
 		{
 			generateKey();
 		}
@@ -84,19 +84,19 @@ public:
 			return board;
 		}
 
-		char getLabel() const
+		int getLabel() const
 		{
 			return label;
 		}
 
-		void markStart()
-		{
-			label = 's';
-		}
+        void markStart() 
+        {
+            label = -1;
+        }
 
 	private:
 		std::vector<std::vector<int> > board;
-		char label;
+		int label;
 		unsigned long long theKey = -1;
 	};
 
@@ -204,7 +204,7 @@ public:
 			}
 		}
 
-		startState = State(startBoard, 's');
+		startState = State(startBoard, -1);
 	}
 
 	bool isGoal(const State& s) const {
@@ -542,6 +542,43 @@ public:
 
 		return avg;
 	}
+
+    bool validatePath(queue<int> path)
+    {
+        std::vector<std::vector<int> > board = startBoard;
+
+        std::vector<State> successors;
+
+        while (!path.empty())
+        {
+            char action = path.front();
+            path.pop();
+            if (action == 'U')
+            {
+                moveUp(successors, board);
+                board = successors.back().getBoard();
+            }
+            else if (action == 'D')
+            {
+                moveDown(successors, board);
+                board = successors.back().getBoard();
+            }
+            else if (action == 'R')
+            {
+                moveRight(successors, board);
+                board = successors.back().getBoard();
+            }
+            else if (action == 'L')
+            {
+                moveLeft(successors, board);
+                board = successors.back().getBoard();
+            }
+        }
+
+        if (board == endBoard)
+            return true;
+        return false;
+    }
 
 	std::vector<std::vector<int> > startBoard;
 	std::vector<std::vector<int> > endBoard;
