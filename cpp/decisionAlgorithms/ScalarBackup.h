@@ -1,5 +1,6 @@
 #pragma once
 #include <functional>
+#include <memory>
 #include "../utility/PriorityQueue.h"
 #include "DecisionAlgorithm.h"
 
@@ -16,12 +17,12 @@ public:
 		: sortingFunction(sorting)
 	{}
 
-	Node* backup(PriorityQueue<Node*>& open, vector<TopLevelAction>& tlas, Node* start)
+	shared_ptr<Node> backup(PriorityQueue<shared_ptr<Node> >& open, vector<TopLevelAction>& tlas, shared_ptr<Node> start)
 	{
 		// First things first, reorder open so it matches our expansion policy needs
 		sortOpen(open);
 
-		Node* goalPrime = open.top();
+		shared_ptr<Node> goalPrime = open.top();
 
 		// Only move one step towards best on open
 		while (goalPrime->getParent() != start)
@@ -33,7 +34,7 @@ public:
 	}
 
 private:
-	void sortOpen(PriorityQueue<Node*>& open)
+	void sortOpen(PriorityQueue<shared_ptr<Node> >& open)
 	{
 		if (sortingFunction == "minimin")
 			open.swapComparator(Node::compareNodesF);

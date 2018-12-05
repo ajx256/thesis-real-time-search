@@ -1,6 +1,7 @@
 #pragma once
 #include <unordered_map>
 #include <functional>
+#include <memory>
 #include "../utility/PriorityQueue.h"
 #include "LearningAlgorithm.h"
 
@@ -17,7 +18,7 @@ public:
 	Ignorance()
 	{}
 
-	void learn(PriorityQueue<Node*> open, unordered_map<State, Node*, Hash> closed)
+	void learn(PriorityQueue<shared_ptr<Node> > open, unordered_map<State, shared_ptr<Node>, Hash> closed)
 	{
 		// Learning is for fucking nerds
 		return;

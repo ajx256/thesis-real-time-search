@@ -1,5 +1,6 @@
 #pragma once
 #include <unordered_map>
+#include <memory>
 #include <functional>
 #include "../utility/PriorityQueue.h"
 
@@ -10,7 +11,7 @@ class DecisionAlgorithm
 	typedef typename Domain::HashState Hash;
 
 public:
-	virtual Node* backup(PriorityQueue<Node*>& open, vector<TopLevelAction>& tlas, Node* start)
+	virtual shared_ptr<Node> backup(PriorityQueue<shared_ptr<Node> >& open, vector<TopLevelAction>& tlas, shared_ptr<Node> start)
 	{
 	}
 };

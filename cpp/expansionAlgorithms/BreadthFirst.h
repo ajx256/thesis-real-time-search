@@ -1,6 +1,7 @@
 #pragma once
 #include <unordered_map>
 #include <functional>
+#include <memory>
 #include <queue>
 #include "ExpansionAlgorithm.h"
 #include "../utility/PriorityQueue.h"
@@ -25,8 +26,8 @@ public:
 		lookahead++;
 	}
 
-	void expand(PriorityQueue<Node*>& open, unordered_map<State, Node*, Hash>& closed, vector<TopLevelAction>& tlas,
-		std::function<bool(Node*, unordered_map<State, Node*, Hash>&, PriorityQueue<Node*>&, vector<TopLevelAction>&)> duplicateDetection,
+	void expand(PriorityQueue<shared_ptr<Node> >& open, unordered_map<State, shared_ptr<Node>, Hash>& closed, vector<TopLevelAction>& tlas,
+		std::function<bool(shared_ptr<Node>, unordered_map<State, shared_ptr<Node>, Hash>&, PriorityQueue<shared_ptr<Node> >&, vector<TopLevelAction>&)> duplicateDetection,
 		ResultContainer& res)
 	{
 		// Empty any old values out of the queue
@@ -36,7 +37,7 @@ public:
 		}
 
 		// Start by shoving everything on open onto the queue...
-		for (Node* n : open)
+		for (shared_ptr<Node> n : open)
 		{
 			q.push(n);
 		}
@@ -46,7 +47,7 @@ public:
 		while (!q.empty() && expansions < lookahead)
 		{
 			// Pop lowest fhat-value off open
-			Node* cur = q.front();
+			shared_ptr<Node> cur = q.front();
 			q.pop();
 			
 			// Check if current node is goal
@@ -72,7 +73,7 @@ public:
 
 			for (State child : children)
 			{
-				Node* childNode = new Node(cur->getGValue() + domain.getEdgeCost(child),
+				shared_ptr<Node> childNode = make_shared<Node>(cur->getGValue() + domain.getEdgeCost(child),
 					domain.heuristic(child), domain.distance(child), domain.distanceErr(child), 
 					domain.epsilonHGlobal(), domain.epsilonDGlobal(), child, cur, cur->getOwningTLA());
 
@@ -94,8 +95,6 @@ public:
 					// Add to open of generating TLA
 					tlas[childNode->getOwningTLA()].open.push(childNode);
 				}
-				else
-					delete childNode;
 			}
 
 			// Learn one-step error
@@ -113,5 +112,5 @@ public:
 protected:
 	Domain & domain;
 	double lookahead;
-	queue<Node*> q;
+	queue<shared_ptr<Node> > q;
 };

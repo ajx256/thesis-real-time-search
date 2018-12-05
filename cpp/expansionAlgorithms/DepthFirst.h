@@ -1,6 +1,7 @@
 #pragma once
 #include <unordered_map>
 #include <stack>
+#include <memory>
 #include <functional>
 #include "ExpansionAlgorithm.h"
 #include "../utility/PriorityQueue.h"
@@ -25,8 +26,8 @@ public:
 		lookahead++;
 	}
 
-	void expand(PriorityQueue<Node*>& open, unordered_map<State, Node*, Hash>& closed, vector<TopLevelAction>& tlas,
-		std::function<bool(Node*, unordered_map<State, Node*, Hash>&, PriorityQueue<Node*>&, vector<TopLevelAction>&)> duplicateDetection,
+	void expand(PriorityQueue<shared_ptr<Node> >& open, unordered_map<State, shared_ptr<Node>, Hash>& closed, vector<TopLevelAction>& tlas,
+		std::function<bool(shared_ptr<Node>, unordered_map<State, shared_ptr<Node>, Hash>&, PriorityQueue<shared_ptr<Node> >&, vector<TopLevelAction>&)> duplicateDetection,
 		ResultContainer& res)
 	{
 		// Start by shoving everything on open onto the stack...
@@ -42,7 +43,7 @@ public:
 
 		while (!theStack.empty())
 		{
-			pair<Node*, int> cur = theStack.top();
+			pair<shared_ptr<Node>, int> cur = theStack.top();
 			theStack.pop();
 
 			// If this node is a goal, do not expand it. If the current depth is equal to our lookahead depth,
@@ -67,7 +68,7 @@ public:
 
 				for (State child : children)
 				{
-					Node* childNode = new Node(cur.first->getGValue() + domain.getEdgeCost(child),
+					shared_ptr<Node> childNode = make_shared<Node>(cur.first->getGValue() + domain.getEdgeCost(child),
 						domain.heuristic(child), domain.distance(child), domain.distanceErr(child), 
 						domain.epsilonHGlobal(), domain.epsilonDGlobal(), child, cur.first, cur.first->getOwningTLA());
 
@@ -85,8 +86,6 @@ public:
 						closed[child] = childNode;
 						theStack.push(make_pair(childNode, cur.second + 1));
 					}
-					else
-						delete childNode;
 				}
 
 				// Learn the one-step error
@@ -105,5 +104,5 @@ public:
 protected:
 	Domain& domain;
 	double lookahead;
-	stack<pair<Node*, int> > theStack;
+	stack<pair<shared_ptr<Node>, int> > theStack;
 };

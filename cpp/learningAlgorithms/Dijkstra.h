@@ -1,6 +1,7 @@
 #pragma once
 #include <unordered_map>
 #include <functional>
+#include <memory>
 #include "../utility/PriorityQueue.h"
 #include "LearningAlgorithm.h"
 
@@ -18,10 +19,10 @@ public:
 		: domain(domain)
 	{}
 
-	void learn(PriorityQueue<Node*> open, unordered_map<State, Node*, Hash> closed)
+	void learn(PriorityQueue<shared_ptr<Node> > open, unordered_map<State, shared_ptr<Node>, Hash> closed)
 	{
 		// Start by initializing every state in closed to inf h
-		for (typename unordered_map<State, Node*, Hash>::iterator it = closed.begin(); it != closed.end(); it++)
+		for (typename unordered_map<State, shared_ptr<Node>, Hash>::iterator it = closed.begin(); it != closed.end(); it++)
 		{
 			if (!it->second->onOpen())
 				domain.updateHeuristic(it->first, numeric_limits<double>::infinity());
@@ -33,7 +34,7 @@ public:
 		// Perform reverse dijkstra while closed is not empy
 		while (!closed.empty() && !open.empty())
 		{
-			Node* cur = open.top();
+			shared_ptr<Node> cur = open.top();
 			open.pop();
 
 			closed.erase(cur->getState());
@@ -41,7 +42,7 @@ public:
 			// Now get all of the predecessors of cur
 			for (State s : domain.predecessors(cur->getState()))
 			{
-				typename unordered_map<State, Node*, Hash>::iterator it = closed.find(s);
+				typename unordered_map<State, shared_ptr<Node>, Hash>::iterator it = closed.find(s);
 
 				if (it != closed.end() &&
 					domain.heuristic(s) > domain.getEdgeCost(cur->getState()) + domain.heuristic(cur->getState()))

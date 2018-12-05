@@ -2,6 +2,7 @@
 #include <unordered_map>
 #include <functional>
 #include <limits>
+#include <memory>
 #include "ExpansionAlgorithm.h"
 #include "../utility/PriorityQueue.h"
 #include"../utility/ResultContainer.h"
@@ -25,8 +26,8 @@ public:
 		lookahead++;
 	}
 
-	void expand(PriorityQueue<Node*>& open, unordered_map<State, Node*, Hash>& closed, vector<TopLevelAction>& tlas,
-		std::function<bool(Node*, unordered_map<State, Node*, Hash>&, PriorityQueue<Node*>&, vector<TopLevelAction>&)> duplicateDetection,
+	void expand(PriorityQueue<shared_ptr<Node> >& open, unordered_map<State, shared_ptr<Node>, Hash>& closed, vector<TopLevelAction>& tlas,
+		std::function<bool(shared_ptr<Node>, unordered_map<State, shared_ptr<Node>, Hash>&, PriorityQueue<shared_ptr<Node> >&, vector<TopLevelAction>&)> duplicateDetection,
 		ResultContainer& res)
 	{
 		// This starts at 1, because we had to expand start to get the top level actions
@@ -45,7 +46,7 @@ public:
 			int chosenTLAIndex = simulateExpansion(tlas);
 
 			// Expand under the TLA which holds the lowest risk
-			Node* chosenNode = tlas[chosenTLAIndex].open.top();
+			shared_ptr<Node> chosenNode = tlas[chosenTLAIndex].open.top();
 
 			// Add this node to the expansion delay window
 			domain.pushDelayWindow(chosenNode->getDelayCntr());
@@ -66,7 +67,7 @@ public:
 			expansions++;
 
 			// Increment the delay counts of every other node on open...
-			for (Node* n : open)
+			for (shared_ptr<Node> n : open)
 			{
 				n->incDelayCntr();
 			}
@@ -84,7 +85,7 @@ public:
 			for (State child : children)
 			{
 				// Create a node for this state
-				Node* childNode = new Node(chosenNode->getGValue() + domain.getEdgeCost(child),
+				shared_ptr<Node> childNode = make_shared<Node>(chosenNode->getGValue() + domain.getEdgeCost(child),
 					domain.heuristic(child), domain.distance(child), domain.distanceErr(child), 
 					domain.epsilonHGlobal(), domain.epsilonDGlobal(), child, chosenNode, chosenNode->getOwningTLA());
 
@@ -105,11 +106,6 @@ public:
 
 					// Add to open of generating TLA
 					tlas[chosenTLAIndex].open.push(childNode);
-				}
-				else
-				{
-					// If this state has already been visited, delete the node, one already exists with minimal g-value
-					delete childNode;
 				}
 			}
 
@@ -164,24 +160,17 @@ private:
 			double riskCalculation = riskAnalysis(alphaTLA, squishedTopLevelActions);
 
 			// If this is the first TLA risk has been calculated for, it by default minimizes risk...
-            // If two actions minimize risk by same value, tie break on f-hat -> f -> g in this order.
+            // If two actions minimize risk by same value, tie break on f -> g in this order.
             if (riskCalculation == minimalRisk)
             {
-                if (tlas[i].topLevelNode->getFHatValue() == tlas[minimalRiskTLA].topLevelNode->getFHatValue())
+                if (tlas[i].topLevelNode->getFValue() == tlas[minimalRiskTLA].topLevelNode->getFValue())
                 {
-                    if (tlas[i].topLevelNode->getFValue() == tlas[minimalRiskTLA].topLevelNode->getFValue())
-                    {
-                        if (tlas[i].topLevelNode->getGValue() < tlas[minimalRiskTLA].topLevelNode->getGValue())
-                        {
-                            minimalRiskTLA = i;
-                        }
-                    }
-                    else if (tlas[i].topLevelNode->getFValue() < tlas[minimalRiskTLA].topLevelNode->getFValue())
+                    if (tlas[i].topLevelNode->getGValue() > tlas[minimalRiskTLA].topLevelNode->getGValue())
                     {
                         minimalRiskTLA = i;
                     }
                 }
-                else if (tlas[i].topLevelNode->getFHatValue() < tlas[minimalRiskTLA].topLevelNode->getFHatValue())
+                else if (tlas[i].topLevelNode->getFValue() < tlas[minimalRiskTLA].topLevelNode->getFValue())
                 {
                     minimalRiskTLA = i;
                 }
@@ -268,7 +257,7 @@ private:
 			// Add to the best k nodes while i < k and non-selected nodes exist on the frontier
 			while (i < k && !tla.open.empty())
 			{
-				Node* best = tla.open.top();
+				shared_ptr<Node> best = tla.open.top();
 				tla.open.pop();
 
 				// Make this node's PDF a discrete distribution...
@@ -280,7 +269,7 @@ private:
 			}
 
 			// Now put the nodes back in the top level open list
-			for (Node* n : tla.kBestNodes)
+			for (shared_ptr<Node> n : tla.kBestNodes)
 			{
 				tla.open.push(n);
 			}

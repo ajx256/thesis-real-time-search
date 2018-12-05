@@ -1,6 +1,7 @@
 #pragma once
 #include <functional>
 #include <limits>
+#include <memory>
 #include "DecisionAlgorithm.h"
 #include "../utility/PriorityQueue.h"
 
@@ -17,7 +18,7 @@ public:
 		: domain(domain), k(k), beliefType(beliefType), lookahead(lookahead)
 	{}
 
-	Node* backup(PriorityQueue<Node*>& open, vector<TopLevelAction>& tlas, Node* start)
+	shared_ptr<Node> backup(PriorityQueue<shared_ptr<Node> >& open, vector<TopLevelAction>& tlas, shared_ptr<Node> start)
 	{
 		kBestDecision(tlas);
 
@@ -29,7 +30,7 @@ public:
 				lowestExpectedPathTLA = tla;
 		}
 
-		Node* goalPrime = lowestExpectedPathTLA.topLevelNode;
+		shared_ptr<Node> goalPrime = lowestExpectedPathTLA.topLevelNode;
 
 		goalPrime->markStart();
 
@@ -77,7 +78,7 @@ private:
 			// Add to the best k nodes while i < k and non-selected nodes exist on the frontier
 			while (i < k && !tla.open.empty())
 			{
-				Node* best = tla.open.top();
+				shared_ptr<Node> best = tla.open.top();
 				tla.open.pop();
 
 				// Make this node's PDF a discrete distribution...

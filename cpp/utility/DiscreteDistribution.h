@@ -47,8 +47,8 @@ class DiscreteDistribution
 	{
 		ProbabilityNode first;
 		ProbabilityNode second;
-		ProbabilityPair* left;
-		ProbabilityPair* right;
+		ProbabilityPair* left = NULL;
+		ProbabilityPair* right = NULL;
 
 		ProbabilityPair(ProbabilityNode lower, ProbabilityNode upper)
 			: first(lower), second(upper), left(NULL), right(NULL) {}

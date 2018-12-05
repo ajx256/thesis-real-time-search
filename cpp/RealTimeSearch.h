@@ -3,6 +3,7 @@
 #include <set>
 #include <functional>
 #include <unordered_map>
+#include <memory>
 #include "utility/DiscreteDistribution.h"
 #include "utility/PriorityQueue.h"
 #include "utility/ResultContainer.h"
@@ -37,7 +38,7 @@ public:
 		Cost derr;
 		Cost epsH;
 		Cost epsD;
-		Node* parent;
+		shared_ptr<Node> parent;
 		State stateRep;
 		int owningTLA;
 		bool open;
@@ -56,7 +57,7 @@ public:
 		Cost getDHatValue() const { return (derr / (1.0 - epsD)); }
 		Cost getHHatValue() const { return h + getDHatValue() * epsH; }
 		State getState() const { return stateRep; }
-		Node* getParent() const { return parent; }
+		shared_ptr<Node> getParent() const { return parent; }
 		int getOwningTLA() const { return owningTLA; }
 
 		void setHValue(Cost val) { h = val; }
@@ -67,7 +68,7 @@ public:
 		void setEpsilonD(Cost val) { epsD = val; }
 		void setState(State s) { stateRep = s; }
 		void setOwningTLA(int tla) { owningTLA = tla; }
-		void setParent(Node* p) { parent = p; }
+		void setParent(shared_ptr<Node> p) { parent = p; }
 
 		bool onOpen() { return open; }
 		void close() { open = false; }
@@ -78,7 +79,7 @@ public:
 
 		void markStart() { stateRep.markStart(); }
 
-		Node(Cost g, Cost h, Cost d, Cost derr, Cost epsH, Cost epsD, State state, Node* parent, int tla)
+		Node(Cost g, Cost h, Cost d, Cost derr, Cost epsH, Cost epsD, State state, shared_ptr<Node> parent, int tla)
 			: g(g), h(h), d(d), derr(derr), epsH(epsH), epsD(epsD), stateRep(state), parent(parent), owningTLA(tla)
 		{
 			open = true;
@@ -103,7 +104,7 @@ public:
 			return stream;
 		}
 
-		static bool compareNodesF(const Node* n1, const Node* n2)
+		static bool compareNodesF(const shared_ptr<Node> n1, const shared_ptr<Node> n2)
 		{
 			// Tie break on g-value
 			if (n1->getFValue() == n2->getFValue())
@@ -113,7 +114,7 @@ public:
 			return n1->getFValue() < n2->getFValue();
 		}
 
-		static bool compareNodesFHat(const Node* n1, const Node* n2)
+		static bool compareNodesFHat(const shared_ptr<Node> n1, const shared_ptr<Node> n2)
 		{
 			// Tie break on g-value
 			if (n1->getFHatValue() == n2->getFHatValue())
@@ -122,12 +123,12 @@ public:
                 {
 				    return n1->getGValue() > n2->getGValue();
                 }
-                return n1->getFValue() > n2->getFValue();
+                return n1->getFValue() < n2->getFValue();
 			}
 			return n1->getFHatValue() < n2->getFHatValue();
 		}
 
-		static bool compareNodesH(const Node* n1, const Node* n2)
+		static bool compareNodesH(const shared_ptr<Node> n1, const shared_ptr<Node> n2)
 		{
 			if (n1->getHValue() == n2->getHValue())
 			{
@@ -140,10 +141,10 @@ public:
 	struct TopLevelAction
 	{
 	public:
-		PriorityQueue<Node*> open;
+		PriorityQueue<shared_ptr<Node> > open;
 		Cost expectedMinimumPathCost;
-		Node* topLevelNode;
-		vector<Node*> kBestNodes;
+		shared_ptr<Node> topLevelNode;
+		vector<shared_ptr<Node> > kBestNodes;
 		DiscreteDistribution belief;
 
 		TopLevelAction()
@@ -180,50 +181,62 @@ public:
 	{
 		if (expansionModule == "a-star")
 		{
-			expansionAlgo = new AStar<Domain, Node, TopLevelAction>(domain, lookahead, "f");
+			expansionAlgo = make_shared<AStar<Domain, Node, TopLevelAction> >(domain, lookahead, "f");
 		}
 		else if (expansionModule == "f-hat")
 		{
-			expansionAlgo = new AStar<Domain, Node, TopLevelAction>(domain, lookahead, "fhat");
+			expansionAlgo = make_shared<AStar<Domain, Node, TopLevelAction> >(domain, lookahead, "fhat");
 		}
 		else if (expansionModule == "dfs")
 		{
-			expansionAlgo = new DepthFirst<Domain, Node, TopLevelAction>(domain, lookahead);
+			expansionAlgo = make_shared<DepthFirst<Domain, Node, TopLevelAction> >(domain, lookahead);
 		}
 		else if (expansionModule == "bfs")
 		{
-			expansionAlgo = new BreadthFirst<Domain, Node, TopLevelAction>(domain, lookahead);
+			expansionAlgo = make_shared<BreadthFirst<Domain, Node, TopLevelAction> >(domain, lookahead);
 		}
 		else if (expansionModule == "risk")
 		{
-			expansionAlgo = new Risk<Domain, Node, TopLevelAction>(domain, lookahead, 1);
+			expansionAlgo = make_shared<Risk<Domain, Node, TopLevelAction> >(domain, lookahead, 1);
 		}
         else if (expansionModule == "confidence")
 		{
-			expansionAlgo = new Confidence<Domain, Node, TopLevelAction>(domain, lookahead, 1);
+			expansionAlgo = make_shared<Confidence<Domain, Node, TopLevelAction> >(domain, lookahead, 1);
 		}
+        else
+        {
+            expansionAlgo = make_shared<AStar<Domain, Node, TopLevelAction> >(domain, lookahead, "f");
+        }
 
 		if (learningModule == "none")
 		{
-			learningAlgo = new Ignorance<Domain, Node, TopLevelAction>;
+			learningAlgo = make_shared<Ignorance<Domain, Node, TopLevelAction> >();
 		}
 		else if (learningModule == "learn")
 		{
-			learningAlgo = new Dijkstra<Domain, Node, TopLevelAction>(domain);
+			learningAlgo = make_shared<Dijkstra<Domain, Node, TopLevelAction> >(domain);
 		}
+        else
+        {
+            learningAlgo = make_shared<Dijkstra<Domain, Node, TopLevelAction> >(domain);
+        }
 
 		if (decisionModule == "minimin")
 		{
-			decisionAlgo = new ScalarBackup<Domain, Node, TopLevelAction>("minimin");
+			decisionAlgo = make_shared<ScalarBackup<Domain, Node, TopLevelAction> >("minimin");
 		}
 		else if (decisionModule == "bellman")
 		{
-			decisionAlgo = new ScalarBackup<Domain, Node, TopLevelAction>("bellman");
+			decisionAlgo = make_shared<ScalarBackup<Domain, Node, TopLevelAction> >("bellman");
 		}
 		else if (decisionModule == "k-best")
 		{
-			decisionAlgo = new KBestBackup<Domain, Node, TopLevelAction>(domain, k, belief, lookahead);
+			decisionAlgo = make_shared<KBestBackup<Domain, Node, TopLevelAction> >(domain, k, belief, lookahead);
 		}
+        else
+        {
+            decisionAlgo = make_shared<ScalarBackup<Domain, Node, TopLevelAction> >("minimin");
+        }
 	}
 
 	~RealTimeSearch()
@@ -238,9 +251,9 @@ public:
 		ResultContainer res;
 
 		// Get the start node
-		Node* start = new Node(0, domain.heuristic(domain.getStartState()), domain.distance(domain.getStartState()),
+		shared_ptr<Node> start = make_shared<Node>(0, domain.heuristic(domain.getStartState()), domain.distance(domain.getStartState()),
 			domain.distanceErr(domain.getStartState()), domain.epsilonHGlobal(), domain.epsilonDGlobal(), 
-			domain.getStartState(), NULL, -1);
+			domain.getStartState(), nullptr, -1);
 
 		while (1)
 		{
@@ -287,8 +300,8 @@ public:
 		ResultContainer res;
 
 		// Get the start node
-		Node* start = new Node(0, domain.heuristic(domain.getStartState()), domain.distance(domain.getStartState()),
-			domain.distanceErr(domain.getStartState()), domain.epsilonHGlobal(), domain.epsilonDGlobal(), domain.getStartState(), NULL, -1);
+		shared_ptr<Node> start = make_shared<Node>(0, domain.heuristic(domain.getStartState()), domain.distance(domain.getStartState()),
+			domain.distanceErr(domain.getStartState()), domain.epsilonHGlobal(), domain.epsilonDGlobal(), domain.getStartState(), nullptr, -1);
 
 		// Check if a goal has been reached
 		if (domain.isGoal(start->getState()))
@@ -319,10 +332,6 @@ public:
 		open.clear();
 
 		// delete all of the nodes from the last expansion phase
-		for (typename unordered_map<State, Node*, Hash>::iterator it = closed.begin(); it != closed.end(); it++)
-			if (it->second != start)
-				delete it->second;
-
 		closed.clear();
 
 		open.push(start);
@@ -346,11 +355,11 @@ public:
 	}
 
 private:
-	static bool duplicateDetection(Node* node, unordered_map<State, Node*, Hash>& closed, PriorityQueue<Node*>& open, 
+	static bool duplicateDetection(shared_ptr<Node> node, unordered_map<State, shared_ptr<Node>, Hash>& closed, PriorityQueue<shared_ptr<Node> >& open, 
 		vector<TopLevelAction>& tlaList)
 	{
 		// Check if this state exists 
-		typename unordered_map<State, Node*, Hash>::iterator it = closed.find(node->getState());
+		typename unordered_map<State, shared_ptr<Node>, Hash>::iterator it = closed.find(node->getState());
 
 		if (it != closed.end())
 		{
@@ -400,7 +409,7 @@ private:
 		return false;
 	}
 
-	void generateTopLevelActions(Node* start, ResultContainer& res)
+	void generateTopLevelActions(shared_ptr<Node> start, ResultContainer& res)
 	{
 		// The first node to be expanded in any problem is the start node
 		// Doing so yields the top level actions
@@ -416,7 +425,7 @@ private:
 
 		for (State child : children)
 		{
-			Node* childNode = new Node(start->getGValue() + domain.getEdgeCost(child),
+			shared_ptr<Node> childNode = make_shared<Node>(start->getGValue() + domain.getEdgeCost(child),
 				domain.heuristic(child), domain.distance(child), domain.distanceErr(child), domain.epsilonHGlobal(),
 				domain.epsilonDGlobal(), child, start, tlas.size());
 
@@ -456,7 +465,7 @@ private:
 		}
 	}
 
-	void restartLists(Node* start)
+	void restartLists(shared_ptr<Node> start)
 	{
 		// clear the TLA list
 		tlas.clear();
@@ -465,10 +474,6 @@ private:
 		open.clear();
 
 		// delete all of the nodes from the last expansion phase
-		for (typename unordered_map<State, Node*, Hash>::iterator it = closed.begin(); it != closed.end(); it++)
-			if (it->second != start)
-				delete it->second;
-
 		closed.clear();
 	}
 
@@ -481,17 +486,10 @@ private:
 		open.clear();
 
 		// delete all of the nodes from the last expansion phase
-		for (typename unordered_map<State, Node*, Hash>::iterator it = closed.begin(); it != closed.end(); it++)
-			delete it->second;
-
 		closed.clear();
-
-		delete expansionAlgo;
-		delete learningAlgo;
-		delete decisionAlgo;
 	}
 
-	void calculateCost(Node* solution, ResultContainer& res)
+	void calculateCost(shared_ptr<Node> solution, ResultContainer& res)
 	{
 		res.solutionFound = true;
 		res.solutionCost = solution->getFValue();
@@ -499,11 +497,11 @@ private:
 
 protected:
 	Domain& domain;
-	ExpansionAlgorithm<Domain, Node, TopLevelAction>* expansionAlgo;
-	LearningAlgorithm<Domain, Node, TopLevelAction>* learningAlgo;
-	DecisionAlgorithm<Domain, Node, TopLevelAction>* decisionAlgo;
-	PriorityQueue<Node*> open;
-	unordered_map<State, Node*, Hash> closed;
+	shared_ptr<ExpansionAlgorithm<Domain, Node, TopLevelAction> > expansionAlgo;
+	shared_ptr<LearningAlgorithm<Domain, Node, TopLevelAction> > learningAlgo;
+	shared_ptr<DecisionAlgorithm<Domain, Node, TopLevelAction> > decisionAlgo;
+	PriorityQueue<shared_ptr<Node> > open;
+	unordered_map<State, shared_ptr<Node>, Hash> closed;
 	vector<TopLevelAction> tlas;
 
 	double lookahead;
