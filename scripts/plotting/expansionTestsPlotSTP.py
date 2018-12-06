@@ -57,7 +57,7 @@ with open("../utility/KorfTrueCosts.json") as costs:
 resultDirs = {"4x4"}
 limits = [3, 10, 30, 100, 300, 1000]
 
-algorithms = ["F-based", "F-Hat", "BFS", "Risk", "LSS-LRTA*", "Confidence"]
+algorithms = ["A*", "F-Hat", "BFS", "Risk", "LSS-LRTA*", "Confidence"]
 
 instance = []
 lookAheadVals = []
@@ -75,7 +75,7 @@ for dir in resultDirs:
             resultData = json.load(json_data)
 
             if resultData["Lookahead"] not in gapSums:
-                gapSums[resultData["Lookahead"]] = {"F-based" : 0, "Risk" : 0, "F-Hat" : 0, "BFS" : 0, "LSS-LRTA*" : 0, "Confidence" : 0}
+                gapSums[resultData["Lookahead"]] = {"A*" : 0, "Risk" : 0, "F-Hat" : 0, "BFS" : 0, "LSS-LRTA*" : 0, "Confidence" : 0}
 
             # Find the optimal cost
             instanceKorf = file.split('-')[1].split('.')[0]
@@ -84,9 +84,9 @@ for dir in resultDirs:
                 instance.append(str(dir))
                 lookAheadVals.append(resultData["Lookahead"])
                 algorithm.append(algo)
-                solutionCost.append(resultData[algo.replace("F-based", "A*")])
-                differenceCost.append(resultData[algo.replace("F-based", "A*")] - resultData["A*"])
-                gapSums[resultData["Lookahead"]][algo] =  gapSums[resultData["Lookahead"]][algo] + (resultData[algo.replace("F-based", "A*")] - korfCosts[instanceKorf])
+                solutionCost.append(resultData[algo.replace("A*", "A*")])
+                differenceCost.append(resultData[algo.replace("A*", "A*")] - resultData["A*"])
+                gapSums[resultData["Lookahead"]][algo] =  gapSums[resultData["Lookahead"]][algo] + (resultData[algo.replace("A*", "A*")] - korfCosts[instanceKorf])
 
 dfExp = pd.DataFrame({
     "instance":instance,
@@ -98,17 +98,17 @@ dfExp = pd.DataFrame({
 dfDiffExp = pd.DataFrame({
     "instance":instance,
     "Node Expansion Limit":lookAheadVals,
-    "Algorithm Cost - F-based Cost":differenceCost,
+    "Algorithm Cost - A* Cost":differenceCost,
     "Algorithm":algorithm
 })
 
-algorithmsExpA = ["F-based", "F-Hat"]
+algorithmsExpA = ["A*", "F-Hat"]
 
-algorithmsExpB = ["F-based", "F-Hat", "BFS"]
+algorithmsExpB = ["A*", "F-Hat", "BFS"]
 
-algorithmsExpC = ["F-based", "F-Hat", "BFS", "Risk", "LSS-LRTA*"]
+algorithmsExpC = ["A*", "F-Hat", "BFS", "Risk", "LSS-LRTA*"]
 
-algorithmsOpt = ["F-based", "F-Hat", "Risk", "LSS-LRTA*"]
+algorithmsOpt = ["A*", "F-Hat", "Risk", "LSS-LRTA*"]
 
 instanceDiffExpCOpt = []
 lookAheadValsDiffExpCOpt = []
@@ -119,7 +119,7 @@ for la in gapSums:
     for algo in gapSums[la]:
         instanceDiffExpCOpt.append("4x4")
         lookAheadValsDiffExpCOpt.append(la)
-        optimalGap.append((gapSums[la][algo] / 100) / (gapSums[la]["F-based"] / 100))
+        optimalGap.append((gapSums[la][algo] / 100) / (gapSums[la]["A*"] / 100))
         algorithmDiffExpCOpt.append(algo)
 
 dfOpt = pd.DataFrame({
@@ -139,16 +139,16 @@ for instance in resultDirs:
 
     makeViolinPlot(11, 8, "Node Expansion Limit", "Solution Cost", instanceDataExp, 0.4, "Algorithm", limits, algorithmsExpA, "Node Expansion Limit", "Solution Cost", "../../plots/Experiment2AViolin" + instance + ".pdf")
 
-    makeDifferencePlot(11, 8, "Node Expansion Limit", "Algorithm Cost - F-based Cost", instanceDataDiffExp, 0.35, "Algorithm", limits, algorithmsExpA, "Node Expansion Limit", "Algorithm Cost - F-based Cost", "../../plots/Experiment2ADifference" + instance + ".pdf")
+    makeDifferencePlot(11, 8, "Node Expansion Limit", "Algorithm Cost - A* Cost", instanceDataDiffExp, 0.35, "Algorithm", limits, algorithmsExpA, "Node Expansion Limit", "Algorithm Cost - A* Cost", "../../plots/Experiment2ADifference" + instance + ".pdf")
 
     makeViolinPlot(11, 8, "Node Expansion Limit", "Solution Cost", instanceDataExp, 0.53, "Algorithm", limits, algorithmsExpB, "Node Expansion Limit", "Solution Cost", "../../plots/Experiment2BViolin" + instance + ".pdf")
 
-    makeDifferencePlot(11, 8, "Node Expansion Limit", "Algorithm Cost - F-based Cost", instanceDataDiffExp, 0.35, "Algorithm", limits, algorithmsExpB, "Node Expansion Limit", "Algorithm Cost - F-based Cost", "../../plots/Experiment2BDifference" + instance + ".pdf")
+    makeDifferencePlot(11, 8, "Node Expansion Limit", "Algorithm Cost - A* Cost", instanceDataDiffExp, 0.35, "Algorithm", limits, algorithmsExpB, "Node Expansion Limit", "Algorithm Cost - A* Cost", "../../plots/Experiment2BDifference" + instance + ".pdf")
 
     makeViolinPlot(11, 12, "Node Expansion Limit", "Solution Cost", instanceDataExp, 0.65, "Algorithm", limits, algorithmsExpC, "Node Expansion Limit", "Solution Cost", "../../plots/Experiment2CViolin" + instance + ".pdf")
 
-    makeDifferencePlot(11, 8, "Node Expansion Limit", "Algorithm Cost - F-based Cost", instanceDataDiffExp, 0.35, "Algorithm", limits, algorithmsExpC, "Node Expansion Limit", "Algorithm Cost - F-based Cost", "../../plots/Experiment2CDifference" + instance + ".pdf")
+    makeDifferencePlot(11, 8, "Node Expansion Limit", "Algorithm Cost - A* Cost", instanceDataDiffExp, 0.35, "Algorithm", limits, algorithmsExpC, "Node Expansion Limit", "Algorithm Cost - A* Cost", "../../plots/Experiment2CDifference" + instance + ".pdf")
 
-    makeDifferencePlot(11, 8, "Node Expansion Limit", "Algorithm Cost - F-based Cost", instanceDataDiffExp, 0.35, "Algorithm", limits, algorithmsExpC, "Node Expansion Limit", "Algorithm Cost - F-based Cost", "../../plots/Experiment2CDifference" + instance + "AAAI19Slides.pdf")
+    makeDifferencePlot(11, 8, "Node Expansion Limit", "Algorithm Cost - A* Cost", instanceDataDiffExp, 0.35, "Algorithm", limits, algorithmsExpC, "Node Expansion Limit", "Algorithm Cost - A* Cost", "../../plots/Experiment2CDifference" + instance + "AAAI19Slides.pdf")
 
-    makeOptimalityGapPlot(11, 8, "Node Expansion Limit", "Average Optimality Gap", instanceDataOpt, 0.35, "Algorithm", limits, algorithmsOpt, "Node Expansion Limit", "Average Optimality Gap (% of F-based)", "../../plots/Experiment2COptimalityGap" + instance + ".pdf")
+    makeOptimalityGapPlot(11, 8, "Node Expansion Limit", "Average Optimality Gap", instanceDataOpt, 0.35, "Algorithm", limits, algorithmsOpt, "Node Expansion Limit", "Average Optimality Gap (% of A*)", "../../plots/Experiment2COptimalityGap" + instance + ".pdf")
