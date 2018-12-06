@@ -48,12 +48,41 @@ int main(int argc, char** argv)
         RealTimeSearch<TreeWorld> confidence(world, "confidence", "learn", "k-best", lookaheadDepth, 1, "normal");
 		RealTimeSearch<TreeWorld> lsslrta(world, "a-star", "none", "minimin", lookaheadDepth);
 
-		bfsRes = bfs.search();
 		astarRes = astar.search();
-		fhatRes = fhat.search();
+        if (!world.validatePath(astarRes.path))
+        {
+            cout << "Invalid path detected from f search!" << endl;
+            exit(1);
+        }
+
 		riskRes = risk.search();
-        confidenceRes = confidence.search();
-		lsslrtaRes = lsslrta.search();
+        if (!world.validatePath(riskRes.path))
+        {
+            cout << "Invalid path detected from risk search!" << endl;
+            exit(1);
+        }
+        
+        //confidenceRes = confidence.search();
+		fhatRes = fhat.search();
+        if (!world.validatePath(fhatRes.path))
+        {
+            cout << "Invalid path detected from f-hat search!" << endl;
+            exit(1);
+        }
+
+		bfsRes = bfs.search();
+        if (!world.validatePath(bfsRes.path))
+        {
+            cout << "Invalid path detected from BFS search!" << endl;
+            exit(1);
+        }
+        
+        lsslrtaRes = lsslrta.search();
+        if (!world.validatePath(lsslrtaRes.path))
+        {
+            cout << "Invalid path detected from LSS-LRTA* search!" << endl;
+            exit(1);
+        }
 	}
 	else if (domain == "SlidingPuzzle")
 	{

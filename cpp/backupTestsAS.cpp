@@ -58,16 +58,81 @@ int main(int argc, char** argv)
 		RealTimeSearch<TreeWorld> pk30(world, "a-star", "none", "k-best", lookaheadDepth, 30, "pemberton");
 
 		miniminRes = minimin.search();
+        if (!world.validatePath(miniminRes.path))
+        {
+            cout << "Invalid path detected from minimin backup!" << endl;
+            exit(1);
+        }
+
 		bellmanRes = bellman.search();
-		pembertonRes = pemberton.search();
+        if (!world.validatePath(bellmanRes.path))
+        {
+            cout << "Invalid path detected from bellman backup!" << endl;
+            exit(1);
+        }
+
+		pembertonRes = pemberton.search();    
+        if (!world.validatePath(pembertonRes.path))
+        {
+            cout << "Invalid path detected from one-level cserna backup!" << endl;
+            exit(1);
+        }
+
 		nancyRes = nancy.search();
+        if (!world.validatePath(nancyRes.path))
+        {
+            cout << "Invalid path detected from nancy backup!" << endl;
+            exit(1);
+        }
+
 		csernaRes = cserna.search();
+        if (!world.validatePath(csernaRes.path))
+        {
+            cout << "Invalid path detected from cserna backup!" << endl;
+            exit(1);
+        }
+
 		k3Res = k3.search();
+        if (!world.validatePath(k3Res.path))
+        {
+            cout << "Invalid path detected from gaussian k-3 backup!" << endl;
+            exit(1);
+        }
+
 		k10Res = k10.search();
+        if (!world.validatePath(k10Res.path))
+        {
+            cout << "Invalid path detected from gaussian k-10 backup!" << endl;
+            exit(1);
+        }
+
 		k30Res = k30.search();
+        if (!world.validatePath(k30Res.path))
+        {
+            cout << "Invalid path detected from gaussian k-30 backup!" << endl;
+            exit(1);
+        }
+
 		pk3Res = pk3.search();
+        if (!world.validatePath(pk3Res.path))
+        {
+            cout << "Invalid path detected from one-level k-3 backup!" << endl;
+            exit(1);
+        }
+
 		pk10Res = pk10.search();
+        if (!world.validatePath(pk10Res.path))
+        {
+            cout << "Invalid path detected from one-level k-10 backup!" << endl;
+            exit(1);
+        }
+
 		pk30Res = pk30.search();
+        if (!world.validatePath(pk30Res.path))
+        {
+            cout << "Invalid path detected from one-level k-30 backup!" << endl;
+            exit(1);
+        }
 	}
 	else if (domain == "SlidingPuzzle")
 	{
@@ -84,12 +149,53 @@ int main(int argc, char** argv)
 		RealTimeSearch<SlidingTilePuzzle> k30(world, "a-star", "learn", "k-best", lookaheadDepth, 30, "normal");
 
 		miniminRes = minimin.search();
+        if (!world.validatePath(miniminRes.path))
+        {
+            cout << "Invalid path detected from minimin backup!" << endl;
+            exit(1);
+        }
+
 		bellmanRes = bellman.search();
+        if (!world.validatePath(bellmanRes.path))
+        {
+            cout << "Invalid path detected from bellman backup!" << endl;
+            exit(1);
+        }
+
 		nancyRes = nancy.search();
+        if (!world.validatePath(nancyRes.path))
+        {
+            cout << "Invalid path detected from nancy backup!" << endl;
+            exit(1);
+        }
+
 		csernaRes = cserna.search();
+        if (!world.validatePath(csernaRes.path))
+        {
+            cout << "Invalid path detected from cserna backup!" << endl;
+            exit(1);
+        }
+
 		k3Res = k3.search();
+        if (!world.validatePath(k3Res.path))
+        {
+            cout << "Invalid path detected from gaussian k-3 backup!" << endl;
+            exit(1);
+        }
+
 		k10Res = k10.search();
+        if (!world.validatePath(k10Res.path))
+        {
+            cout << "Invalid path detected from gaussian k-10 backup!" << endl;
+            exit(1);
+        }
+
 		k30Res = k30.search();
+        if (!world.validatePath(k30Res.path))
+        {
+            cout << "Invalid path detected from gaussian k-30 backup!" << endl;
+            exit(1);
+        }
 	}
 	else
 	{

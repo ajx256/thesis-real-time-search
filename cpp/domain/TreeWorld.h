@@ -4,6 +4,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <queue>
 #include <unordered_map>
 #include "../utility/Random.h"
 #include "../utility/SlidingWindow.h"
@@ -365,6 +366,24 @@ public:
 
 		return avg;
 	}
+
+    bool validatePath(queue<int> path)
+    {
+        State cur = startState;
+
+        while (!path.empty())
+        {
+            int childChosen = path.front();
+            path.pop();
+
+            cur = State(cur.getDepth() + 1, (cur.getSeedOffset() * TreeWorld::branchingFactor) + childChosen, childChosen);
+        }
+
+        if (cur.getDepth() == maxDepth)
+            return true;
+
+        return false;
+    }
 
 	State startState;
 	int maxDepth;
