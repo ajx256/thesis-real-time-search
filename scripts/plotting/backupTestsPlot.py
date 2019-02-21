@@ -35,6 +35,9 @@ def makeDifferencePlot(width, height, xAxis, yAxis, dataframe, dodge, hue, order
     plt.cla()
     return
 
+# Prevents embedding of type 3 fonts in graphs
+sns.set(rc={'pdf.fonttype': 42, 'ps.fonttype': 42})
+
 # Hard coded result directories
 resultDirs = {"b2d100"}
 
@@ -135,10 +138,10 @@ for instance in resultDirs:
     instanceDataDiffAS = dfDiffAS.loc[dfDiffAS["instance"] == instance]
     instanceDataDiffASAAAISlide = dfDiffASAAAISlide.loc[dfDiffASAAAISlide["instance"] == instance]
 
-    makeViolinPlot(13, 10, "Depth Limit", "Solution Cost", instanceDataDFS, 0.725, "Algorithm", depthsDFS, algorithms, "Depth Limit", "Solution Cost", "../../plots/Experiment1BViolin" + instance + ".pdf", colors)
-    makeDifferencePlot(18, 15, "Depth Limit", "Algorithm Cost - Cserna Cost", instanceDataDiffDFS, 0.5, "Algorithm", depthsDFS, algorithms, "Depth Limit", "Algorithm Cost - Cserna One Level Belief Cost", "../../plots/Experiment1BDifference" + instance + ".pdf", colors, markers)
+    makeViolinPlot(11, 8, "Depth Limit", "Solution Cost", instanceDataDFS, 0.725, "Algorithm", depthsDFS, algorithms, "Depth Limit", "Solution Cost", "../../plots/Experiment1BViolin" + instance + ".pdf", colors)
+    makeDifferencePlot(11, 8, "Depth Limit", "Algorithm Cost - Cserna Cost", instanceDataDiffDFS, 0.5, "Algorithm", depthsDFS, algorithms, "Depth Limit", "Algorithm Cost - Cserna One Level Belief Cost", "../../plots/Experiment1BDifference" + instance + ".pdf", colors, markers)
 
-    makeViolinPlot(13, 10, "Node Expansion Limit", "Solution Cost", instanceDataAS, 0.725, "Algorithm", depthsAS, algorithms, "Node Expansion Limit", "Solution Cost", "../../plots/Experiment1CViolin" + instance + ".pdf", colors)
-    makeDifferencePlot(13, 10, "Node Expansion Limit", "Algorithm Cost - Cserna Cost", instanceDataDiffAS, 0.5, "Algorithm", depthsAS, algorithms, "Node Expansion Limit", "Algorithm Cost - Cserna One Level Belief Cost", "../../plots/Experiment1CDifference" + instance + ".pdf", colors, markers)
+    makeViolinPlot(11, 8, "Node Expansion Limit", "Solution Cost", instanceDataAS, 0.725, "Algorithm", depthsAS, algorithms, "Node Expansion Limit", "Solution Cost", "../../plots/Experiment1CViolin" + instance + ".pdf", colors)
+    makeDifferencePlot(7.12, 5.5, "Node Expansion Limit", "Algorithm Cost - Cserna Cost", instanceDataDiffAS, 0.5, "Algorithm", depthsAS, algorithms, "Node Expansion Limit", "Algorithm Cost - Cserna One Level Belief Cost", "../../plots/Experiment1CDifference" + instance + ".pdf", colors, markers)
 
-    makeDifferencePlot(13, 10, "Node Expansion Limit", "Algorithm Cost - Cserna Cost", instanceDataDiffASAAAISlide, 0.5, "Algorithm", depthsAS, algorithmsAAAI19Slides, "Node Expansion Limit", "Algorithm Cost - Cserna Cost", "../../plots/Experiment1CDifference" + instance + "AAAI19Slides.pdf", colors, markers)
+    makeDifferencePlot(7.12, 5.5, "Node Expansion Limit", "Algorithm Cost - Cserna Cost", instanceDataDiffASAAAISlide, 0.5, "Algorithm", depthsAS, algorithmsAAAI19Slides, "Node Expansion Limit", "Algorithm Cost - Cserna Cost", "../../plots/Experiment1CDifference" + instance + "AAAI19Slides.png", colors, markers)

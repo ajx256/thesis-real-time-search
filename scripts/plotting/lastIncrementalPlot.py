@@ -37,6 +37,9 @@ def makeDifferencePlot(width, height, xAxis, yAxis, dataframe, dodge, hue, order
     plt.cla()
     return
 
+# Prevents embedding of type 3 fonts in graphs
+sns.set(rc={'pdf.fonttype': 42, 'ps.fonttype': 42})
+
 # Hard coded result directories
 resultDirs = {"b2d10"}
 
@@ -95,8 +98,8 @@ for instance in resultDirs:
     elif instanceData["Depth Limit"].iloc[0] == 9:
         depths.append(9)
     
-    makeViolinPlot(13, 10, "Depth Limit", "Solution Cost", instanceData, 0.75, "Algorithm", depths, algorithms, "Depth Limit", "Solution Cost", "../../plots/Experiment1AViolin" + instance + ".pdf")
+    makeViolinPlot(11, 8, "Depth Limit", "Solution Cost", instanceData, 0.75, "Algorithm", depths, algorithms, "Depth Limit", "Solution Cost", "../../plots/Experiment1AViolin" + instance + ".pdf")
 	    
     instanceDataDiff = dfDiff.loc[dfDiff["instance"] == instance]
 
-    makeDifferencePlot(13, 10, "Depth Limit", "Algorithm Cost - Cserna Cost", instanceDataDiff, 0.3, "Algorithm", depths, algorithms, "Depth Limit", "Algorithm Cost - Cserna Correct Belief Cost", "../../plots/Experiment1ADifference" + instance + ".pdf", colors, markers)
+    makeDifferencePlot(11, 8, "Depth Limit", "Algorithm Cost - Cserna Cost", instanceDataDiff, 0.3, "Algorithm", depths, algorithms, "Depth Limit", "Algorithm Cost - Cserna Correct Belief Cost", "../../plots/Experiment1ADifference" + instance + ".pdf", colors, markers)

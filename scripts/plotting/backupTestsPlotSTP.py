@@ -35,6 +35,9 @@ def makeDifferencePlot(width, height, xAxis, yAxis, dataframe, dodge, hue, order
     plt.cla()
     return
 
+# Prevents embedding of type 3 fonts in graphs
+sns.set(rc={'pdf.fonttype': 42, 'ps.fonttype': 42})
+
 markers=["o", "v", "s", "<", "p", "h", "^", "D", "X", ">", "o", "v", "s", "<", "p", "h", "^", "D", "X", ">"]
 
 korfCosts = {}
@@ -170,8 +173,8 @@ for instance in resultDirs:
     instanceDataAS = dfAS.loc[dfAS["instance"] == instance]
     instanceDataDiffAS = dfDiffAS.loc[dfDiffAS["instance"] == instance]
 
-    makeViolinPlot(13, 10, "Node Expansion Limit", "Solution Cost", instanceDataAS, 0.685, "Algorithm", depthsAS, algorithms, "Node Expansion Limit", "Solution Cost", "../../plots/Experiment1CViolin" + instance + ".pdf")
+    makeViolinPlot(11, 8, "Node Expansion Limit", "Solution Cost", instanceDataAS, 0.685, "Algorithm", depthsAS, algorithms, "Node Expansion Limit", "Solution Cost", "../../plots/Experiment1CViolin" + instance + ".pdf")
     
-    makeDifferencePlot(13, 10, "Node Expansion Limit", "Algorithm Cost - Cserna Cost", instanceDataDiffAS, 0.35, "Algorithm", depthsAS, algorithms, "Node Expansion Limit", "Algorithm Cost - Cserna Cost", "../../plots/Experiment1CDifference" + instance + ".pdf", markers)
+    makeDifferencePlot(7.12, 5.5, "Node Expansion Limit", "Algorithm Cost - Cserna Cost", instanceDataDiffAS, 0.35, "Algorithm", depthsAS, algorithms, "Node Expansion Limit", "Algorithm Cost - Cserna Cost", "../../plots/Experiment1CDifference" + instance + ".pdf", markers)
 
-    makeDifferencePlot(13, 10, "Node Expansion Limit", "Algorithm Cost - Cserna Cost", instanceDataDiffAS, 0.35, "Algorithm", depthsAS, algorithmsAAAI19Slide, "Node Expansion Limit", "Algorithm Cost - Cserna Cost", "../../plots/Experiment1CDifference" + instance + "AAAI19Slides.pdf", markers)
+    makeDifferencePlot(7.12, 5.5, "Node Expansion Limit", "Algorithm Cost - Cserna Cost", instanceDataDiffAS, 0.35, "Algorithm", depthsAS, algorithmsAAAI19Slide, "Node Expansion Limit", "Algorithm Cost - Cserna Cost", "../../plots/Experiment1CDifference" + instance + "AAAI19Slides.png", markers)

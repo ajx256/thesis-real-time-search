@@ -2,8 +2,10 @@ import pandas as pd
 import numpy as np
 from scipy import stats, integrate
 import matplotlib.pyplot as plt
-
 import seaborn as sns
+
+# Prevents embedding of type 3 fonts in graphs
+sns.set(rc={'pdf.fonttype': 42, 'ps.fonttype': 42})
 
 sns.set(color_codes=True)
 
